@@ -8,6 +8,7 @@ import (
 	"github.com/influxdata/flux/execute"
 	"github.com/influxdata/flux/plan"
 	"github.com/influxdata/flux/semantic"
+	"github.com/influxdata/flux/values"
 )
 
 const HoltWintersKind = "holtWinters"
@@ -126,7 +127,7 @@ type HWProcedureSpec struct {
 	points []FloatPoint
 }
 
-func (r *HWProcedureSpec) roundTime(t int64) int64 {
+func (r *hwTransformation) roundTime(t int64) int64 {
 	// Overflow safe round function
 	remainder := t % r.interval
 	if remainder > r.halfInterval {
@@ -138,7 +139,7 @@ func (r *HWProcedureSpec) roundTime(t int64) int64 {
 }
 
 // Forecast the data h points into the future.
-func (r *HWProcedureSpec) forecast(h int, params []float64) []float64 {
+func (r *hwTransformation) forecast(h int, params []float64) []float64 {
 	// Constrain parameters
 	constrain(params)
 
@@ -175,7 +176,7 @@ func (r *HWProcedureSpec) forecast(h int, params []float64) []float64 {
 			stmh = seasonals[(t-m+hm+so)%m]
 		}
 		var sT float64
-		yT, lT, bT, sT = r.next(
+		yT, lT, bT, sT = next(
 			params[0], // alpha
 			params[1], // beta
 			params[2], // gamma
@@ -200,7 +201,7 @@ func (r *HWProcedureSpec) forecast(h int, params []float64) []float64 {
 }
 
 // Compute sum squared error for the given parameters.
-func (r *HWProcedureSpec) sse(params []float64) float64 {
+func (r *hwTransformation) sse(params []float64) float64 {
 	sse := 0.0
 	forecasted := r.forecast(0, params)
 	for i := range forecasted {
@@ -257,6 +258,29 @@ func createHWTransformation(id execute.DatasetID, mode execute.AccumulationMode,
 type hwTransformation struct {
 	d     execute.Dataset
 	cache execute.TableBuilderCache
+
+	// Season period
+	m        int
+	seasonal bool
+
+	// Horizon
+	h int
+
+	// Interval between points
+	interval int64
+	// interval / 2 -- used to perform rounding
+	halfInterval int64
+
+	// Whether to include all data or only future values
+	includeFitData bool
+
+	// NelderMead optimizer
+	optim *Optimizer
+	// Small difference bound for the optimizer
+	epsilon float64
+
+	y      []float64
+	points []FloatPoint
 }
 
 func NewHoltWintersTransformation(d execute.Dataset, cache execute.TableBuilderCache, spec *HWProcedureSpec) (*hwTransformation, error) {
@@ -266,7 +290,165 @@ func NewHoltWintersTransformation(d execute.Dataset, cache execute.TableBuilderC
 	}, nil
 }
 
-func (t *hwTransformation) Process(id execute.DatasetID, tbl flux.Table) error {
+type FloatPoint struct {
+	Time  int64
+	Value float64
+}
+
+func (r *hwTransformation) Process(id execute.DatasetID, tbl flux.Table) error {
+	// TODO: Iterate over the rows of the input table and add the
+	// timestamps and values to the r.points slice.
+	var timeIdx, valueIdx int
+	tbl.Do(func(cr flux.ColReader) error {
+		l := cr.Len()
+		if l < 2 || r.seasonal && l < r.m || r.h <= 0 {
+			return fmt.Errorf("table must have at least two rows")
+		}
+		timeIdx = execute.ColIdx("_time", cr.Cols())
+		valueIdx = execute.ColIdx("_value", cr.Cols())
+
+		timeArr := cr.Times(timeIdx)
+		valueArr := cr.Floats(valueIdx)
+
+		for i := 0; i < l; i++ {
+			r.points = append(r.points, FloatPoint{
+				Time:  timeArr.Value(i),
+				Value: valueArr.Value(i),
+			})
+		}
+		return nil
+	})
+
+	// First fill in r.y with values and NaNs for missing values
+	start, stop := r.roundTime(r.points[0].Time), r.roundTime(r.points[len(r.points)-1].Time)
+	count := (stop - start) / r.interval
+	if count <= 0 {
+		return nil
+	}
+	r.y = make([]float64, 1, count)
+	r.y[0] = r.points[0].Value
+	t := r.roundTime(r.points[0].Time)
+	for _, p := range r.points[1:] {
+		rounded := r.roundTime(p.Time)
+		if rounded <= t {
+			// Drop values that occur for the same time bucket
+			continue
+		}
+		t += r.interval
+		// Add any missing values before the next point
+		for rounded != t {
+			// Add in a NaN so we can skip it later.
+			r.y = append(r.y, math.NaN())
+			t += r.interval
+		}
+		r.y = append(r.y, p.Value)
+	}
+
+	// Seasonality
+	m := r.m
+
+	// Starting guesses
+	// NOTE: Since these values are guesses
+	// in the cases where we were missing data,
+	// we can just skip the value and call it good.
+
+	l0 := 0.0
+	if r.seasonal {
+		for i := 0; i < m; i++ {
+			if !math.IsNaN(r.y[i]) {
+				l0 += (1 / float64(m)) * r.y[i]
+			}
+		}
+	} else {
+		l0 += hwWeight * r.y[0]
+	}
+
+	b0 := 0.0
+	if r.seasonal {
+		for i := 0; i < m && m+i < len(r.y); i++ {
+			if !math.IsNaN(r.y[i]) && !math.IsNaN(r.y[m+i]) {
+				b0 += 1 / float64(m*m) * (r.y[m+i] - r.y[i])
+			}
+		}
+	} else {
+		if !math.IsNaN(r.y[1]) {
+			b0 = hwWeight * (r.y[1] - r.y[0])
+		}
+	}
+
+	var s []float64
+	if r.seasonal {
+		s = make([]float64, m)
+		for i := 0; i < m; i++ {
+			if !math.IsNaN(r.y[i]) {
+				s[i] = r.y[i] / l0
+			} else {
+				s[i] = 0
+			}
+		}
+	}
+
+	parameters := make([]float64, 6+len(s))
+	parameters[4] = l0
+	parameters[5] = b0
+	o := len(parameters) - len(s)
+	for i := range s {
+		parameters[i+o] = s[i]
+	}
+
+	// Determine best fit for the various parameters
+	minSSE := math.Inf(1)
+	var bestParams []float64
+	for alpha := hwGuessLower; alpha < hwGuessUpper; alpha += hwGuessStep {
+		for beta := hwGuessLower; beta < hwGuessUpper; beta += hwGuessStep {
+			for gamma := hwGuessLower; gamma < hwGuessUpper; gamma += hwGuessStep {
+				for phi := hwGuessLower; phi < hwGuessUpper; phi += hwGuessStep {
+					parameters[0] = alpha
+					parameters[1] = beta
+					parameters[2] = gamma
+					parameters[3] = phi
+					sse, params := r.optim.Optimize(r.sse, parameters, r.epsilon, 1)
+					if sse < minSSE || bestParams == nil {
+						minSSE = sse
+						bestParams = params
+					}
+				}
+			}
+		}
+	}
+
+	// Forecast
+	// Construct output table here
+	builder, created := r.cache.TableBuilder(tbl.Key())
+	if !created {
+		return fmt.Errorf("holt-winters found duplicate table with key: %v", tbl.Key())
+	}
+	if err := execute.AddTableCols(tbl, builder); err != nil {
+		return err
+	}
+
+	forecasted := r.forecast(r.h, bestParams)
+	if r.includeFitData {
+		start := r.points[0].Time
+		for i, v := range forecasted {
+			if !math.IsNaN(v) {
+				t := start + r.interval*(int64(i))
+				builder.AppendTime(timeIdx, values.Time(t))
+				builder.AppendFloat(valueIdx, v)
+			}
+		}
+	} else {
+		stop := r.points[len(r.points)-1].Time
+		for i, v := range forecasted[len(r.y):] {
+			if !math.IsNaN(v) {
+				t := stop + r.interval*(int64(i)+1)
+				builder.AppendTime(timeIdx, values.Time(t))
+				builder.AppendFloat(valueIdx, v)
+			}
+		}
+	}
+	// Clear data set
+	r.y = r.y[0:0]
 	return nil
 }
 
