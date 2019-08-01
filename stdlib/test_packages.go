@@ -10,6 +10,7 @@ import (
 	chronograf "github.com/influxdata/flux/stdlib/testing/chronograf"
 	kapacitor "github.com/influxdata/flux/stdlib/testing/kapacitor"
 	testdata2 "github.com/influxdata/flux/stdlib/testing/testdata"
+	usage "github.com/influxdata/flux/stdlib/testing/usage"
 )
 
 var FluxTestPackages = func() []*ast.Package {
@@ -20,5 +21,6 @@ var FluxTestPackages = func() []*ast.Package {
 	pkgs = append(pkgs, chronograf.FluxTestPackages...)
 	pkgs = append(pkgs, kapacitor.FluxTestPackages...)
 	pkgs = append(pkgs, testdata2.FluxTestPackages...)
+	pkgs = append(pkgs, usage.FluxTestPackages...)
 	return pkgs
 }()
