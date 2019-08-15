@@ -65,6 +65,12 @@ To assist in review for the PR, please add the following to your pull request co
 
 Flux uses _conventional commit message_ formats: https://www.conventionalcommits.org/en/v1.0.0-beta.3/. Please use this commit message format for commits that will be visible in influxdata/flux history.
 
+## Security Vulnerability Reporting
+InfluxData takes security and our users' trust very seriously. If you believe you have found a security issue in any of our
+open source projects, please responsibly disclose it by contacting security@influxdata.com. More details about 
+security vulnerability reporting, 
+including our GPG key, [can be found here](https://www.influxdata.com/how-to-report-security-vulnerabilities/).
+
 ## Signing the CLA
 In order to contribute back to Flux, you must sign the
 [InfluxData Contributor License Agreement](https://www.influxdata.com/legal/cla/) (CLA).
