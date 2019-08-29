@@ -100,7 +100,12 @@ func (v ConstraintGenerator) lookup(n Node) (PolyType, error) {
 
 // scheme produces a type scheme from a poly type, this includes the generalize step.
 func (v ConstraintGenerator) scheme(t PolyType) Scheme {
-	ftv := t.freeVars(v.cs).diff(v.env.freeVars(v.cs))
+	var ftv TvarSet
+	for _, tv := range t.freeVars(v.cs) {
+		if v.env.freeVars(v.cs).contains(tv) {
+			ftv = append(ftv, tv)
+		}
+	}
 	return Scheme{
 		T:    t,
 		Free: ftv,
@@ -301,7 +306,7 @@ func (v ConstraintGenerator) typeof(n Node) (PolyType, error) {
 			pipeArgument: pipeArgument,
 		}, nil
 	case *FunctionParameter:
-		v.env.Set(n.Key.Name, Scheme{T: nodeVar})
+		v.env.Set(n.Key.Name, Scheme{T: nodeVar, Free: TvarSet{nodeVar}})
 		return nodeVar, nil
 	case *FunctionBlock:
 		return v.lookup(n.Body)
@@ -561,18 +566,18 @@ func (c *Constraints) AddKindConst(tv Tvar, k Kind) {
 // Instantiate produces a new poly type where the free variables from the scheme have been made fresh.
 // This way each new instantiation of a scheme is independent of the other but all have the same constraint structure.
 func (c *Constraints) Instantiate(s Scheme, loc ast.SourceLocation) (t PolyType) {
-	if len(s.Free) == 0 {
-		return s.T
-	}
+
 	// Create a substituion for the new type variables
-	subst := make(Substitution, len(s.Free))
-	for _, tv := range s.Free {
+	subst := make(Substitution)
+	forall := s.T.freeVars(c).diff(s.Free)
+
+	for _, tv := range forall {
 		fresh := c.f.Fresh()
 		subst[tv] = fresh
 	}
 
 	// Add any new kind constraints
-	for _, tv := range s.Free {
+	for _, tv := range forall {
 		ks, ok := c.kindConst[tv]
 		if ok {
 			ntv := subst.ApplyTvar(tv)
@@ -585,11 +590,11 @@ func (c *Constraints) Instantiate(s Scheme, loc ast.SourceLocation) (t PolyType)
 
 	// Add any new type constraints
 	for _, tc := range c.typeConst {
-		fvs := tc.l.freeVars(c)
 		// Only add new constraints that constrain the left hand free vars
-		if fvs.hasIntersect(s.Free) {
-			l := subst.ApplyType(tc.l)
-			r := subst.ApplyType(tc.r)
+		if tc.l.freeVars(c).hasIntersect(forall) {
+			// fmt.Println(tc)
+			r := subst.ApplyType(tc.l)
+			l := subst.ApplyType(tc.r)
 			c.AddTypeConst(l, r, loc)
 		}
 	}
