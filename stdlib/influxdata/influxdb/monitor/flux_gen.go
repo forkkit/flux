@@ -25,7 +25,7 @@ var pkgAST = &ast.Package{
 					Line:   125,
 				},
 				File:   "monitor.flux",
-				Source: "package monitor\n\nimport \"experimental\"\nimport \"influxdata/influxdb/v1\"\nimport \"influxdata/influxdb\"\n\nbucket = \"_monitoring\"\n\n// Write persists the check statuses\noption write = (tables=<-) => tables |> experimental.to(bucket: bucket)\n\n// Log records notification events\noption log = (tables=<-) => tables |> experimental.to(bucket: bucket)\n\n// From retrieves the check statuses that have been stored.\nfrom = (start, stop=now(), fn=(r) => true) =>\n    influxdb.from(bucket: bucket)\n        |> range(start: start, stop: stop)\n        |> filter(fn: (r) => r._measurement == \"statuses\")\n        |> filter(fn: fn)\n        |> v1.fieldsAsCols()\n\n// StateChanges takes a stream of tables, fromLevel, and toLevel and returns\n// a stream of tables where status has gone from fromLevel to toLevel.\n//\n// StateChanges only operates on data with data containing r._measurement == \"statuses\"\n// and where r._level exists.\nstateChanges = (fromLevel=\"any\", toLevel, tables=<-) => {\n    toStatuses = tables\n        |> filter(fn: (r) => r._level == toLevel and r._measurement == \"statuses\")\n        |> map(fn: (r) => ({r with level_value: 1}))\n        |> duplicate(column: \"_level\", as: \"l2\")\n        |> drop(columns: [\"_level\"])\n        |> rename(columns: {\"l2\": \"_level\"})\n\n    levelFilter = if fromLevel == \"any\" then (r) => r._level != toLevel and exists r._level\n                   else (r) => r._level == fromLevel\n\n    fromStatuses = tables\n        |> filter(fn: levelFilter)\n        |> map(fn: (r) => ({r with level_value: 0}))\n        |> duplicate(column: \"_level\", as: \"l2\")\n        |> drop(columns: [\"_level\"])\n        |> rename(columns: {\"l2\": \"_level\"})\n\n     allStatuses = union(tables: [toStatuses, fromStatuses])\n        |> sort(columns: [\"_time\"])\n\n    return allStatuses\n        |> difference(columns: [\"level_value\"])\n        |> filter(fn: (r) => r.level_value > 0)\n        |> drop(columns: [\"level_value\"])\n        |> experimental.group(mode: \"extend\", columns: [\"_level\"])\n}\n\n// Notify will call the endpoint and log the results.\nnotify = (tables=<-, endpoint, data={}) =>\n    tables\n        |> experimental.set(o: data)\n        |> experimental.group(mode: \"extend\", columns: experimental.objectKeys(o: data))\n        |> map(fn: (r) => ({r with\n            _measurement: \"notifications\",\n            _status_timestamp: int(v: r._time),\n            _time: now(),\n        }))\n        |> endpoint()\n        |> experimental.group(mode: \"extend\", columns: [\"_sent\"])\n        |> log()\n\n// Logs retrieves notification events that have been logged.\nlogs = (start, stop=now(), fn) =>\n    influxdb.from(bucket: bucket)\n        |> range(start: start, stop: stop)\n        |> filter(fn: (r) => r._measurement == \"notifications\")\n        |> filter(fn: fn)\n        |> v1.fieldsAsCols()\n\n// Deadman takes in a stream of tables and reports which tables\n// were observed strictly before t and which were observed after.\n//\ndeadman = (t, tables=<-) => tables\n    |> max(column: \"_time\")\n    |> map(fn: (r) => ( {r with dead: r._time < t} ))\n\n// levels describing the result of a check\nlevelOK = \"ok\"\nlevelInfo = \"info\"\nlevelWarn = \"warn\"\nlevelCrit = \"crit\"\nlevelUnknown = \"unknown\"\n\n// Check performs a check against its input using the given ok, info, warn and crit functions\n// and writes the result to a system bucket.\ncheck = (\n    tables=<-,\n    data={},\n    messageFn,\n    crit=(r) => false,\n    warn=(r) => false,\n    info=(r) => false,\n    ok=(r) => true\n) =>\n    tables\n        |> experimental.set(o: data.tags)\n        |> experimental.group(mode: \"extend\", columns: experimental.objectKeys(o: data.tags))\n        |> map(fn: (r) => ({r with\n            _measurement: \"statuses\",\n            _source_measurement: r._measurement,\n            _type: data._type,\n            _check_id:  data._check_id,\n            _check_name: data._check_name,\n            _level:\n                if crit(r: r) then levelCrit\n                else if warn(r: r) then levelWarn\n                else if info(r: r) then levelInfo\n                else if ok(r: r) then levelOK\n                else levelUnknown,\n            _source_timestamp: int(v:r._time),\n            _time: now(),\n        }))\n        |> map(fn: (r) => ({r with\n            _message: messageFn(r: r),\n        }))\n        |> experimental.group(mode: \"extend\", columns: [\"_source_measurement\", \"_type\", \"_check_id\", \"_check_name\", \"_level\"])\n        |> write()",
+				Source: "package monitor\n\nimport \"experimental\"\nimport \"influxdata/influxdb/v1\"\nimport \"influxdata/influxdb\"\n\nbucket = \"_monitoring\"\n\n// Write persists the check statuses\noption write = (tables=<-) => tables\n\n// Log records notification events\noption log = (tables=<-) => tables\n\n// From retrieves the check statuses that have been stored.\nfrom = (start, stop=now(), fn=(r) => true) =>\n    influxdb.from(bucket: bucket)\n        |> range(start: start, stop: stop)\n        |> filter(fn: (r) => r._measurement == \"statuses\")\n        |> filter(fn: fn)\n        |> v1.fieldsAsCols()\n\n// StateChanges takes a stream of tables, fromLevel, and toLevel and returns\n// a stream of tables where status has gone from fromLevel to toLevel.\n//\n// StateChanges only operates on data with data containing r._measurement == \"statuses\"\n// and where r._level exists.\nstateChanges = (fromLevel=\"any\", toLevel, tables=<-) => {\n    toStatuses = tables\n        |> filter(fn: (r) => r._level == toLevel and r._measurement == \"statuses\")\n        |> map(fn: (r) => ({r with level_value: 1}))\n        |> duplicate(column: \"_level\", as: \"l2\")\n        |> drop(columns: [\"_level\"])\n        |> rename(columns: {\"l2\": \"_level\"})\n\n    levelFilter = if fromLevel == \"any\" then (r) => r._level != toLevel and exists r._level\n                   else (r) => r._level == fromLevel\n\n    fromStatuses = tables\n        |> filter(fn: levelFilter)\n        |> map(fn: (r) => ({r with level_value: 0}))\n        |> duplicate(column: \"_level\", as: \"l2\")\n        |> drop(columns: [\"_level\"])\n        |> rename(columns: {\"l2\": \"_level\"})\n\n     allStatuses = union(tables: [toStatuses, fromStatuses])\n        |> sort(columns: [\"_time\"])\n\n    return allStatuses\n        |> difference(columns: [\"level_value\"])\n        |> filter(fn: (r) => r.level_value > 0)\n        |> drop(columns: [\"level_value\"])\n        |> experimental.group(mode: \"extend\", columns: [\"_level\"])\n}\n\n// Notify will call the endpoint and log the results.\nnotify = (tables=<-, endpoint, data={}) =>\n    tables\n        |> experimental.set(o: data)\n        |> experimental.group(mode: \"extend\", columns: experimental.objectKeys(o: data))\n        |> map(fn: (r) => ({r with\n            _measurement: \"notifications\",\n            _status_timestamp: int(v: r._time),\n            _time: now(),\n        }))\n        |> endpoint()\n        |> experimental.group(mode: \"extend\", columns: [\"_sent\"])\n        |> log()\n\n// Logs retrieves notification events that have been logged.\nlogs = (start, stop=now(), fn) =>\n    influxdb.from(bucket: bucket)\n        |> range(start: start, stop: stop)\n        |> filter(fn: (r) => r._measurement == \"notifications\")\n        |> filter(fn: fn)\n        |> v1.fieldsAsCols()\n\n// Deadman takes in a stream of tables and reports which tables\n// were observed strictly before t and which were observed after.\n//\ndeadman = (t, tables=<-) => tables\n    |> max(column: \"_time\")\n    |> map(fn: (r) => ( {r with dead: r._time < t} ))\n\n// levels describing the result of a check\nlevelOK = \"ok\"\nlevelInfo = \"info\"\nlevelWarn = \"warn\"\nlevelCrit = \"crit\"\nlevelUnknown = \"unknown\"\n\n// Check performs a check against its input using the given ok, info, warn and crit functions\n// and writes the result to a system bucket.\ncheck = (\n    tables=<-,\n    data={},\n    messageFn,\n    crit=(r) => false,\n    warn=(r) => false,\n    info=(r) => false,\n    ok=(r) => true\n) =>\n    tables\n        |> experimental.set(o: data.tags)\n        |> experimental.group(mode: \"extend\", columns: experimental.objectKeys(o: data.tags))\n        |> map(fn: (r) => ({r with\n            _measurement: \"statuses\",\n            _source_measurement: r._measurement,\n            _type: data._type,\n            _check_id:  data._check_id,\n            _check_name: data._check_name,\n            _level:\n                if crit(r: r) then levelCrit\n                else if warn(r: r) then levelWarn\n                else if info(r: r) then levelInfo\n                else if ok(r: r) then levelOK\n                else levelUnknown,\n            _source_timestamp: int(v:r._time),\n            _time: now(),\n        }))\n        |> map(fn: (r) => ({r with\n            _message: messageFn(r: r),\n        }))\n        |> experimental.group(mode: \"extend\", columns: [\"_source_measurement\", \"_type\", \"_check_id\", \"_check_name\", \"_level\"])\n        |> write()",
 				Start: ast.Position{
 					Column: 1,
 					Line:   1,
@@ -90,11 +90,11 @@ var pkgAST = &ast.Package{
 					Errors: nil,
 					Loc: &ast.SourceLocation{
 						End: ast.Position{
-							Column: 72,
+							Column: 37,
 							Line:   10,
 						},
 						File:   "monitor.flux",
-						Source: "write = (tables=<-) => tables |> experimental.to(bucket: bucket)",
+						Source: "write = (tables=<-) => tables",
 						Start: ast.Position{
 							Column: 8,
 							Line:   10,
@@ -124,192 +124,34 @@ var pkgAST = &ast.Package{
 						Errors: nil,
 						Loc: &ast.SourceLocation{
 							End: ast.Position{
-								Column: 72,
+								Column: 37,
 								Line:   10,
 							},
 							File:   "monitor.flux",
-							Source: "(tables=<-) => tables |> experimental.to(bucket: bucket)",
+							Source: "(tables=<-) => tables",
 							Start: ast.Position{
 								Column: 16,
 								Line:   10,
 							},
 						},
 					},
-					Body: &ast.PipeExpression{
-						Argument: &ast.Identifier{
-							BaseNode: ast.BaseNode{
-								Errors: nil,
-								Loc: &ast.SourceLocation{
-									End: ast.Position{
-										Column: 37,
-										Line:   10,
-									},
-									File:   "monitor.flux",
-									Source: "tables",
-									Start: ast.Position{
-										Column: 31,
-										Line:   10,
-									},
-								},
-							},
-							Name: "tables",
-						},
+					Body: &ast.Identifier{
 						BaseNode: ast.BaseNode{
 							Errors: nil,
 							Loc: &ast.SourceLocation{
 								End: ast.Position{
-									Column: 72,
+									Column: 37,
 									Line:   10,
 								},
 								File:   "monitor.flux",
-								Source: "tables |> experimental.to(bucket: bucket)",
+								Source: "tables",
 								Start: ast.Position{
 									Column: 31,
 									Line:   10,
 								},
 							},
 						},
-						Call: &ast.CallExpression{
-							Arguments: []ast.Expression{&ast.ObjectExpression{
-								BaseNode: ast.BaseNode{
-									Errors: nil,
-									Loc: &ast.SourceLocation{
-										End: ast.Position{
-											Column: 71,
-											Line:   10,
-										},
-										File:   "monitor.flux",
-										Source: "bucket: bucket",
-										Start: ast.Position{
-											Column: 57,
-											Line:   10,
-										},
-									},
-								},
-								Properties: []*ast.Property{&ast.Property{
-									BaseNode: ast.BaseNode{
-										Errors: nil,
-										Loc: &ast.SourceLocation{
-											End: ast.Position{
-												Column: 71,
-												Line:   10,
-											},
-											File:   "monitor.flux",
-											Source: "bucket: bucket",
-											Start: ast.Position{
-												Column: 57,
-												Line:   10,
-											},
-										},
-									},
-									Key: &ast.Identifier{
-										BaseNode: ast.BaseNode{
-											Errors: nil,
-											Loc: &ast.SourceLocation{
-												End: ast.Position{
-													Column: 63,
-													Line:   10,
-												},
-												File:   "monitor.flux",
-												Source: "bucket",
-												Start: ast.Position{
-													Column: 57,
-													Line:   10,
-												},
-											},
-										},
-										Name: "bucket",
-									},
-									Value: &ast.Identifier{
-										BaseNode: ast.BaseNode{
-											Errors: nil,
-											Loc: &ast.SourceLocation{
-												End: ast.Position{
-													Column: 71,
-													Line:   10,
-												},
-												File:   "monitor.flux",
-												Source: "bucket",
-												Start: ast.Position{
-													Column: 65,
-													Line:   10,
-												},
-											},
-										},
-										Name: "bucket",
-									},
-								}},
-								With: nil,
-							}},
-							BaseNode: ast.BaseNode{
-								Errors: nil,
-								Loc: &ast.SourceLocation{
-									End: ast.Position{
-										Column: 72,
-										Line:   10,
-									},
-									File:   "monitor.flux",
-									Source: "experimental.to(bucket: bucket)",
-									Start: ast.Position{
-										Column: 41,
-										Line:   10,
-									},
-								},
-							},
-							Callee: &ast.MemberExpression{
-								BaseNode: ast.BaseNode{
-									Errors: nil,
-									Loc: &ast.SourceLocation{
-										End: ast.Position{
-											Column: 56,
-											Line:   10,
-										},
-										File:   "monitor.flux",
-										Source: "experimental.to",
-										Start: ast.Position{
-											Column: 41,
-											Line:   10,
-										},
-									},
-								},
-								Object: &ast.Identifier{
-									BaseNode: ast.BaseNode{
-										Errors: nil,
-										Loc: &ast.SourceLocation{
-											End: ast.Position{
-												Column: 53,
-												Line:   10,
-											},
-											File:   "monitor.flux",
-											Source: "experimental",
-											Start: ast.Position{
-												Column: 41,
-												Line:   10,
-											},
-										},
-									},
-									Name: "experimental",
-								},
-								Property: &ast.Identifier{
-									BaseNode: ast.BaseNode{
-										Errors: nil,
-										Loc: &ast.SourceLocation{
-											End: ast.Position{
-												Column: 56,
-												Line:   10,
-											},
-											File:   "monitor.flux",
-											Source: "to",
-											Start: ast.Position{
-												Column: 54,
-												Line:   10,
-											},
-										},
-									},
-									Name: "to",
-								},
-							},
-						},
+						Name: "tables",
 					},
 					Params: []*ast.Property{&ast.Property{
 						BaseNode: ast.BaseNode{
@@ -367,11 +209,11 @@ var pkgAST = &ast.Package{
 				Errors: nil,
 				Loc: &ast.SourceLocation{
 					End: ast.Position{
-						Column: 72,
+						Column: 37,
 						Line:   10,
 					},
 					File:   "monitor.flux",
-					Source: "option write = (tables=<-) => tables |> experimental.to(bucket: bucket)",
+					Source: "option write = (tables=<-) => tables",
 					Start: ast.Position{
 						Column: 1,
 						Line:   10,
@@ -384,11 +226,11 @@ var pkgAST = &ast.Package{
 					Errors: nil,
 					Loc: &ast.SourceLocation{
 						End: ast.Position{
-							Column: 70,
+							Column: 35,
 							Line:   13,
 						},
 						File:   "monitor.flux",
-						Source: "log = (tables=<-) => tables |> experimental.to(bucket: bucket)",
+						Source: "log = (tables=<-) => tables",
 						Start: ast.Position{
 							Column: 8,
 							Line:   13,
@@ -418,192 +260,34 @@ var pkgAST = &ast.Package{
 						Errors: nil,
 						Loc: &ast.SourceLocation{
 							End: ast.Position{
-								Column: 70,
+								Column: 35,
 								Line:   13,
 							},
 							File:   "monitor.flux",
-							Source: "(tables=<-) => tables |> experimental.to(bucket: bucket)",
+							Source: "(tables=<-) => tables",
 							Start: ast.Position{
 								Column: 14,
 								Line:   13,
 							},
 						},
 					},
-					Body: &ast.PipeExpression{
-						Argument: &ast.Identifier{
-							BaseNode: ast.BaseNode{
-								Errors: nil,
-								Loc: &ast.SourceLocation{
-									End: ast.Position{
-										Column: 35,
-										Line:   13,
-									},
-									File:   "monitor.flux",
-									Source: "tables",
-									Start: ast.Position{
-										Column: 29,
-										Line:   13,
-									},
-								},
-							},
-							Name: "tables",
-						},
+					Body: &ast.Identifier{
 						BaseNode: ast.BaseNode{
 							Errors: nil,
 							Loc: &ast.SourceLocation{
 								End: ast.Position{
-									Column: 70,
+									Column: 35,
 									Line:   13,
 								},
 								File:   "monitor.flux",
-								Source: "tables |> experimental.to(bucket: bucket)",
+								Source: "tables",
 								Start: ast.Position{
 									Column: 29,
 									Line:   13,
 								},
 							},
 						},
-						Call: &ast.CallExpression{
-							Arguments: []ast.Expression{&ast.ObjectExpression{
-								BaseNode: ast.BaseNode{
-									Errors: nil,
-									Loc: &ast.SourceLocation{
-										End: ast.Position{
-											Column: 69,
-											Line:   13,
-										},
-										File:   "monitor.flux",
-										Source: "bucket: bucket",
-										Start: ast.Position{
-											Column: 55,
-											Line:   13,
-										},
-									},
-								},
-								Properties: []*ast.Property{&ast.Property{
-									BaseNode: ast.BaseNode{
-										Errors: nil,
-										Loc: &ast.SourceLocation{
-											End: ast.Position{
-												Column: 69,
-												Line:   13,
-											},
-											File:   "monitor.flux",
-											Source: "bucket: bucket",
-											Start: ast.Position{
-												Column: 55,
-												Line:   13,
-											},
-										},
-									},
-									Key: &ast.Identifier{
-										BaseNode: ast.BaseNode{
-											Errors: nil,
-											Loc: &ast.SourceLocation{
-												End: ast.Position{
-													Column: 61,
-													Line:   13,
-												},
-												File:   "monitor.flux",
-												Source: "bucket",
-												Start: ast.Position{
-													Column: 55,
-													Line:   13,
-												},
-											},
-										},
-										Name: "bucket",
-									},
-									Value: &ast.Identifier{
-										BaseNode: ast.BaseNode{
-											Errors: nil,
-											Loc: &ast.SourceLocation{
-												End: ast.Position{
-													Column: 69,
-													Line:   13,
-												},
-												File:   "monitor.flux",
-												Source: "bucket",
-												Start: ast.Position{
-													Column: 63,
-													Line:   13,
-												},
-											},
-										},
-										Name: "bucket",
-									},
-								}},
-								With: nil,
-							}},
-							BaseNode: ast.BaseNode{
-								Errors: nil,
-								Loc: &ast.SourceLocation{
-									End: ast.Position{
-										Column: 70,
-										Line:   13,
-									},
-									File:   "monitor.flux",
-									Source: "experimental.to(bucket: bucket)",
-									Start: ast.Position{
-										Column: 39,
-										Line:   13,
-									},
-								},
-							},
-							Callee: &ast.MemberExpression{
-								BaseNode: ast.BaseNode{
-									Errors: nil,
-									Loc: &ast.SourceLocation{
-										End: ast.Position{
-											Column: 54,
-											Line:   13,
-										},
-										File:   "monitor.flux",
-										Source: "experimental.to",
-										Start: ast.Position{
-											Column: 39,
-											Line:   13,
-										},
-									},
-								},
-								Object: &ast.Identifier{
-									BaseNode: ast.BaseNode{
-										Errors: nil,
-										Loc: &ast.SourceLocation{
-											End: ast.Position{
-												Column: 51,
-												Line:   13,
-											},
-											File:   "monitor.flux",
-											Source: "experimental",
-											Start: ast.Position{
-												Column: 39,
-												Line:   13,
-											},
-										},
-									},
-									Name: "experimental",
-								},
-								Property: &ast.Identifier{
-									BaseNode: ast.BaseNode{
-										Errors: nil,
-										Loc: &ast.SourceLocation{
-											End: ast.Position{
-												Column: 54,
-												Line:   13,
-											},
-											File:   "monitor.flux",
-											Source: "to",
-											Start: ast.Position{
-												Column: 52,
-												Line:   13,
-											},
-										},
-									},
-									Name: "to",
-								},
-							},
-						},
+						Name: "tables",
 					},
 					Params: []*ast.Property{&ast.Property{
 						BaseNode: ast.BaseNode{
@@ -661,11 +345,11 @@ var pkgAST = &ast.Package{
 				Errors: nil,
 				Loc: &ast.SourceLocation{
 					End: ast.Position{
-						Column: 70,
+						Column: 35,
 						Line:   13,
 					},
 					File:   "monitor.flux",
-					Source: "option log = (tables=<-) => tables |> experimental.to(bucket: bucket)",
+					Source: "option log = (tables=<-) => tables",
 					Start: ast.Position{
 						Column: 1,
 						Line:   13,

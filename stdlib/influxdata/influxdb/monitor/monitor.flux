@@ -7,10 +7,10 @@ import "influxdata/influxdb"
 bucket = "_monitoring"
 
 // Write persists the check statuses
-option write = (tables=<-) => tables |> experimental.to(bucket: bucket)
+option write = (tables=<-) => tables
 
 // Log records notification events
-option log = (tables=<-) => tables |> experimental.to(bucket: bucket)
+option log = (tables=<-) => tables
 
 // From retrieves the check statuses that have been stored.
 from = (start, stop=now(), fn=(r) => true) =>
