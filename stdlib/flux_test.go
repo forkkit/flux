@@ -44,6 +44,13 @@ var skip = map[string]string{
 	"http_endpoint": "need ability to test side effects in e2e tests: https://github.com/influxdata/flux/issues/1723)",
 }
 
+var skipAllocTest = map[string]bool{
+	"cov":                      true,
+	"join_across_measurements": true,
+	"join_agg":                 true,
+	"join":                     true,
+}
+
 func TestFluxEndToEnd(t *testing.T) {
 	runEndToEnd(t, stdlib.FluxTestPackages)
 }
@@ -58,7 +65,7 @@ func runEndToEnd(t *testing.T, pkgs []*ast.Package) {
 			if reason, ok := skip[name]; ok {
 				t.Skip(reason)
 			}
-			testFlux(t, pkg)
+			testFlux(t, name, pkg)
 		})
 	}
 }
@@ -74,30 +81,30 @@ func benchEndToEnd(b *testing.B, pkgs []*ast.Package) {
 			b.ResetTimer()
 			b.ReportAllocs()
 			for i := 0; i < b.N; i++ {
-				testFlux(b, pkg)
+				testFlux(b, n, pkg)
 			}
 		})
 	}
 }
 
-func testFlux(t testing.TB, pkg *ast.Package) {
+func testFlux(t testing.TB, name string, pkg *ast.Package) {
 	pkg = pkg.Copy().(*ast.Package)
 	pkg.Files = append(pkg.Files, stdlib.TestingRunCalls(pkg))
 	c := lang.ASTCompiler{AST: pkg}
 
 	// testing.run
-	doTestRun(t, c)
+	doTestRun(t, name, c)
 
 	// testing.inspect
 	if t.Failed() {
 		// Rerun the test case using testing.inspect
 		pkg.Files[len(pkg.Files)-1] = stdlib.TestingInspectCalls(pkg)
 		c := lang.ASTCompiler{AST: pkg}
-		doTestInspect(t, c)
+		doTestInspect(t, name, c)
 	}
 }
 
-func doTestRun(t testing.TB, c flux.Compiler) {
+func doTestRun(t testing.TB, name string, c flux.Compiler) {
 	program, err := c.Compile(context.Background())
 	if p, ok := program.(lang.DependenciesAwareProgram); ok {
 		p.SetExecutorDependencies(executetest.NewTestExecuteDependencies())
@@ -115,19 +122,26 @@ func doTestRun(t testing.TB, c flux.Compiler) {
 
 	// Read all results checking for errors
 	for res := range r.Results() {
-		err := res.Tables().Do(func(flux.Table) error {
+		err := res.Tables().Do(func(tbl flux.Table) error {
+			tbl.Done()
 			return nil
 		})
 		if err != nil {
 			t.Error(err)
 		}
 	}
+	r.Done()
 	if err := r.Err(); err != nil {
 		t.Fatalf("unexpected error retrieving testing.run result: %s", err)
 	}
+	if !skipAllocTest[name] {
+		if got := alloc.Allocated(); got != 0 {
+			t.Fatalf("caught memory leak: %d bytes were not released", got)
+		}
+	}
 }
 
-func doTestInspect(t testing.TB, c flux.Compiler) {
+func doTestInspect(t testing.TB, name string, c flux.Compiler) {
 	program, err := c.Compile(context.Background())
 	if p, ok := program.(lang.DependenciesAwareProgram); ok {
 		p.SetExecutorDependencies(executetest.NewTestExecuteDependencies())
@@ -135,6 +149,7 @@ func doTestInspect(t testing.TB, c flux.Compiler) {
 	if err != nil {
 		t.Fatalf("unexpected error while compiling query: %v", err)
 	}
+
 	alloc := &memory.Allocator{}
 	r, err := program.Start(context.Background(), alloc)
 	if err != nil {
@@ -149,8 +164,14 @@ func doTestInspect(t testing.TB, c flux.Compiler) {
 			t.Error(err)
 		}
 	}
+	r.Done()
 	if err := r.Err(); err != nil {
 		t.Fatalf("unexpected error retrieving testing.inspect result: %s", err)
 	}
 	t.Log(out.String())
+	if !skipAllocTest[name] {
+		if got := alloc.Allocated(); got != 0 {
+			t.Fatalf("caught memory leak: %d bytes were not released", got)
+		}
+	}
 }
