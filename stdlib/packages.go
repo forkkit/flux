@@ -25,6 +25,7 @@ import (
 	_ "github.com/influxdata/flux/stdlib/slack"
 	_ "github.com/influxdata/flux/stdlib/socket"
 	_ "github.com/influxdata/flux/stdlib/sql"
+	_ "github.com/influxdata/flux/stdlib/static"
 	_ "github.com/influxdata/flux/stdlib/strings"
 	_ "github.com/influxdata/flux/stdlib/system"
 	_ "github.com/influxdata/flux/stdlib/testing"

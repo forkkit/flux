@@ -1,3 +1,0 @@
-package static
-
-builtin from

@@ -17,7 +17,8 @@ const (
 )
 
 type aggregateFn struct {
-	name      string
+	name string
+	// packageName string
 	dropField bool
 	// All PromQL aggregation operators drop non-grouping labels, but some
 	// of the (non-aggregation) Flux counterparts don't. This field indicates
@@ -35,7 +36,7 @@ var aggregateFns = map[promql.ItemType]aggregateFn{
 	promql.ItemStdvar:   {name: "stddev", dropField: true, dropNonGrouping: false},
 	promql.ItemTopK:     {name: "top", dropField: false, dropNonGrouping: false},
 	promql.ItemBottomK:  {name: "bottom", dropField: false, dropNonGrouping: false},
-	promql.ItemQuantile: {name: "quantile", dropField: true, dropNonGrouping: false},
+	promql.ItemQuantile: {name: "promql.quantile", dropField: true, dropNonGrouping: false},
 }
 
 func dropNonGroupingColsCall(groupCols []string, without bool) *ast.CallExpression {
