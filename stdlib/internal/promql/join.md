@@ -9,7 +9,7 @@ The output groups will be the same as the input groups.
 | Name    | Type     | Description |
 | ------- | -------- | ----------- |
 | tables  | object   | Specifies the two table streams to join. |
-| fn      | function | Defines the function that joins the rows of each table. The return value is an object which defines the output record structure. |
+| fn      | function | Defines the function that joins the rows of each table. The return value is an object which defines the output record structure. This function must preserve the table grouping. |
 
 Ex.
 ```
