@@ -12,13 +12,17 @@ require (
 	github.com/dave/jennifer v1.2.0
 	github.com/eclipse/paho.mqtt.golang v1.2.0
 	github.com/go-sql-driver/mysql v1.4.0
+	github.com/gogo/protobuf v1.3.0 // indirect
 	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db // indirect
 	github.com/google/go-cmp v0.3.0
 	github.com/goreleaser/goreleaser v0.94.0
 	github.com/influxdata/changelog v1.0.0
+	github.com/influxdata/ifql v0.0.6
 	github.com/influxdata/line-protocol v0.0.0-20180522152040-32c6aa80de5e
 	github.com/influxdata/promql/v2 v2.12.0
 	github.com/influxdata/tdigest v0.0.0-20181121200506-bf2b5ad3c0a9
+	github.com/influxdata/yamux v0.0.0-20171107173414-1f58ded512de // indirect
+	github.com/influxdata/yarpc v0.0.1 // indirect
 	github.com/lib/pq v1.0.0
 	github.com/mattn/go-runewidth v0.0.3 // indirect
 	github.com/mattn/go-tty v0.0.0-20180907095812-13ff1204f104 // indirect

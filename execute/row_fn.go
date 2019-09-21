@@ -243,6 +243,31 @@ func (f *RowMapFn) Eval(ctx context.Context, row int, cr flux.ColReader) (values
 	return v.Object(), nil
 }
 
+func CompileRowJoinFunc(scope compiler.Scope, fn *semantic.FunctionExpression, a, b semantic.Type) (*RowJoinFn, error) {
+	return nil, nil
+}
+
+type RowJoinFn struct {
+	a, b semantic.Type
+
+	fn    compiler.Evaluator
+	scope compiler.Scope
+}
+
+func (f *RowJoinFn) Eval(ctx context.Context, a, b values.Object) (values.Object, error) {
+	a.Range(func(k string, v values.Value) {
+		f.scope.Set(k, v)
+	})
+	b.Range(func(k string, v values.Value) {
+		f.scope.Set(k, v)
+	})
+	obj, err := f.fn.Eval(ctx, f.scope)
+	if err != nil {
+		return nil, err
+	}
+	return obj.Object(), nil
+}
+
 type RowReduceFn struct {
 	rowFn
 	isWrap  bool
