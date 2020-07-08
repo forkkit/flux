@@ -3,6 +3,7 @@ package promql
 
 import "math" 
 import "universe"
+import "experimental"
 
 // changes() implements functionality equivalent to PromQL's changes() function:
 //
@@ -106,12 +107,14 @@ builtin promqlYear
 
 quantile = (q, tables=<-, method="exact_mean") => 
     // value is in normal range. We can use the normal quantile function
-    if q <= 1 and q >= 0 then 
+    if q <= 1.0 and q >= 0.0 then 
     (tables
         |> universe.quantile(q: q, method: method))
-    else if q < 0 then
+    else if q < 0.0 then
     (tables
         |> reduce(identity: {_value: math.mInf(sign: -1)}, fn: (r, accumulator) => accumulator))
     else 
     (tables
         |> reduce(identity: {_value: math.mInf(sign: 1)}, fn: (r, accumulator) => accumulator))
+
+join = experimental.join

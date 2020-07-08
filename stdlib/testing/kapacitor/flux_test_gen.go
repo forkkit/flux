@@ -1474,7 +1474,8 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 				Value: "testing",
 			},
 		}},
-		Name: "combine_pivot_test.flux",
+		Metadata: "parser-type=rust",
+		Name:     "combine_pivot_test.flux",
 		Package: &ast.PackageClause{
 			BaseNode: ast.BaseNode{
 				Errors: nil,
@@ -1507,18 +1508,10 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 						},
 					},
 				},
-				Name: "main",
+				Name: "testdata_test",
 			},
 		},
-	}},
-	Package: "main",
-	Path:    "",
-}, &ast.Package{
-	BaseNode: ast.BaseNode{
-		Errors: nil,
-		Loc:    nil,
-	},
-	Files: []*ast.File{&ast.File{
+	}, &ast.File{
 		BaseNode: ast.BaseNode{
 			Errors: nil,
 			Loc: &ast.SourceLocation{
@@ -2685,7 +2678,8 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 				Value: "testing",
 			},
 		}},
-		Name: "delete_drop_test.flux",
+		Metadata: "parser-type=rust",
+		Name:     "delete_drop_test.flux",
 		Package: &ast.PackageClause{
 			BaseNode: ast.BaseNode{
 				Errors: nil,
@@ -2718,18 +2712,10 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 						},
 					},
 				},
-				Name: "main",
+				Name: "testdata_test",
 			},
 		},
-	}},
-	Package: "main",
-	Path:    "",
-}, &ast.Package{
-	BaseNode: ast.BaseNode{
-		Errors: nil,
-		Loc:    nil,
-	},
-	Files: []*ast.File{&ast.File{
+	}, &ast.File{
 		BaseNode: ast.BaseNode{
 			Errors: nil,
 			Loc: &ast.SourceLocation{
@@ -4247,7 +4233,8 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 				Value: "testing",
 			},
 		}},
-		Name: "eval_map_with_test.flux",
+		Metadata: "parser-type=rust",
+		Name:     "eval_map_with_test.flux",
 		Package: &ast.PackageClause{
 			BaseNode: ast.BaseNode{
 				Errors: nil,
@@ -4280,18 +4267,10 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 						},
 					},
 				},
-				Name: "main",
+				Name: "testdata_test",
 			},
 		},
-	}},
-	Package: "main",
-	Path:    "",
-}, &ast.Package{
-	BaseNode: ast.BaseNode{
-		Errors: nil,
-		Loc:    nil,
-	},
-	Files: []*ast.File{&ast.File{
+	}, &ast.File{
 		BaseNode: ast.BaseNode{
 			Errors: nil,
 			Loc: &ast.SourceLocation{
@@ -5441,7 +5420,8 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 				Value: "testing",
 			},
 		}},
-		Name: "fill_default_test.flux",
+		Metadata: "parser-type=rust",
+		Name:     "fill_default_test.flux",
 		Package: &ast.PackageClause{
 			BaseNode: ast.BaseNode{
 				Errors: nil,
@@ -5474,18 +5454,10 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 						},
 					},
 				},
-				Name: "main",
+				Name: "testdata_test",
 			},
 		},
-	}},
-	Package: "main",
-	Path:    "",
-}, &ast.Package{
-	BaseNode: ast.BaseNode{
-		Errors: nil,
-		Loc:    nil,
-	},
-	Files: []*ast.File{&ast.File{
+	}, &ast.File{
 		BaseNode: ast.BaseNode{
 			Errors: nil,
 			Loc: &ast.SourceLocation{
@@ -6964,7 +6936,8 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 				Value: "testing",
 			},
 		}},
-		Name: "flatten_pivot_test.flux",
+		Metadata: "parser-type=rust",
+		Name:     "flatten_pivot_test.flux",
 		Package: &ast.PackageClause{
 			BaseNode: ast.BaseNode{
 				Errors: nil,
@@ -6997,18 +6970,10 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 						},
 					},
 				},
-				Name: "main",
+				Name: "testdata_test",
 			},
 		},
-	}},
-	Package: "main",
-	Path:    "",
-}, &ast.Package{
-	BaseNode: ast.BaseNode{
-		Errors: nil,
-		Loc:    nil,
-	},
-	Files: []*ast.File{&ast.File{
+	}, &ast.File{
 		BaseNode: ast.BaseNode{
 			Errors: nil,
 			Loc: &ast.SourceLocation{
@@ -8192,7 +8157,8 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 				Value: "testing",
 			},
 		}},
-		Name: "noop_yield_test.flux",
+		Metadata: "parser-type=rust",
+		Name:     "noop_yield_test.flux",
 		Package: &ast.PackageClause{
 			BaseNode: ast.BaseNode{
 				Errors: nil,
@@ -8225,10 +8191,10 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 						},
 					},
 				},
-				Name: "main",
+				Name: "testdata_test",
 			},
 		},
 	}},
-	Package: "main",
-	Path:    "",
+	Package: "testdata_test",
+	Path:    "testing/kapacitor",
 }}

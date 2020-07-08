@@ -9,31 +9,25 @@ import (
 	"cloud.google.com/go/bigtable"
 	"github.com/google/go-cmp/cmp"
 	"github.com/influxdata/flux"
-	"github.com/influxdata/flux/ast"
 	"github.com/influxdata/flux/execute"
 	"github.com/influxdata/flux/execute/executetest"
 	"github.com/influxdata/flux/interpreter"
-	"github.com/influxdata/flux/memory"
+	"github.com/influxdata/flux/mock"
 	"github.com/influxdata/flux/plan"
-	"github.com/influxdata/flux/semantic"
+	"github.com/influxdata/flux/runtime"
 	"github.com/influxdata/flux/stdlib/universe"
 	"github.com/influxdata/flux/values"
-	"github.com/stretchr/testify/assert"
+
+	_ "github.com/influxdata/flux/stdlib/date"
+	_ "github.com/influxdata/flux/stdlib/influxdata/influxdb"
+	_ "github.com/influxdata/flux/stdlib/math"
+	_ "github.com/influxdata/flux/stdlib/regexp"
+	_ "github.com/influxdata/flux/stdlib/strings"
+	_ "github.com/influxdata/flux/stdlib/system"
 )
 
-var rRowKey *semantic.MemberExpression = &semantic.MemberExpression{
-	Object:   &semantic.IdentifierExpression{Name: "r"},
-	Property: "rowKey",
-}
-
-var rFamily *semantic.MemberExpression = &semantic.MemberExpression{
-	Object:   &semantic.IdentifierExpression{Name: "r"},
-	Property: "family",
-}
-
-var rTime *semantic.MemberExpression = &semantic.MemberExpression{
-	Object:   &semantic.IdentifierExpression{Name: "r"},
-	Property: "_time",
+func init() {
+	runtime.FinalizeBuiltIns()
 }
 
 func TestBigtableDecode(t *testing.T) {
@@ -74,7 +68,7 @@ func TestBigtableDecode(t *testing.T) {
 			columnNames: []string{"rowKey", "_time", "family", "a", "b"},
 		}
 
-		decoder := &BigtableDecoder{reader: &reader, administration: &MockAllocator{}}
+		decoder := &BigtableDecoder{reader: &reader, administration: &mock.Administration{}}
 		table, err := decoder.Decode(context.Background())
 		if err != nil {
 			t.Fatal(err)
@@ -122,7 +116,11 @@ func TestBigtableDecode(t *testing.T) {
 		}
 
 		for i := 0; i < 4; i++ {
-			assert.Equal(t, wantBuffer.GetRow(i), buffer.GetRow(i))
+			want := wantBuffer.GetRow(i)
+			got := buffer.GetRow(i)
+			if !got.Equal(want) {
+				t.Fatalf("unexpected result -want/+got:\n%s", cmp.Diff(want, got))
+			}
 		}
 	})
 }
@@ -140,13 +138,13 @@ func TestNodeRewrite(t *testing.T) {
 		{
 			name:      "|> filter(fn: (r) => r.rowKey == ... )",
 			queryNode: &plan.PhysicalPlanNode{Spec: &FromBigtableProcedureSpec{}},
-			rewriteNode: &plan.PhysicalPlanNode{Spec: &universe.FilterProcedureSpec{Fn: interpreter.ResolvedFunction{Fn: &semantic.FunctionExpression{Block: &semantic.FunctionBlock{
-				Body: &semantic.BinaryExpression{
-					Operator: ast.EqualOperator,
-					Left:     rRowKey,
-					Right:    &semantic.StringLiteral{Value: "single row"},
+			rewriteNode: &plan.PhysicalPlanNode{
+				Spec: &universe.FilterProcedureSpec{
+					Fn: interpreter.ResolvedFunction{
+						Fn: executetest.FunctionExpression(t, `(r) => r.rowKey == "single row"`),
+					},
 				},
-			}}}}},
+			},
 			rewriteFunc: AddFilterToNode,
 			wantNode:    &plan.PhysicalPlanNode{Spec: &FromBigtableProcedureSpec{RowSet: bigtable.SingleRow("single row")}},
 			wantBool:    true,
@@ -154,27 +152,27 @@ func TestNodeRewrite(t *testing.T) {
 		{
 			name:      "|> filter(fn: (r) => r.rowKey >= ... )",
 			queryNode: &plan.PhysicalPlanNode{Spec: &FromBigtableProcedureSpec{}},
-			rewriteNode: &plan.PhysicalPlanNode{Spec: &universe.FilterProcedureSpec{Fn: interpreter.ResolvedFunction{Fn: &semantic.FunctionExpression{Block: &semantic.FunctionBlock{
-				Body: &semantic.BinaryExpression{
-					Operator: ast.GreaterThanEqualOperator,
-					Left:     rRowKey,
-					Right:    &semantic.StringLiteral{Value: "greater than or equal"},
+			rewriteNode: &plan.PhysicalPlanNode{
+				Spec: &universe.FilterProcedureSpec{
+					Fn: interpreter.ResolvedFunction{
+						Fn: executetest.FunctionExpression(t, `(r) => r.rowKey >= "greater than or equal"`),
+					},
 				},
-			}}}}},
+			},
 			rewriteFunc: AddFilterToNode,
 			wantNode:    &plan.PhysicalPlanNode{Spec: &FromBigtableProcedureSpec{RowSet: bigtable.InfiniteRange("greater than or equal")}},
 			wantBool:    true,
 		},
 		{
-			name:      "|> filter(fn: (r) => r._time == ... )",
+			name:      "|> filter(fn: (r) => r._time >= ... )",
 			queryNode: &plan.PhysicalPlanNode{Spec: &FromBigtableProcedureSpec{Filter: bigtable.PassAllFilter()}},
-			rewriteNode: &plan.PhysicalPlanNode{Spec: &universe.FilterProcedureSpec{Fn: interpreter.ResolvedFunction{Fn: &semantic.FunctionExpression{Block: &semantic.FunctionBlock{
-				Body: &semantic.BinaryExpression{
-					Operator: ast.GreaterThanEqualOperator,
-					Left:     rTime,
-					Right:    &semantic.DateTimeLiteral{Value: now},
+			rewriteNode: &plan.PhysicalPlanNode{
+				Spec: &universe.FilterProcedureSpec{
+					Fn: interpreter.ResolvedFunction{
+						Fn: executetest.FunctionExpression(t, `(r) => r._time >= %s`, now.Format(time.RFC3339Nano)),
+					},
 				},
-			}}}}},
+			},
 			rewriteFunc: AddFilterToNode,
 			wantNode:    &plan.PhysicalPlanNode{Spec: &FromBigtableProcedureSpec{Filter: bigtable.ChainFilters(bigtable.PassAllFilter(), bigtable.TimestampRangeFilter(now, time.Time{}))}},
 			wantBool:    true,
@@ -182,13 +180,13 @@ func TestNodeRewrite(t *testing.T) {
 		{
 			name:      "|> filter(fn: (r) => r._time < ... )",
 			queryNode: &plan.PhysicalPlanNode{Spec: &FromBigtableProcedureSpec{Filter: bigtable.PassAllFilter()}},
-			rewriteNode: &plan.PhysicalPlanNode{Spec: &universe.FilterProcedureSpec{Fn: interpreter.ResolvedFunction{Fn: &semantic.FunctionExpression{Block: &semantic.FunctionBlock{
-				Body: &semantic.BinaryExpression{
-					Operator: ast.LessThanOperator,
-					Left:     rTime,
-					Right:    &semantic.DateTimeLiteral{Value: now},
+			rewriteNode: &plan.PhysicalPlanNode{
+				Spec: &universe.FilterProcedureSpec{
+					Fn: interpreter.ResolvedFunction{
+						Fn: executetest.FunctionExpression(t, `(r) => r._time < %s`, now.Format(time.RFC3339Nano)),
+					},
 				},
-			}}}}},
+			},
 			rewriteFunc: AddFilterToNode,
 			wantNode:    &plan.PhysicalPlanNode{Spec: &FromBigtableProcedureSpec{Filter: bigtable.ChainFilters(bigtable.PassAllFilter(), bigtable.TimestampRangeFilter(time.Time{}, now))}},
 			wantBool:    true,
@@ -196,21 +194,13 @@ func TestNodeRewrite(t *testing.T) {
 		{
 			name:      "|> filter(fn: (r) => r.rowKey >= ... and r.rowKey < ...)",
 			queryNode: &plan.PhysicalPlanNode{Spec: &FromBigtableProcedureSpec{Filter: bigtable.PassAllFilter()}},
-			rewriteNode: &plan.PhysicalPlanNode{Spec: &universe.FilterProcedureSpec{Fn: interpreter.ResolvedFunction{Fn: &semantic.FunctionExpression{Block: &semantic.FunctionBlock{
-				Body: &semantic.LogicalExpression{
-					Operator: ast.AndOperator,
-					Left: &semantic.BinaryExpression{
-						Operator: ast.GreaterThanEqualOperator,
-						Left:     rRowKey,
-						Right:    &semantic.StringLiteral{Value: "start"},
-					},
-					Right: &semantic.BinaryExpression{
-						Operator: ast.LessThanOperator,
-						Left:     rRowKey,
-						Right:    &semantic.StringLiteral{Value: "end"},
+			rewriteNode: &plan.PhysicalPlanNode{
+				Spec: &universe.FilterProcedureSpec{
+					Fn: interpreter.ResolvedFunction{
+						Fn: executetest.FunctionExpression(t, `(r) => r.rowKey >= "start" and r.rowKey < "end"`),
 					},
 				},
-			}}}}},
+			},
 			rewriteFunc: AddFilterToNode,
 			wantNode:    &plan.PhysicalPlanNode{Spec: &FromBigtableProcedureSpec{RowSet: bigtable.NewRange("start", "end"), Filter: bigtable.PassAllFilter()}},
 			wantBool:    true,
@@ -218,65 +208,41 @@ func TestNodeRewrite(t *testing.T) {
 		{
 			name:      "|> filter(fn: (r) => r.rowKey < ... and r.rowKey >= ...)",
 			queryNode: &plan.PhysicalPlanNode{Spec: &FromBigtableProcedureSpec{Filter: bigtable.PassAllFilter()}},
-			rewriteNode: &plan.PhysicalPlanNode{Spec: &universe.FilterProcedureSpec{Fn: interpreter.ResolvedFunction{Fn: &semantic.FunctionExpression{Block: &semantic.FunctionBlock{
-				Body: &semantic.LogicalExpression{
-					Operator: ast.AndOperator,
-					Left: &semantic.BinaryExpression{
-						Operator: ast.LessThanOperator,
-						Left:     rRowKey,
-						Right:    &semantic.StringLiteral{Value: "end"},
-					},
-					Right: &semantic.BinaryExpression{
-						Operator: ast.GreaterThanEqualOperator,
-						Left:     rRowKey,
-						Right:    &semantic.StringLiteral{Value: "start"},
+			rewriteNode: &plan.PhysicalPlanNode{
+				Spec: &universe.FilterProcedureSpec{
+					Fn: interpreter.ResolvedFunction{
+						Fn: executetest.FunctionExpression(t, `(r) => r.rowKey < "end" and r.rowKey >= "start"`),
 					},
 				},
-			}}}}},
+			},
 			rewriteFunc: AddFilterToNode,
 			wantNode:    &plan.PhysicalPlanNode{Spec: &FromBigtableProcedureSpec{RowSet: bigtable.NewRange("start", "end"), Filter: bigtable.PassAllFilter()}},
 			wantBool:    true,
 		},
 		{
-			name:      "|> filter(fn: (r) => r._time < ... and r._time >= ...)",
+			name:      "|> filter(fn: (r) => r._time >= ...)",
 			queryNode: &plan.PhysicalPlanNode{Spec: &FromBigtableProcedureSpec{Filter: bigtable.PassAllFilter()}},
-			rewriteNode: &plan.PhysicalPlanNode{Spec: &universe.FilterProcedureSpec{Fn: interpreter.ResolvedFunction{Fn: &semantic.FunctionExpression{Block: &semantic.FunctionBlock{
-				Body: &semantic.LogicalExpression{
-					Operator: ast.AndOperator,
-					Left: &semantic.BinaryExpression{
-						Operator: ast.LessThanOperator,
-						Left:     rTime,
-						Right:    &semantic.DateTimeLiteral{Value: time.Time{}},
-					},
-					Right: &semantic.BinaryExpression{
-						Operator: ast.GreaterThanEqualOperator,
-						Left:     rTime,
-						Right:    &semantic.DateTimeLiteral{Value: now},
+			rewriteNode: &plan.PhysicalPlanNode{
+				Spec: &universe.FilterProcedureSpec{
+					Fn: interpreter.ResolvedFunction{
+						Fn: executetest.FunctionExpression(t, `(r) => r._time >= %s`, now.Format(time.RFC3339Nano)),
 					},
 				},
-			}}}}},
+			},
 			rewriteFunc: AddFilterToNode,
 			wantNode:    &plan.PhysicalPlanNode{Spec: &FromBigtableProcedureSpec{Filter: bigtable.ChainFilters(bigtable.PassAllFilter(), bigtable.TimestampRangeFilter(now, time.Time{}))}},
 			wantBool:    true,
 		},
 		{
-			name:      "|> filter(fn: (r) => r._time >= ... and r._time < ...)",
+			name:      "|> filter(fn: (r) => r._time >= ...)",
 			queryNode: &plan.PhysicalPlanNode{Spec: &FromBigtableProcedureSpec{Filter: bigtable.PassAllFilter()}},
-			rewriteNode: &plan.PhysicalPlanNode{Spec: &universe.FilterProcedureSpec{Fn: interpreter.ResolvedFunction{Fn: &semantic.FunctionExpression{Block: &semantic.FunctionBlock{
-				Body: &semantic.LogicalExpression{
-					Operator: ast.AndOperator,
-					Left: &semantic.BinaryExpression{
-						Operator: ast.GreaterThanEqualOperator,
-						Left:     rTime,
-						Right:    &semantic.DateTimeLiteral{Value: now},
-					},
-					Right: &semantic.BinaryExpression{
-						Operator: ast.LessThanOperator,
-						Left:     rTime,
-						Right:    &semantic.DateTimeLiteral{Value: time.Time{}},
+			rewriteNode: &plan.PhysicalPlanNode{
+				Spec: &universe.FilterProcedureSpec{
+					Fn: interpreter.ResolvedFunction{
+						Fn: executetest.FunctionExpression(t, `(r) => r._time >= %s`, now.Format(time.RFC3339Nano)),
 					},
 				},
-			}}}}},
+			},
 			rewriteFunc: AddFilterToNode,
 			wantNode:    &plan.PhysicalPlanNode{Spec: &FromBigtableProcedureSpec{Filter: bigtable.ChainFilters(bigtable.PassAllFilter(), bigtable.TimestampRangeFilter(now, time.Time{}))}},
 			wantBool:    true,
@@ -284,32 +250,16 @@ func TestNodeRewrite(t *testing.T) {
 		{
 			name:      "|> filter(fn: (r) => strings.hasPrefix(v: r.rowKey, prefix: ...)",
 			queryNode: &plan.PhysicalPlanNode{Spec: &FromBigtableProcedureSpec{Filter: bigtable.PassAllFilter()}},
-			rewriteNode: &plan.PhysicalPlanNode{Spec: &universe.FilterProcedureSpec{Fn: interpreter.ResolvedFunction{Fn: &semantic.FunctionExpression{Block: &semantic.FunctionBlock{
-				Body: &semantic.CallExpression{
-					Callee: &semantic.MemberExpression{
-						Object:   nil,
-						Property: "hasPrefix",
-					},
-					Arguments: &semantic.ObjectExpression{
-						Properties: []*semantic.Property{
-							{
-								Key: &semantic.Identifier{
-									Name: "v",
-								},
-								Value: rRowKey,
-							},
-							{
-								Key: &semantic.Identifier{
-									Name: "prefix",
-								},
-								Value: &semantic.StringLiteral{
-									Value: "the prefix",
-								},
-							},
-						},
+			rewriteNode: &plan.PhysicalPlanNode{
+				Spec: &universe.FilterProcedureSpec{
+					Fn: interpreter.ResolvedFunction{
+						Fn: executetest.FunctionExpression(t, `
+import "strings"
+(r) => strings.hasPrefix(v: r.rowKey, prefix: "the prefix")
+`),
 					},
 				},
-			}}}}},
+			},
 			rewriteFunc: AddFilterToNode,
 			wantNode:    &plan.PhysicalPlanNode{Spec: &FromBigtableProcedureSpec{RowSet: bigtable.PrefixRange("the prefix"), Filter: bigtable.PassAllFilter()}},
 			wantBool:    true,
@@ -317,13 +267,13 @@ func TestNodeRewrite(t *testing.T) {
 		{
 			name:      "|> filter(fn: (r) => r.family == ...)",
 			queryNode: &plan.PhysicalPlanNode{Spec: &FromBigtableProcedureSpec{Filter: bigtable.PassAllFilter()}},
-			rewriteNode: &plan.PhysicalPlanNode{Spec: &universe.FilterProcedureSpec{Fn: interpreter.ResolvedFunction{Fn: &semantic.FunctionExpression{Block: &semantic.FunctionBlock{
-				Body: &semantic.BinaryExpression{
-					Operator: ast.EqualOperator,
-					Left:     rFamily,
-					Right:    &semantic.StringLiteral{Value: "family"},
+			rewriteNode: &plan.PhysicalPlanNode{
+				Spec: &universe.FilterProcedureSpec{
+					Fn: interpreter.ResolvedFunction{
+						Fn: executetest.FunctionExpression(t, `(r) => r.family == "family"`),
+					},
 				},
-			}}}}},
+			},
 			rewriteFunc: AddFilterToNode,
 			wantNode:    &plan.PhysicalPlanNode{Spec: &FromBigtableProcedureSpec{Filter: bigtable.ChainFilters(bigtable.PassAllFilter(), bigtable.FamilyFilter("family"))}},
 			wantBool:    true,
@@ -405,24 +355,4 @@ func (m *MockRowReader) ColumnTypes() []flux.ColType {
 
 func (m *MockRowReader) SetColumns([]interface{}) {}
 
-type MockAllocator struct{}
-
-func (a *MockAllocator) Context() context.Context {
-	return nil
-}
-
-func (a *MockAllocator) ResolveTime(qt flux.Time) execute.Time {
-	return execute.Now()
-}
-
-func (a *MockAllocator) StreamContext() execute.StreamContext {
-	return nil
-}
-
-func (a *MockAllocator) Allocator() *memory.Allocator {
-	return &memory.Allocator{}
-}
-
-func (a *MockAllocator) Parents() []execute.DatasetID {
-	return nil
-}
+func (m *MockRowReader) Close() error { return nil }

@@ -5,9 +5,10 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/influxdata/flux"
 	"github.com/influxdata/flux/ast"
-	"github.com/influxdata/flux/internal/parser"
 	"github.com/influxdata/flux/internal/token"
+	"github.com/influxdata/flux/libflux/go/libflux"
 )
 
 const defaultPackageName = "main"
@@ -56,7 +57,7 @@ func ParseFile(fset *token.FileSet, path string) (*ast.File, error) {
 	if err != nil {
 		return nil, err
 	}
-	return parser.ParseFile(f, src), nil
+	return parseFile(f, src)
 }
 
 // ParseSource parses the string as Flux source code.
@@ -64,12 +65,36 @@ func ParseFile(fset *token.FileSet, path string) (*ast.File, error) {
 func ParseSource(source string) *ast.Package {
 	src := []byte(source)
 	f := token.NewFile("", len(src))
-	file := parser.ParseFile(f, src)
+	file, err := parseFile(f, src)
+	if err != nil {
+		// Produce a default ast.File with the error
+		// contained in case parsing the file failed.
+		file = &ast.File{
+			BaseNode: ast.BaseNode{
+				Errors: []ast.Error{
+					{Msg: err.Error()},
+				},
+			},
+		}
+	}
 	pkg := &ast.Package{
 		Package: packageName(file),
 		Files:   []*ast.File{file},
 	}
 	return pkg
+}
+
+func HandleToJSON(hdl flux.ASTHandle) ([]byte, error) {
+	libfluxHdl := hdl.(*libflux.ASTPkg)
+	return libfluxHdl.MarshalJSON()
+}
+
+func ParseToHandle(src []byte) (*libflux.ASTPkg, error) {
+	pkg := libflux.ParseString(string(src))
+	if err := pkg.GetError(); err != nil {
+		return nil, err
+	}
+	return pkg, nil
 }
 
 func packageName(f *ast.File) string {

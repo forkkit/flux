@@ -1,13 +1,14 @@
 package universe
 
 import (
-	"fmt"
-
 	"github.com/apache/arrow/go/arrow/array"
 	"github.com/apache/arrow/go/arrow/math"
 	"github.com/influxdata/flux"
+	"github.com/influxdata/flux/codes"
 	"github.com/influxdata/flux/execute"
+	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/plan"
+	"github.com/influxdata/flux/runtime"
 )
 
 const SumKind = "sum"
@@ -17,9 +18,9 @@ type SumOpSpec struct {
 }
 
 func init() {
-	sumSignature := execute.AggregateSignature(nil, nil)
+	sumSignature := runtime.MustLookupBuiltinType("universe", "sum")
 
-	flux.RegisterPackageValue("universe", SumKind, flux.FunctionValue(SumKind, createSumOpSpec, sumSignature))
+	runtime.RegisterPackageValue("universe", SumKind, flux.MustValue(flux.FunctionValue(SumKind, createSumOpSpec, sumSignature)))
 	flux.RegisterOpSpec(SumKind, newSumOp)
 	plan.RegisterProcedureSpec(SumKind, newSumProcedure, SumKind)
 	execute.RegisterTransformation(SumKind, createSumTransformation)
@@ -51,7 +52,7 @@ type SumProcedureSpec struct {
 func newSumProcedure(qs flux.OperationSpec, a plan.Administration) (plan.ProcedureSpec, error) {
 	spec, ok := qs.(*SumOpSpec)
 	if !ok {
-		return nil, fmt.Errorf("invalid spec type %T", qs)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", qs)
 	}
 	return &SumProcedureSpec{
 		AggregateConfig: spec.AggregateConfig,
@@ -85,7 +86,7 @@ type SumAgg struct{}
 func createSumTransformation(id execute.DatasetID, mode execute.AccumulationMode, spec plan.ProcedureSpec, a execute.Administration) (execute.Transformation, execute.Dataset, error) {
 	s, ok := spec.(*SumProcedureSpec)
 	if !ok {
-		return nil, nil, fmt.Errorf("invalid spec type %T", spec)
+		return nil, nil, errors.Newf(codes.Internal, "invalid spec type %T", spec)
 	}
 
 	t, d := execute.NewAggregateTransformationAndDataset(id, mode, new(SumAgg), s.AggregateConfig, a.Allocator())

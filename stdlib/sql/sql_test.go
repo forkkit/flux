@@ -4,13 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/influxdata/flux/execute"
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/google/go-cmp/cmp"
 	"github.com/influxdata/flux"
+	"github.com/influxdata/flux/execute"
 	"github.com/influxdata/flux/execute/executetest"
 	"github.com/influxdata/flux/memory"
 	"github.com/influxdata/flux/values"
@@ -66,25 +66,7 @@ func (m *MockRowReader) SetColumns(i []interface{}) {
 	m.columns = i
 }
 
-type MockAllocator struct{}
-
-func (a *MockAllocator) Context() context.Context {
-	return nil
-}
-
-func (a *MockAllocator) ResolveTime(qt flux.Time) execute.Time {
-	return execute.Now()
-}
-
-func (a *MockAllocator) StreamContext() execute.StreamContext {
-	return nil
-}
-
-func (a *MockAllocator) Allocator() *memory.Allocator {
-	return &memory.Allocator{}
-}
-
-func (a *MockAllocator) Parents() []execute.DatasetID {
+func (m *MockRowReader) Close() error {
 	return nil
 }
 
@@ -92,11 +74,9 @@ func TestFromRowReader(t *testing.T) {
 	t.Run("Mock RowReader", func(t *testing.T) {
 
 		var rr execute.RowReader = &MockRowReader{row: 0}
-		sqliter := &SQLIterator{reader: &rr, administration: &MockAllocator{}}
-
 		rr.(*MockRowReader).InitColumnTypes(nil)
-
-		table, err := sqliter.Decode(context.Background())
+		alloc := &memory.Allocator{}
+		table, err := read(context.Background(), rr, alloc)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -111,22 +91,10 @@ func TestFromRowReader(t *testing.T) {
 				{Label: "timestamp", Type: flux.TTime},
 			},
 			Data: [][]interface{}{
-				{int64(42), float64(42.0), true, timestamp},
+				{int64(42), 42.0, true, timestamp},
 				{nil, nil, nil, nil},
 			},
 		}
-
-		firstRow := values.NewObject()
-		firstRow.Set("int", values.NewInt(42))
-		firstRow.Set("float", values.NewFloat(42.0))
-		firstRow.Set("bool", values.NewBool(true))
-		firstRow.Set("timestamp", values.NewTime(timestamp))
-
-		secondRow := values.NewObject()
-		secondRow.Set("int", values.NewNull(flux.SemanticType(flux.TInt)))
-		secondRow.Set("float", values.NewNull(flux.SemanticType(flux.TFloat)))
-		secondRow.Set("bool", values.NewNull(flux.SemanticType(flux.TBool)))
-		secondRow.Set("timestamp", values.NewNull(flux.SemanticType(flux.TTime)))
 
 		if !cmp.Equal(want.Cols(), table.Cols()) {
 			t.Fatalf("unexpected result -want/+got\n\n%s\n\n", cmp.Diff(want.Cols(), table.Cols()))
@@ -155,63 +123,55 @@ func TestFromRowReader(t *testing.T) {
 		}
 
 		for i := 0; i < 2; i++ {
-			assert.Equal(t, wantBuffer.GetRow(i), buffer.GetRow(i))
+			want := wantBuffer.GetRow(i)
+			got := buffer.GetRow(i)
+			// the second row has a lot of nil values.Value which cannot pass values.Value.Equals() check.
+			if !(i == 0 && got.Equal(want)) &&
+				!(i == 1 && got.(fmt.Stringer).String() == want.(fmt.Stringer).String()) {
+				t.Fatalf("unexpected result -want/+got:\n%s", cmp.Diff(want, got))
+			}
 		}
-
 	})
 }
 
-func TestMySQLParsing(t *testing.T) {
+func TestMySqlParsing(t *testing.T) {
+	// here we want to build a mocked representation of what's in our MySql db, and then run our RowReader over it, then verify that the results
+	// are as expected.
+	// NOTE: no meaningful test for reading bools, because the DB doesn't support them, and we already know that we can read INT types
 	testCases := []struct {
 		name       string
 		columnName string
-		columnType flux.ColType
-		data       [][]uint8
+		data       *sql.Rows
 		want       [][]values.Value
 	}{
 		{
 			name:       "ints",
 			columnName: "_int",
-			columnType: flux.TInt,
-			data:       stringSliceToByteArrays([]string{"6", "1", "643", "42", "1283", "4", "0", "18"}),
-			want:       [][]values.Value{{values.NewInt(6)}, {values.NewInt(1)}, {values.NewInt(643)}, {values.NewInt(42)}, {values.NewInt(1283)}, {values.NewInt(4)}, {values.NewInt(0)}, {values.NewInt(18)}},
+			data:       mockRowsToSQLRows(sqlmock.NewRows([]string{"column"}).AddRow(int64(6)).AddRow(int64(1)).AddRow(int64(643)).AddRow(int64(42)).AddRow(int64(1283))),
+			want:       [][]values.Value{{values.NewInt(6)}, {values.NewInt(1)}, {values.NewInt(643)}, {values.NewInt(42)}, {values.NewInt(1283)}},
 		},
 		{
 			name:       "floats",
 			columnName: "_float",
-			columnType: flux.TFloat,
-			data:       stringSliceToByteArrays([]string{"6", "1", "643", "42", "1283", "4", "0", "18"}),
-			want:       [][]values.Value{{values.NewFloat(6)}, {values.NewFloat(1)}, {values.NewFloat(643)}, {values.NewFloat(42)}, {values.NewFloat(1283)}, {values.NewFloat(4)}, {values.NewFloat(0)}, {values.NewFloat(18)}},
+			data:       mockRowsToSQLRows(sqlmock.NewRows([]string{"column"}).AddRow(float64(6)).AddRow(float64(1)).AddRow(float64(643)).AddRow(float64(42)).AddRow(float64(1283))),
+			want:       [][]values.Value{{values.NewFloat(6)}, {values.NewFloat(1)}, {values.NewFloat(643)}, {values.NewFloat(42)}, {values.NewFloat(1283)}},
 		},
 		{
 			name:       "strings",
 			columnName: "_string",
-			columnType: flux.TString,
-			data:       stringSliceToByteArrays([]string{"6", "1", "643", "42", "1283", "4", "0", "18"}),
-			want:       [][]values.Value{{values.NewString("6")}, {values.NewString("1")}, {values.NewString("643")}, {values.NewString("42")}, {values.NewString("1283")}, {values.NewString("4")}, {values.NewString("0")}, {values.NewString("18")}},
+			data:       mockRowsToSQLRows(sqlmock.NewRows([]string{"column"}).AddRow(string("6")).AddRow(string("1")).AddRow(string("643")).AddRow(string("42")).AddRow(string("1283"))),
+			want:       [][]values.Value{{values.NewString("6")}, {values.NewString("1")}, {values.NewString("643")}, {values.NewString("42")}, {values.NewString("1283")}},
 		},
 		{
 			name:       "datetime",
 			columnName: "_datetime",
-			columnType: flux.TTime,
-			data: stringSliceToByteArrays([]string{
-				"2019-06-03 13:59:00",
-				"2019-06-03 13:59:01",
-				"2019-06-03 13:59:02",
-				"2019-06-03 13:59:03",
-				"2019-06-03 13:59:04",
-				"2019-06-03 13:59:05",
-				"2019-06-03 13:59:06",
-				"2019-06-03 13:59:07"}),
+			data:       mockRowsToSQLRows(sqlmock.NewRows([]string{"column"}).AddRow(createTestTimes()[0].(time.Time)).AddRow(createTestTimes()[1].(time.Time)).AddRow(createTestTimes()[2].(time.Time)).AddRow(createTestTimes()[3].(time.Time)).AddRow(createTestTimes()[4].(time.Time))),
 			want: [][]values.Value{
 				{values.NewTime(values.ConvertTime(createTestTimes()[0].(time.Time)))},
 				{values.NewTime(values.ConvertTime(createTestTimes()[1].(time.Time)))},
 				{values.NewTime(values.ConvertTime(createTestTimes()[2].(time.Time)))},
 				{values.NewTime(values.ConvertTime(createTestTimes()[3].(time.Time)))},
 				{values.NewTime(values.ConvertTime(createTestTimes()[4].(time.Time)))},
-				{values.NewTime(values.ConvertTime(createTestTimes()[5].(time.Time)))},
-				{values.NewTime(values.ConvertTime(createTestTimes()[6].(time.Time)))},
-				{values.NewTime(values.ConvertTime(createTestTimes()[7].(time.Time)))},
 			},
 		},
 	}
@@ -219,26 +179,137 @@ func TestMySQLParsing(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 
-			TestReader := &MySQLRowReader{}
-
-			TestReader.NextFunc = func() func() bool {
-				i := 0
-				vals := make([]interface{}, len(tc.data))
-				for i, v := range tc.data {
-					vals[i] = v
+			TestReader, err := NewMySQLRowReader(tc.data)
+			if !cmp.Equal(nil, err) {
+				t.Fatalf("unexpected result -want/+got\n\n%s\n\n", cmp.Diff(nil, err))
+			}
+			i := 0
+			for TestReader.Next() {
+				row, _ := TestReader.GetNextRow()
+				if !cmp.Equal(tc.want[i], row) {
+					t.Fatalf("unexpected result -want/+got\n\n%s\n\n", cmp.Diff(tc.want[i], row))
 				}
-				return func() bool {
-					if i < len(tc.data) {
-						TestReader.SetColumns([]interface{}{vals[i]})
-						i++
-						return true
-					}
-					return false
-				}
-			}()
-			TestReader.InitColumnNames([]string{tc.columnName})
-			TestReader.SetColumnTypes([]flux.ColType{tc.columnType})
+				i++
+			}
+		})
+	}
+}
 
+func TestPostgresParsing(t *testing.T) {
+	// here we want to build a mocked representation of what's in our Postgres db, and then run our RowReader over it, then verify that the results
+	// are as expected
+	testCases := []struct {
+		name       string
+		columnName string
+		data       *sql.Rows
+		want       [][]values.Value
+	}{
+		{
+			name:       "ints",
+			columnName: "_int",
+			data:       mockRowsToSQLRows(sqlmock.NewRows([]string{"column"}).AddRow(int64(6)).AddRow(int64(1)).AddRow(int64(643)).AddRow(int64(42)).AddRow(int64(1283))),
+			want:       [][]values.Value{{values.NewInt(6)}, {values.NewInt(1)}, {values.NewInt(643)}, {values.NewInt(42)}, {values.NewInt(1283)}},
+		},
+		{
+			name:       "floats",
+			columnName: "_float",
+			data:       mockRowsToSQLRows(sqlmock.NewRows([]string{"column"}).AddRow(float64(6)).AddRow(float64(1)).AddRow(float64(643)).AddRow(float64(42)).AddRow(float64(1283))),
+			want:       [][]values.Value{{values.NewFloat(6)}, {values.NewFloat(1)}, {values.NewFloat(643)}, {values.NewFloat(42)}, {values.NewFloat(1283)}},
+		},
+		{
+			name:       "strings",
+			columnName: "_string",
+			data:       mockRowsToSQLRows(sqlmock.NewRows([]string{"column"}).AddRow(string("6")).AddRow(string("1")).AddRow(string("643")).AddRow(string("42")).AddRow(string("1283"))),
+			want:       [][]values.Value{{values.NewString("6")}, {values.NewString("1")}, {values.NewString("643")}, {values.NewString("42")}, {values.NewString("1283")}},
+		},
+		{
+			name:       "bools",
+			columnName: "_bools",
+			data:       mockRowsToSQLRows(sqlmock.NewRows([]string{"column"}).AddRow(bool(true)).AddRow(bool(false)).AddRow(bool(true)).AddRow(bool(false)).AddRow(bool(true))),
+			want:       [][]values.Value{{values.NewBool(true)}, {values.NewBool(false)}, {values.NewBool(true)}, {values.NewBool(false)}, {values.NewBool(true)}},
+		},
+		{
+			name:       "datetime",
+			columnName: "_datetime",
+			data:       mockRowsToSQLRows(sqlmock.NewRows([]string{"column"}).AddRow(createTestTimes()[0].(time.Time)).AddRow(createTestTimes()[1].(time.Time)).AddRow(createTestTimes()[2].(time.Time)).AddRow(createTestTimes()[3].(time.Time)).AddRow(createTestTimes()[4].(time.Time))),
+			want: [][]values.Value{
+				{values.NewTime(values.ConvertTime(createTestTimes()[0].(time.Time)))},
+				{values.NewTime(values.ConvertTime(createTestTimes()[1].(time.Time)))},
+				{values.NewTime(values.ConvertTime(createTestTimes()[2].(time.Time)))},
+				{values.NewTime(values.ConvertTime(createTestTimes()[3].(time.Time)))},
+				{values.NewTime(values.ConvertTime(createTestTimes()[4].(time.Time)))},
+			},
+		},
+	}
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+
+			TestReader, err := NewPostgresRowReader(tc.data)
+			if !cmp.Equal(nil, err) {
+				t.Fatalf("unexpected result -want/+got\n\n%s\n\n", cmp.Diff(nil, err))
+			}
+			i := 0
+			for TestReader.Next() {
+				row, _ := TestReader.GetNextRow()
+				if !cmp.Equal(tc.want[i], row) {
+					t.Fatalf("unexpected result -want/+got\n\n%s\n\n", cmp.Diff(tc.want[i], row))
+				}
+				i++
+			}
+		})
+	}
+}
+
+func TestSQLiteParsing(t *testing.T) {
+	// here we want to build a mocked representation of what's in our SQLite db, and then run our RowReader over it, then verify that the results
+	// are as expected.
+	// NOTE: no meaningful test for reading bools, because the DB doesn't support them, and we already know that we can read INT types
+	testCases := []struct {
+		name       string
+		columnName string
+		data       *sql.Rows
+		want       [][]values.Value
+	}{
+		{
+			name:       "ints",
+			columnName: "_int",
+			data:       mockRowsToSQLRows(sqlmock.NewRows([]string{"column"}).AddRow(int64(6)).AddRow(int64(1)).AddRow(int64(643)).AddRow(int64(42)).AddRow(int64(1283))),
+			want:       [][]values.Value{{values.NewInt(6)}, {values.NewInt(1)}, {values.NewInt(643)}, {values.NewInt(42)}, {values.NewInt(1283)}},
+		},
+		{
+			name:       "floats",
+			columnName: "_float",
+			data:       mockRowsToSQLRows(sqlmock.NewRows([]string{"column"}).AddRow(float64(6)).AddRow(float64(1)).AddRow(float64(643)).AddRow(float64(42)).AddRow(float64(1283))),
+			want:       [][]values.Value{{values.NewFloat(6)}, {values.NewFloat(1)}, {values.NewFloat(643)}, {values.NewFloat(42)}, {values.NewFloat(1283)}},
+		},
+		{
+			name:       "strings",
+			columnName: "_string",
+			data:       mockRowsToSQLRows(sqlmock.NewRows([]string{"column"}).AddRow(string("6")).AddRow(string("1")).AddRow(string("643")).AddRow(string("42")).AddRow(string("1283"))),
+			want:       [][]values.Value{{values.NewString("6")}, {values.NewString("1")}, {values.NewString("643")}, {values.NewString("42")}, {values.NewString("1283")}},
+		},
+		{
+			name:       "datetime",
+			columnName: "_datetime",
+			data:       mockRowsToSQLRows(sqlmock.NewRows([]string{"column"}).AddRow(createTestTimes()[0].(time.Time)).AddRow(createTestTimes()[1].(time.Time)).AddRow(createTestTimes()[2].(time.Time)).AddRow(createTestTimes()[3].(time.Time)).AddRow(createTestTimes()[4].(time.Time))),
+			want: [][]values.Value{
+				{values.NewTime(values.ConvertTime(createTestTimes()[0].(time.Time)))},
+				{values.NewTime(values.ConvertTime(createTestTimes()[1].(time.Time)))},
+				{values.NewTime(values.ConvertTime(createTestTimes()[2].(time.Time)))},
+				{values.NewTime(values.ConvertTime(createTestTimes()[3].(time.Time)))},
+				{values.NewTime(values.ConvertTime(createTestTimes()[4].(time.Time)))},
+			},
+		},
+	}
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+
+			TestReader, err := NewSqliteRowReader(tc.data)
+			if !cmp.Equal(nil, err) {
+				t.Fatalf("unexpected result -want/+got\n\n%s\n\n", cmp.Diff(nil, err))
+			}
 			i := 0
 			for TestReader.Next() {
 				row, _ := TestReader.GetNextRow()
@@ -269,13 +340,11 @@ func createTestTimes() []interface{} {
 	return a
 }
 
-func stringSliceToByteArrays(s []string) [][]byte {
-	array := make([][]byte, len(s))
-
-	for i := range s {
-		b := []byte(s[i])
-		array[i] = b
-	}
-
-	return array
+// kind of abusing the functionality here, but it works well for our purpose
+func mockRowsToSQLRows(mockedRows *sqlmock.Rows) *sql.Rows {
+	db, mock, _ := sqlmock.New()
+	mock.ExpectQuery("select").WillReturnRows(mockedRows)
+	// the following basically does a type cast to what we need
+	rows, _ := db.Query("select")
+	return rows
 }

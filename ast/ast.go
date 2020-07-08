@@ -191,10 +191,11 @@ func (p *Package) Copy() Node {
 // File represents a source from a single file
 type File struct {
 	BaseNode
-	Name    string               `json:"name,omitempty"` // name of the file
-	Package *PackageClause       `json:"package"`
-	Imports []*ImportDeclaration `json:"imports"`
-	Body    []Statement          `json:"body"`
+	Name     string               `json:"name,omitempty"` // name of the file
+	Metadata string               `json:"metadata,omitempty"`
+	Package  *PackageClause       `json:"package"`
+	Imports  []*ImportDeclaration `json:"imports"`
+	Body     []Statement          `json:"body"`
 }
 
 // Type is the abstract type
@@ -368,6 +369,7 @@ type ReturnStatement struct {
 
 // Type is the abstract type
 func (*ReturnStatement) Type() string { return "ReturnStatement" }
+
 func (s *ReturnStatement) Copy() Node {
 	if s == nil {
 		return s
@@ -611,6 +613,8 @@ func (p *InterpolatedPart) Copy() Node {
 	return np
 }
 
+// ParenExpression represents an expressions that is wrapped in parentheses in the source code.
+// It has no semantic meaning, rather it only communicates information about the syntax of the source code.
 type ParenExpression struct {
 	BaseNode
 	Expression Expression `json:"expression"`
@@ -832,7 +836,7 @@ func (o *OperatorKind) UnmarshalText(data []byte) error {
 }
 
 // BinaryExpression use binary operators act on two operands in an expression.
-// BinaryExpression includes relational and arithmatic operators
+// BinaryExpression includes relational and arithmetic operators
 type BinaryExpression struct {
 	BaseNode
 	Operator OperatorKind `json:"operator"`
@@ -912,6 +916,7 @@ func (o LogicalOperatorKind) MarshalText() ([]byte, error) {
 	}
 	return []byte(text), nil
 }
+
 func (o *LogicalOperatorKind) UnmarshalText(data []byte) error {
 	var ok bool
 	*o, ok = logOperators[string(data)]
@@ -1122,14 +1127,14 @@ type PipeLiteral struct {
 // Type is the abstract type
 func (*PipeLiteral) Type() string { return "PipeLiteral" }
 
-func (i *PipeLiteral) Copy() Node {
-	if i == nil {
-		return i
+func (p *PipeLiteral) Copy() Node {
+	if p == nil {
+		return p
 	}
-	ni := new(PipeLiteral)
-	*ni = *i
-	ni.BaseNode = i.BaseNode.Copy()
-	return ni
+	np := new(PipeLiteral)
+	*np = *p
+	np.BaseNode = p.BaseNode.Copy()
+	return np
 }
 
 // StringLiteral expressions begin and end with double quote marks.
@@ -1296,6 +1301,19 @@ func toDuration(l Duration) (time.Duration, error) {
 	}
 	return dur, err
 }
+
+const (
+	NanosecondUnit  = "ns"
+	MicrosecondUnit = "us"
+	MillisecondUnit = "ms"
+	SecondUnit      = "s"
+	MinuteUnit      = "m"
+	HourUnit        = "h"
+	DayUnit         = "d"
+	WeekUnit        = "w"
+	MonthUnit       = "mo"
+	YearUnit        = "y"
+)
 
 // DurationLiteral represents the elapsed time between two instants as an
 // int64 nanosecond count with syntax of golang's time.Duration

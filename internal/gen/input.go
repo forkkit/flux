@@ -2,18 +2,19 @@ package gen
 
 import (
 	"container/heap"
-	"errors"
+	"context"
 	"math"
 	"math/rand"
 	"strings"
 	"time"
 
+	"github.com/apache/arrow/go/arrow/array"
 	"github.com/influxdata/flux"
+	"github.com/influxdata/flux/arrow"
 	"github.com/influxdata/flux/csv"
 	"github.com/influxdata/flux/execute"
+	"github.com/influxdata/flux/internal/execute/table"
 	"github.com/influxdata/flux/memory"
-	"github.com/influxdata/flux/plan"
-	"github.com/influxdata/flux/semantic"
 	"github.com/influxdata/flux/values"
 )
 
@@ -79,9 +80,9 @@ type Schema struct {
 	Alloc *memory.Allocator
 }
 
-// Input constructs a ResultIterator with randomly generated
+// Input constructs a TableIterator with randomly generated
 // data according to the Schema.
-func Input(schema Schema) (flux.ResultIterator, error) {
+func Input(ctx context.Context, schema Schema) (flux.TableIterator, error) {
 	tags := schema.Tags
 
 	var seed int64
@@ -93,7 +94,11 @@ func Input(schema Schema) (flux.ResultIterator, error) {
 	r := rand.New(rand.NewSource(seed))
 	series := genSeriesKeys(tags, r)
 	if len(series) == 0 {
-		return nil, errors.New("at least one tag with a positive cardinality is required")
+		// If no tags were provided, then there is only one series
+		// and it is the default one.
+		series = []flux.GroupKey{
+			execute.NewGroupKey(nil, nil),
+		}
 	}
 
 	var ti typeInfo
@@ -134,10 +139,21 @@ func Input(schema Schema) (flux.ResultIterator, error) {
 	if numPoints == 0 {
 		numPoints = DefaultNumPoints
 	}
+
+	alloc := schema.Alloc
+	if alloc == nil {
+		alloc = &memory.Allocator{}
+	}
+
 	g := &dataGenerator{
-		Period:    values.Duration(period),
+		Context:   ctx,
+		Period:    values.ConvertDuration(period),
 		NumPoints: numPoints,
 		Nulls:     schema.Nulls,
+		Allocator: alloc,
+		Rand:      r,
+		Groups:    groups,
+		TypeInfo:  ti,
 	}
 	if !schema.Start.IsZero() {
 		g.Start = values.ConvertTime(schema.Start)
@@ -145,71 +161,19 @@ func Input(schema Schema) (flux.ResultIterator, error) {
 		ts := time.Now().Truncate(period).Add(-period * time.Duration(numPoints))
 		g.Start = values.ConvertTime(ts)
 	}
-
-	alloc := schema.Alloc
-	if alloc == nil {
-		alloc = &memory.Allocator{}
-	}
-	cache := execute.NewTableBuilderCache(alloc)
-	cache.SetTriggerSpec(plan.DefaultTriggerSpec)
-	for {
-		if len(groups) == 0 {
-			break
-		}
-
-		sg := heap.Pop(&groups).(seriesGroup)
-		vt := heap.Pop(&ti).(valueType)
-		vt.Number -= len(sg.Series)
-		sg.Type = vt.Type
-
-		for _, s := range sg.Series {
-			builder, _ := cache.TableBuilder(s)
-			startIdx, _ := builder.AddCol(flux.ColMeta{
-				Label: execute.DefaultStartColLabel,
-				Type:  flux.TTime,
-			})
-			stopIdx, _ := builder.AddCol(flux.ColMeta{
-				Label: execute.DefaultStopColLabel,
-				Type:  flux.TTime,
-			})
-			_ = execute.AddTableKeyCols(s, builder)
-			start, stop := g.Generate(builder, r, sg.Type)
-			for i := 0; i < g.NumPoints; i++ {
-				_ = builder.AppendTime(startIdx, start)
-				_ = builder.AppendTime(stopIdx, stop)
-				_ = execute.AppendKeyValues(s, builder)
-			}
-		}
-		heap.Push(&ti, vt)
-	}
-
-	var (
-		tables []flux.Table
-		err    error
-	)
-	cache.ForEachBuilder(func(key flux.GroupKey, builder execute.TableBuilder) {
-		tbl, terr := builder.Table()
-		if terr != nil && err == nil {
-			err = terr
-			return
-		}
-		tables = append(tables, tbl)
-		builder.Release()
-	})
-	if err != nil {
-		return nil, err
-	}
-	return flux.NewSliceResultIterator([]flux.Result{
-		&result{tables: tables},
-	}), nil
+	return g, nil
 }
 
 // CsvInput generates a csv input based on the Schema.
-func CsvInput(schema Schema) (string, error) {
-	results, err := Input(schema)
+func CsvInput(ctx context.Context, schema Schema) (string, error) {
+	tables, err := Input(ctx, schema)
 	if err != nil {
 		return "", err
 	}
+
+	results := flux.NewSliceResultIterator([]flux.Result{
+		&result{tables: tables},
+	})
 
 	var buf strings.Builder
 	enc := csv.NewMultiResultEncoder(csv.DefaultEncoderConfig())
@@ -386,97 +350,194 @@ func groupBy(keys []flux.GroupKey, by []string) []seriesGroup {
 }
 
 type dataGenerator struct {
+	Context   context.Context
 	Start     values.Time
 	Period    values.Duration
-	Jitter    values.Duration
 	Nulls     float64
 	NumPoints int
+	Allocator *memory.Allocator
+
+	Rand     *rand.Rand
+	Groups   seriesGroups
+	TypeInfo typeInfo
 }
 
-func (dg *dataGenerator) Generate(tb execute.TableBuilder, r *rand.Rand, typ flux.ColType) (start, stop values.Time) {
-	var next func() values.Value
+func (dg *dataGenerator) Do(f func(tbl flux.Table) error) error {
+	for {
+		if len(dg.Groups) == 0 {
+			break
+		}
+
+		sg := heap.Pop(&dg.Groups).(seriesGroup)
+		vt := heap.Pop(&dg.TypeInfo).(valueType)
+		vt.Number -= len(sg.Series)
+		sg.Type = vt.Type
+
+		for _, s := range sg.Series {
+			// Construct the table columns.
+			cols := make([]flux.ColMeta, len(s.Cols())+2)
+			copy(cols, s.Cols())
+			cols[len(cols)-2] = flux.ColMeta{Label: execute.DefaultTimeColLabel, Type: flux.TTime}
+			cols[len(cols)-1] = flux.ColMeta{Label: execute.DefaultValueColLabel, Type: sg.Type}
+
+			// The stream function uses the same random number generator
+			// as the other tables. For this reason, we can only output one table at a time.
+			// Use a channel to signal when the table has been processed to avoid
+			// creating multiple tables at the same time.
+			done := make(chan struct{})
+			tbl, err := table.Stream(s, cols, func(ctx context.Context, w *table.StreamWriter) error {
+				defer close(done)
+
+				// Only construct the key values once for the first table
+				// and then reuse them for each one with a slice.
+				// The first table should always be the biggest because of
+				// the size constraint.
+				// These are constructed lazily below.
+				keyValues := make([]array.Interface, len(w.Cols()))
+				defer func() {
+					for _, vs := range keyValues {
+						if vs != nil {
+							vs.Release()
+						}
+					}
+				}()
+
+				start, n := dg.Start, dg.NumPoints
+				for n > 0 {
+					tvalues := make([]array.Interface, len(w.Cols()))
+
+					var ts *array.Int64
+					ts, start, n = dg.generateBufferTimes(start, n)
+					for i, v := range s.Values() {
+						if keyValues[i] == nil {
+							keyValues[i] = arrow.Repeat(v, ts.Len(), dg.Allocator)
+						}
+						vs := keyValues[i]
+						if vs.Len() == ts.Len() {
+							vs.Retain()
+						} else {
+							vs = arrow.Slice(vs, 0, int64(ts.Len()))
+						}
+						tvalues[i] = vs
+					}
+					tvalues[len(cols)-2] = ts
+					tvalues[len(cols)-1] = dg.generateBufferValues(dg.Rand, sg.Type, ts.Len())
+					if err := w.Write(tvalues); err != nil {
+						return err
+					}
+				}
+				return nil
+			})
+			if err != nil {
+				return err
+			}
+
+			if err := f(tbl); err != nil {
+				return err
+			}
+
+			if err := dg.wait(dg.Context, done); err != nil {
+				return err
+			}
+		}
+		heap.Push(&dg.TypeInfo, vt)
+	}
+	return nil
+}
+
+func (dg *dataGenerator) generateBufferTimes(start values.Time, n int) (ts *array.Int64, stop values.Time, left int) {
+	size := n
+	if size > 1024 {
+		size = 1024
+	}
+
+	b := arrow.NewIntBuilder(dg.Allocator)
+	b.Reserve(size)
+	for stop = start; b.Len() < size; stop = stop.Add(dg.Period) {
+		b.Append(int64(stop))
+	}
+	return b.NewInt64Array(), stop, n - size
+}
+
+func (dg *dataGenerator) generateBufferValues(r *rand.Rand, typ flux.ColType, n int) array.Interface {
 	switch typ {
 	case flux.TFloat:
-		next = func() values.Value {
+		b := arrow.NewFloatBuilder(dg.Allocator)
+		b.Resize(n)
+		for i := 0; i < n; i++ {
 			if dg.Nulls > 0.0 && dg.Nulls > r.Float64() {
-				return values.NewNull(semantic.Float)
+				b.AppendNull()
+				continue
 			}
-			v := rand.NormFloat64() * 50
-			return values.NewFloat(v)
+			v := r.NormFloat64() * 50
+			b.Append(v)
 		}
-	case flux.TInt:
-		next = func() values.Value {
+		return b.NewArray()
+	case flux.TInt, flux.TTime:
+		b := arrow.NewIntBuilder(dg.Allocator)
+		b.Resize(n)
+		for i := 0; i < n; i++ {
 			if dg.Nulls > 0.0 && dg.Nulls > r.Float64() {
-				return values.NewNull(semantic.Int)
+				b.AppendNull()
+				continue
 			}
-			v := rand.Intn(201) - 100
-			return values.NewInt(int64(v))
+			v := r.Intn(201) - 100
+			b.Append(int64(v))
 		}
+		return b.NewArray()
 	case flux.TUInt:
-		next = func() values.Value {
+		b := arrow.NewUintBuilder(dg.Allocator)
+		b.Resize(n)
+		for i := 0; i < n; i++ {
 			if dg.Nulls > 0.0 && dg.Nulls > r.Float64() {
-				return values.NewNull(semantic.UInt)
+				b.AppendNull()
+				continue
 			}
-			v := rand.Intn(101)
-			return values.NewUInt(uint64(v))
+			v := r.Intn(101)
+			b.Append(uint64(v))
 		}
+		return b.NewArray()
 	case flux.TString:
-		next = func() values.Value {
+		b := arrow.NewStringBuilder(dg.Allocator)
+		b.Resize(n)
+		b.ReserveData(n * 7)
+		for i := 0; i < n; i++ {
 			if dg.Nulls > 0.0 && dg.Nulls > r.Float64() {
-				return values.NewNull(semantic.String)
+				b.AppendNull()
+				continue
 			}
-			v := genTagValue(r, 3, 8)
-			return values.NewString(v)
+			v := genTagValue(r, 3, 7)
+			b.AppendString(v)
 		}
+		return b.NewArray()
 	case flux.TBool:
-		next = func() values.Value {
+		b := arrow.NewBoolBuilder(dg.Allocator)
+		b.Resize(n)
+		for i := 0; i < n; i++ {
 			if dg.Nulls > 0.0 && dg.Nulls > r.Float64() {
-				return values.NewNull(semantic.Bool)
+				b.AppendNull()
+				continue
 			}
-			v := r.Intn(2) == 1
-			return values.NewBool(v)
+			v := r.Intn(2) != 0
+			b.Append(v)
 		}
+		return b.NewArray()
 	default:
 		panic("implement me")
 	}
+}
 
-	timeIdx, _ := tb.AddCol(flux.ColMeta{
-		Label: execute.DefaultTimeColLabel,
-		Type:  flux.TTime,
-	})
-	valueIdx, _ := tb.AddCol(flux.ColMeta{
-		Label: execute.DefaultValueColLabel,
-		Type:  typ,
-	})
-
-	start, stop = dg.Start, dg.Start
-	for i := 0; i < dg.NumPoints; i++ {
-		ts := dg.Start.Add(values.Duration(i) * dg.Period)
-		if dg.Jitter != 0 {
-			jitter := r.Intn(int(dg.Jitter)*2 + 1)
-			ts = ts.Add(values.Duration(jitter))
-		}
-		_ = tb.AppendTime(timeIdx, ts)
-		_ = tb.AppendValue(valueIdx, next())
-		_ = tb.AppendValue(valueIdx, next())
-		if ts > stop {
-			stop = ts
-		}
+func (dg *dataGenerator) wait(ctx context.Context, done <-chan struct{}) error {
+	select {
+	case <-done:
+		return nil
+	case <-ctx.Done():
+		return ctx.Err()
 	}
-	return start, stop
 }
 
 type result struct {
-	tables []flux.Table
-}
-
-func (r *result) Do(f func(flux.Table) error) error {
-	for _, tbl := range r.tables {
-		if err := f(tbl); err != nil {
-			return err
-		}
-	}
-	return nil
+	tables flux.TableIterator
 }
 
 func (r *result) Name() string {
@@ -484,5 +545,5 @@ func (r *result) Name() string {
 }
 
 func (r *result) Tables() flux.TableIterator {
-	return r
+	return r.tables
 }

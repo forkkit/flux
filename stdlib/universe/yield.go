@@ -1,11 +1,11 @@
 package universe
 
 import (
-	"fmt"
-
 	"github.com/influxdata/flux"
+	"github.com/influxdata/flux/codes"
+	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/plan"
-	"github.com/influxdata/flux/semantic"
+	"github.com/influxdata/flux/runtime"
 )
 
 const YieldKind = "yield"
@@ -15,14 +15,9 @@ type YieldOpSpec struct {
 }
 
 func init() {
-	yieldSignature := flux.FunctionSignature(
-		map[string]semantic.PolyType{
-			"name": semantic.String,
-		},
-		nil,
-	)
+	yieldSignature := runtime.MustLookupBuiltinType("universe", "yield")
 
-	flux.RegisterPackageValue("universe", YieldKind, flux.FunctionValueWithSideEffect(YieldKind, createYieldOpSpec, yieldSignature))
+	runtime.RegisterPackageValue("universe", YieldKind, flux.MustValue(flux.FunctionValueWithSideEffect(YieldKind, createYieldOpSpec, yieldSignature)))
 	flux.RegisterOpSpec(YieldKind, newYieldOp)
 	plan.RegisterProcedureSpecWithSideEffect(YieldKind, newYieldProcedure, YieldKind)
 }
@@ -64,7 +59,7 @@ func newYieldProcedure(qs flux.OperationSpec, _ plan.Administration) (plan.Proce
 		return &YieldProcedureSpec{Name: spec.Name}, nil
 	}
 
-	return nil, fmt.Errorf("invalid spec type %T", qs)
+	return nil, errors.Newf(codes.Internal, "invalid spec type %T", qs)
 }
 
 func (s *YieldProcedureSpec) Kind() plan.ProcedureKind {

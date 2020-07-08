@@ -2,16 +2,18 @@ package universe
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"math"
 	"regexp"
 	"sort"
 
 	"github.com/influxdata/flux"
+	"github.com/influxdata/flux/codes"
 	"github.com/influxdata/flux/execute"
+	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/interpreter"
 	"github.com/influxdata/flux/plan"
+	"github.com/influxdata/flux/runtime"
 	"github.com/influxdata/flux/semantic"
 	"github.com/influxdata/flux/values"
 )
@@ -27,20 +29,11 @@ type HistogramOpSpec struct {
 }
 
 func init() {
-	histogramSignature := execute.AggregateSignature(
-		map[string]semantic.PolyType{
-			"column":           semantic.String,
-			"upperBoundColumn": semantic.String,
-			"countColumn":      semantic.String,
-			"bins":             semantic.NewArrayPolyType(semantic.Float),
-			"normalize":        semantic.Bool,
-		},
-		[]string{"bins"},
-	)
+	histogramSignature := runtime.MustLookupBuiltinType("universe", "histogram")
 
-	flux.RegisterPackageValue("universe", HistogramKind, flux.FunctionValue(HistogramKind, createHistogramOpSpec, histogramSignature))
-	flux.RegisterPackageValue("universe", "linearBins", linearBins{})
-	flux.RegisterPackageValue("universe", "logarithmicBins", logarithmicBins{})
+	runtime.RegisterPackageValue("universe", HistogramKind, flux.MustValue(flux.FunctionValue(HistogramKind, createHistogramOpSpec, histogramSignature)))
+	runtime.RegisterPackageValue("universe", "linearBins", linearBins{})
+	runtime.RegisterPackageValue("universe", "logarithmicBins", logarithmicBins{})
 	flux.RegisterOpSpec(HistogramKind, newHistogramOp)
 	plan.RegisterProcedureSpec(HistogramKind, newHistogramProcedure, HistogramKind)
 	execute.RegisterTransformation(HistogramKind, createHistogramTransformation)
@@ -107,7 +100,7 @@ type HistogramProcedureSpec struct {
 func newHistogramProcedure(qs flux.OperationSpec, pa plan.Administration) (plan.ProcedureSpec, error) {
 	spec, ok := qs.(*HistogramOpSpec)
 	if !ok {
-		return nil, fmt.Errorf("invalid spec type %T", qs)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", qs)
 	}
 
 	return &HistogramProcedureSpec{
@@ -131,7 +124,7 @@ func (s *HistogramProcedureSpec) Copy() plan.ProcedureSpec {
 func createHistogramTransformation(id execute.DatasetID, mode execute.AccumulationMode, spec plan.ProcedureSpec, a execute.Administration) (execute.Transformation, execute.Dataset, error) {
 	s, ok := spec.(*HistogramProcedureSpec)
 	if !ok {
-		return nil, nil, fmt.Errorf("invalid spec type %T", spec)
+		return nil, nil, errors.Newf(codes.Internal, "invalid spec type %T", spec)
 	}
 	cache := execute.NewTableBuilderCache(a.Allocator())
 	d := execute.NewDataset(id, mode, cache)
@@ -162,14 +155,14 @@ func (t *histogramTransformation) RetractTable(id execute.DatasetID, key flux.Gr
 func (t *histogramTransformation) Process(id execute.DatasetID, tbl flux.Table) error {
 	builder, created := t.cache.TableBuilder(tbl.Key())
 	if !created {
-		return fmt.Errorf("histogram found duplicate table with key: %v", tbl.Key())
+		return errors.Newf(codes.FailedPrecondition, "histogram found duplicate table with key: %v", tbl.Key())
 	}
 	valueIdx := execute.ColIdx(t.spec.Column, tbl.Cols())
 	if valueIdx < 0 {
-		return fmt.Errorf("column %q is missing", t.spec.Column)
+		return errors.Newf(codes.FailedPrecondition, "column %q is missing", t.spec.Column)
 	}
 	if col := tbl.Cols()[valueIdx]; col.Type != flux.TFloat {
-		return fmt.Errorf("column %q must be a float got %v", t.spec.Column, col.Type)
+		return errors.Newf(codes.FailedPrecondition, "column %q must be a float got %v", t.spec.Column, col.Type)
 	}
 
 	err := execute.AddTableKeyCols(tbl.Key(), builder)
@@ -251,23 +244,10 @@ func (t *histogramTransformation) Finish(id execute.DatasetID, err error) {
 // linearBins is a helper function for creating bins spaced linearly
 type linearBins struct{}
 
-var linearBinsType = semantic.NewFunctionType(semantic.FunctionSignature{
-	Parameters: map[string]semantic.Type{
-		"start":    semantic.Float,
-		"width":    semantic.Float,
-		"count":    semantic.Int,
-		"infinity": semantic.Bool,
-	},
-	Required: semantic.LabelSet{"start", "width", "count"},
-	Return:   semantic.NewArrayType(semantic.Float),
-})
-var linearBinsPolyType = linearBinsType.PolyType()
+var linearBinsType = runtime.MustLookupBuiltinType("universe", "linearBins")
 
-func (b linearBins) Type() semantic.Type {
+func (b linearBins) Type() semantic.MonoType {
 	return linearBinsType
-}
-func (b linearBins) PolyType() semantic.PolyType {
-	return linearBinsPolyType
 }
 
 func (b linearBins) IsNull() bool {
@@ -336,31 +316,31 @@ func (b linearBins) HasSideEffect() bool {
 func (b linearBins) Call(ctx context.Context, args values.Object) (values.Value, error) {
 	startV, ok := args.Get("start")
 	if !ok {
-		return nil, errors.New("start is required")
+		return nil, errors.New(codes.Invalid, "start is required")
 	}
-	if startV.Type() != semantic.Float {
-		return nil, errors.New("start must be a float")
+	if startV.Type().Nature() != semantic.Float {
+		return nil, errors.New(codes.Invalid, "start must be a float")
 	}
 	widthV, ok := args.Get("width")
 	if !ok {
-		return nil, errors.New("width is required")
+		return nil, errors.New(codes.Invalid, "width is required")
 	}
-	if widthV.Type() != semantic.Float {
-		return nil, errors.New("width must be a float")
+	if widthV.Type().Nature() != semantic.Float {
+		return nil, errors.New(codes.Invalid, "width must be a float")
 	}
 	countV, ok := args.Get("count")
 	if !ok {
-		return nil, errors.New("count is required")
+		return nil, errors.New(codes.Invalid, "count is required")
 	}
-	if countV.Type() != semantic.Int {
-		return nil, errors.New("count must be an int")
+	if countV.Type().Nature() != semantic.Int {
+		return nil, errors.New(codes.Invalid, "count must be an int")
 	}
 	infV, ok := args.Get("infinity")
 	if !ok {
 		infV = values.NewBool(true)
 	}
-	if infV.Type() != semantic.Bool {
-		return nil, errors.New("infinity must be a bool")
+	if infV.Type().Nature() != semantic.Bool {
+		return nil, errors.New(codes.Invalid, "infinity must be a bool")
 	}
 	start := startV.Float()
 	width := widthV.Float()
@@ -379,30 +359,17 @@ func (b linearBins) Call(ctx context.Context, args values.Object) (values.Value,
 	if inf {
 		elements[l-1] = values.NewFloat(math.Inf(1))
 	}
-	counts := values.NewArrayWithBacking(semantic.Float, elements)
+	counts := values.NewArrayWithBacking(semantic.NewArrayType(semantic.BasicFloat), elements)
 	return counts, nil
 }
 
 // logarithmicBins is a helper function for creating bins spaced by an logarithmic factor.
 type logarithmicBins struct{}
 
-var logarithmicBinsType = semantic.NewFunctionType(semantic.FunctionSignature{
-	Parameters: map[string]semantic.Type{
-		"start":    semantic.Float,
-		"factor":   semantic.Float,
-		"count":    semantic.Int,
-		"infinity": semantic.Bool,
-	},
-	Required: semantic.LabelSet{"start", "factor", "count"},
-	Return:   semantic.NewArrayType(semantic.Float),
-})
-var logarithmicBinsPolyType = logarithmicBinsType.PolyType()
+var logarithmicBinsType = runtime.MustLookupBuiltinType("universe", "logarithmicBins")
 
-func (b logarithmicBins) Type() semantic.Type {
+func (b logarithmicBins) Type() semantic.MonoType {
 	return logarithmicBinsType
-}
-func (b logarithmicBins) PolyType() semantic.PolyType {
-	return logarithmicBinsPolyType
 }
 
 func (b logarithmicBins) IsNull() bool {
@@ -471,31 +438,31 @@ func (b logarithmicBins) HasSideEffect() bool {
 func (b logarithmicBins) Call(ctx context.Context, args values.Object) (values.Value, error) {
 	startV, ok := args.Get("start")
 	if !ok {
-		return nil, errors.New("start is required")
+		return nil, errors.New(codes.Invalid, "start is required")
 	}
-	if startV.Type() != semantic.Float {
-		return nil, errors.New("start must be a float")
+	if startV.Type().Nature() != semantic.Float {
+		return nil, errors.New(codes.Invalid, "start must be a float")
 	}
 	factorV, ok := args.Get("factor")
 	if !ok {
-		return nil, errors.New("factor is required")
+		return nil, errors.New(codes.Invalid, "factor is required")
 	}
-	if factorV.Type() != semantic.Float {
-		return nil, errors.New("factor must be a float")
+	if factorV.Type().Nature() != semantic.Float {
+		return nil, errors.New(codes.Invalid, "factor must be a float")
 	}
 	countV, ok := args.Get("count")
 	if !ok {
-		return nil, errors.New("count is required")
+		return nil, errors.New(codes.Invalid, "count is required")
 	}
-	if countV.Type() != semantic.Int {
-		return nil, errors.New("count must be an int")
+	if countV.Type().Nature() != semantic.Int {
+		return nil, errors.New(codes.Invalid, "count must be an int")
 	}
 	infV, ok := args.Get("infinity")
 	if !ok {
 		infV = values.NewBool(true)
 	}
-	if infV.Type() != semantic.Bool {
-		return nil, errors.New("infinity must be a bool")
+	if infV.Type().Nature() != semantic.Bool {
+		return nil, errors.New(codes.Invalid, "infinity must be a bool")
 	}
 	start := startV.Float()
 	factor := factorV.Float()
@@ -514,6 +481,6 @@ func (b logarithmicBins) Call(ctx context.Context, args values.Object) (values.V
 	if inf {
 		elements[l-1] = values.NewFloat(math.Inf(1))
 	}
-	counts := values.NewArrayWithBacking(semantic.Float, elements)
+	counts := values.NewArrayWithBacking(semantic.NewArrayType(semantic.BasicFloat), elements)
 	return counts, nil
 }

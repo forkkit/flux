@@ -1,6 +1,7 @@
 package universe_test
 
 import (
+	"context"
 	"errors"
 	"testing"
 	"time"
@@ -8,6 +9,8 @@ import (
 	"github.com/influxdata/flux"
 	"github.com/influxdata/flux/execute"
 	"github.com/influxdata/flux/execute/executetest"
+	"github.com/influxdata/flux/internal/gen"
+	"github.com/influxdata/flux/memory"
 	"github.com/influxdata/flux/plan"
 	"github.com/influxdata/flux/plan/plantest"
 	"github.com/influxdata/flux/querytest"
@@ -38,8 +41,10 @@ func TestGroup_NewQuery(t *testing.T) {
 			Want: &flux.Spec{
 				Operations: []*flux.Operation{
 					{
-						ID:   "from0",
-						Spec: &influxdb.FromOpSpec{Bucket: "telegraf"},
+						ID: "from0",
+						Spec: &influxdb.FromOpSpec{
+							Bucket: influxdb.NameOrID{Name: "telegraf"},
+						},
 					},
 					{
 						ID: "range1",
@@ -71,8 +76,10 @@ func TestGroup_NewQuery(t *testing.T) {
 			Want: &flux.Spec{
 				Operations: []*flux.Operation{
 					{
-						ID:   "from0",
-						Spec: &influxdb.FromOpSpec{Bucket: "telegraf"},
+						ID: "from0",
+						Spec: &influxdb.FromOpSpec{
+							Bucket: influxdb.NameOrID{Name: "telegraf"},
+						},
 					},
 					{
 						ID: "range1",
@@ -104,8 +111,10 @@ func TestGroup_NewQuery(t *testing.T) {
 			Want: &flux.Spec{
 				Operations: []*flux.Operation{
 					{
-						ID:   "from0",
-						Spec: &influxdb.FromOpSpec{Bucket: "telegraf"},
+						ID: "from0",
+						Spec: &influxdb.FromOpSpec{
+							Bucket: influxdb.NameOrID{Name: "telegraf"},
+						},
 					},
 					{
 						ID: "range1",
@@ -137,8 +146,10 @@ func TestGroup_NewQuery(t *testing.T) {
 			Want: &flux.Spec{
 				Operations: []*flux.Operation{
 					{
-						ID:   "from0",
-						Spec: &influxdb.FromOpSpec{Bucket: "telegraf"},
+						ID: "from0",
+						Spec: &influxdb.FromOpSpec{
+							Bucket: influxdb.NameOrID{Name: "telegraf"},
+						},
 					},
 					{
 						ID: "range1",
@@ -173,8 +184,10 @@ func TestGroup_NewQuery(t *testing.T) {
 			Want: &flux.Spec{
 				Operations: []*flux.Operation{
 					{
-						ID:   "from0",
-						Spec: &influxdb.FromOpSpec{Bucket: "telegraf"},
+						ID: "from0",
+						Spec: &influxdb.FromOpSpec{
+							Bucket: influxdb.NameOrID{Name: "telegraf"},
+						},
 					},
 					{
 						ID: "range1",
@@ -737,7 +750,7 @@ func TestGroup_Process(t *testing.T) {
 					KeyValues: []interface{}{nil},
 					GroupKey: execute.NewGroupKey(
 						[]flux.ColMeta{{Label: "t1", Type: flux.TString}},
-						[]values.Value{values.NewNull(semantic.String)},
+						[]values.Value{values.NewNull(semantic.BasicString)},
 					),
 					ColMeta: []flux.ColMeta{
 						{Label: "_time", Type: flux.TTime},
@@ -755,13 +768,13 @@ func TestGroup_Process(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			executetest.ProcessTestHelper(
+			executetest.ProcessTestHelper2(
 				t,
 				tc.data,
 				tc.want,
 				tc.wantErr,
-				func(d execute.Dataset, c execute.TableBuilderCache) execute.Transformation {
-					return universe.NewGroupTransformation(d, c, tc.spec)
+				func(id execute.DatasetID, alloc *memory.Allocator) (execute.Transformation, execute.Dataset) {
+					return universe.NewGroupTransformation(tc.spec, id, alloc)
 				},
 			)
 		})
@@ -965,4 +978,38 @@ func TestMergeGroupRule(t *testing.T) {
 			plantest.LogicalRuleTestHelper(t, &tc)
 		})
 	}
+}
+
+func BenchmarkGroup_ByKey_1000(b *testing.B) {
+	benchmarkGroupByKey(b, 1000)
+}
+
+func benchmarkGroupByKey(b *testing.B, n int) {
+	spec := &universe.GroupProcedureSpec{
+		GroupMode: flux.GroupModeBy,
+		GroupKeys: []string{"t0"},
+	}
+	benchmarkGroup(b, n, spec)
+}
+
+func benchmarkGroup(b *testing.B, n int, spec *universe.GroupProcedureSpec) {
+	b.ReportAllocs()
+	executetest.ProcessBenchmarkHelper(b,
+		func(alloc *memory.Allocator) (flux.TableIterator, error) {
+			schema := gen.Schema{
+				NumPoints: n,
+				Alloc:     alloc,
+				Tags: []gen.Tag{
+					{Name: "_measurement", Cardinality: 1},
+					{Name: "_field", Cardinality: 6},
+					{Name: "t0", Cardinality: 100},
+					{Name: "t1", Cardinality: 50},
+				},
+			}
+			return gen.Input(context.Background(), schema)
+		},
+		func(id execute.DatasetID, alloc *memory.Allocator) (execute.Transformation, execute.Dataset) {
+			return universe.NewGroupTransformation(spec, id, alloc)
+		},
+	)
 }

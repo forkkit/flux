@@ -5,7 +5,6 @@ package socket
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"net"
 	neturl "net/url"
@@ -19,7 +18,7 @@ import (
 	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/line"
 	"github.com/influxdata/flux/plan"
-	"github.com/influxdata/flux/semantic"
+	"github.com/influxdata/flux/runtime"
 	"github.com/influxdata/flux/values"
 )
 
@@ -31,16 +30,9 @@ type FromSocketOpSpec struct {
 }
 
 func init() {
-	fromSocketSignature := semantic.FunctionPolySignature{
-		Parameters: map[string]semantic.PolyType{
-			"url":     semantic.String,
-			"decoder": semantic.String,
-		},
-		Required: semantic.LabelSet{"url"},
-		Return:   flux.TableObjectType,
-	}
+	fromSocketSignature := runtime.MustLookupBuiltinType("socket", "from")
 
-	flux.RegisterPackageValue("socket", "from", flux.FunctionValue(FromSocketKind, createFromSocketOpSpec, fromSocketSignature))
+	runtime.RegisterPackageValue("socket", "from", flux.MustValue(flux.FunctionValue(FromSocketKind, createFromSocketOpSpec, fromSocketSignature)))
 	flux.RegisterOpSpec(FromSocketKind, newFromSocketOp)
 	plan.RegisterProcedureSpec(FromSocketKind, newFromSocketProcedure, FromSocketKind)
 	execute.RegisterSource(FromSocketKind, createFromSocketSource)
@@ -85,7 +77,7 @@ func createFromSocketOpSpec(args flux.Arguments, a *flux.Administration) (flux.O
 	}
 
 	if !contains(decoders, spec.Decoder) {
-		return nil, fmt.Errorf("invalid decoder %s, must be one of %v", spec.Decoder, decoders)
+		return nil, errors.Newf(codes.Invalid, "invalid decoder %s, must be one of %v", spec.Decoder, decoders)
 	}
 
 	return spec, nil
@@ -108,7 +100,7 @@ type FromSocketProcedureSpec struct {
 func newFromSocketProcedure(qs flux.OperationSpec, pa plan.Administration) (plan.ProcedureSpec, error) {
 	spec, ok := qs.(*FromSocketOpSpec)
 	if !ok {
-		return nil, fmt.Errorf("invalid spec type %T", qs)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", qs)
 	}
 
 	return &FromSocketProcedureSpec{
@@ -131,26 +123,31 @@ func (s *FromSocketProcedureSpec) Copy() plan.ProcedureSpec {
 func createFromSocketSource(s plan.ProcedureSpec, dsid execute.DatasetID, a execute.Administration) (execute.Source, error) {
 	spec, ok := s.(*FromSocketProcedureSpec)
 	if !ok {
-		return nil, fmt.Errorf("invalid spec type %T", s)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", s)
 	}
 
 	// known issue with url.Parse for detecting the presence of a scheme: https://github.com/golang/go/issues/19779
 	var scheme, address string
 	if !strings.Contains(spec.URL, "://") {
-		// no scheme specified, use default and use the entire url as address
-		scheme = schemes[0]
-		address = spec.URL
-	} else {
-		// scheme specified, use appropriate values
-		url, err := neturl.Parse(spec.URL)
-		if err != nil {
-			return nil, err
-		}
-		scheme = url.Scheme
-		address = url.Host
-		if !contains(schemes, scheme) {
-			return nil, fmt.Errorf("invalid scheme %s, must be one of %v", scheme, schemes)
-		}
+		// no scheme specified, use default scheme and use the entire url as address
+		spec.URL = schemes[0] + "://" + spec.URL
+	}
+	url, err := neturl.Parse(spec.URL)
+	if err != nil {
+		return nil, errors.Newf(codes.Invalid, "invalid url: %v", err)
+	}
+	deps := flux.GetDependencies(a.Context())
+	validator, err := deps.URLValidator()
+	if err != nil {
+		return nil, err
+	}
+	if err := validator.Validate(url); err != nil {
+		return nil, errors.Newf(codes.Invalid, "url did not pass validation: %v", err)
+	}
+	scheme = url.Scheme
+	address = url.Host
+	if !contains(schemes, scheme) {
+		return nil, errors.Newf(codes.Invalid, "invalid scheme %s, must be one of %v", scheme, schemes)
 	}
 
 	conn, err := net.Dial(scheme, address)
@@ -174,7 +171,7 @@ func NewSocketSource(spec *FromSocketProcedureSpec, rc io.ReadCloser, tp line.Ti
 	}
 
 	if decoder == nil {
-		return nil, fmt.Errorf("unknown decoder type: %v", spec.Decoder)
+		return nil, errors.Newf(codes.Invalid, "unknown decoder type: %v", spec.Decoder)
 	}
 
 	return &socketSource{

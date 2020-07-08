@@ -6,6 +6,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/influxdata/flux/codes"
+	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/semantic"
 )
 
@@ -22,18 +24,19 @@ type Array interface {
 }
 
 type array struct {
-	t        semantic.Type
+	t        semantic.MonoType
 	elements []Value
 }
 
-func NewArray(elementType semantic.Type) Array {
-	return &array{
-		t: semantic.NewArrayType(elementType),
-	}
+func NewArray(arrType semantic.MonoType) Array {
+	return NewArrayWithBacking(arrType, nil)
 }
-func NewArrayWithBacking(elementType semantic.Type, elements []Value) Array {
+func NewArrayWithBacking(arrType semantic.MonoType, elements []Value) Array {
+	if arrType.Nature() != semantic.Array {
+		panic(UnexpectedKind(arrType.Nature(), semantic.Array))
+	}
 	return &array{
-		t:        semantic.NewArrayType(elementType),
+		t:        arrType,
 		elements: elements,
 	}
 }
@@ -54,23 +57,20 @@ func (a *array) String() string {
 	return b.String()
 }
 
-func (a *array) Type() semantic.Type {
+func (a *array) Type() semantic.MonoType {
 	return a.t
-}
-func (a *array) PolyType() semantic.PolyType {
-	return a.t.PolyType()
 }
 
 func (a *array) Get(i int) Value {
 	if i >= len(a.elements) {
-		panic(fmt.Errorf("index out of bounds: i:%d len:%d", i, len(a.elements)))
+		panic(errors.Newf(codes.Internal, "index out of bounds: i:%d len:%d", i, len(a.elements)))
 	}
 	return a.elements[i]
 }
 
 func (a *array) Set(i int, v Value) {
 	if i >= len(a.elements) {
-		panic(fmt.Errorf("index out of bounds: i:%d len:%d", i, len(a.elements)))
+		panic(errors.Newf(codes.Internal, "index out of bounds: i:%d len:%d", i, len(a.elements)))
 	}
 	a.elements[i] = v
 }
@@ -132,7 +132,7 @@ func (a *array) Function() Function {
 	panic(UnexpectedKind(semantic.Array, semantic.Function))
 }
 func (a *array) Equal(rhs Value) bool {
-	if a.Type() != rhs.Type() {
+	if !a.Type().Equal(rhs.Type()) {
 		return false
 	}
 	r := rhs.Array()

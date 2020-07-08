@@ -1,8 +1,9 @@
 package bigtable
 
 import (
-	"cloud.google.com/go/bigtable"
 	"fmt"
+
+	"cloud.google.com/go/bigtable"
 	"github.com/influxdata/flux"
 	"github.com/influxdata/flux/execute"
 	"github.com/influxdata/flux/semantic"
@@ -61,7 +62,7 @@ func (m *BigtableRowReader) GetNextRow() ([]values.Value, error) {
 
 	for _, idx := range m.columnIndices {
 		if !encountered[idx] {
-			rowValues[idx] = values.NewNull(semantic.String)
+			rowValues[idx] = values.NewNull(semantic.BasicString)
 		}
 	}
 
@@ -77,6 +78,8 @@ func (m *BigtableRowReader) ColumnTypes() []flux.ColType {
 }
 
 func (m *BigtableRowReader) SetColumns([]interface{}) {}
+
+func (m *BigtableRowReader) Close() error { return nil }
 
 func NewBigtableRowReader(ctx context.Context, c *BigtableDecoder) (execute.RowReader, error) {
 	reader := &BigtableRowReader{

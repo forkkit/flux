@@ -1,12 +1,13 @@
 package universe
 
 import (
-	"fmt"
-
 	"github.com/apache/arrow/go/arrow/array"
 	"github.com/influxdata/flux"
+	"github.com/influxdata/flux/codes"
 	"github.com/influxdata/flux/execute"
+	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/plan"
+	"github.com/influxdata/flux/runtime"
 )
 
 const LastKind = "last"
@@ -16,9 +17,9 @@ type LastOpSpec struct {
 }
 
 func init() {
-	lastSignature := execute.SelectorSignature(nil, nil)
+	lastSignature := runtime.MustLookupBuiltinType("universe", "last")
 
-	flux.RegisterPackageValue("universe", LastKind, flux.FunctionValue(LastKind, createLastOpSpec, lastSignature))
+	runtime.RegisterPackageValue("universe", LastKind, flux.MustValue(flux.FunctionValue(LastKind, createLastOpSpec, lastSignature)))
 	flux.RegisterOpSpec(LastKind, newLastOp)
 	plan.RegisterProcedureSpec(LastKind, newLastProcedure, LastKind)
 	execute.RegisterTransformation(LastKind, createLastTransformation)
@@ -51,7 +52,7 @@ type LastProcedureSpec struct {
 func newLastProcedure(qs flux.OperationSpec, pa plan.Administration) (plan.ProcedureSpec, error) {
 	spec, ok := qs.(*LastOpSpec)
 	if !ok {
-		return nil, fmt.Errorf("invalid spec type %T", qs)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", qs)
 	}
 	return &LastProcedureSpec{
 		SelectorConfig: spec.SelectorConfig,
@@ -86,7 +87,7 @@ type LastSelector struct {
 func createLastTransformation(id execute.DatasetID, mode execute.AccumulationMode, spec plan.ProcedureSpec, a execute.Administration) (execute.Transformation, execute.Dataset, error) {
 	ps, ok := spec.(*LastProcedureSpec)
 	if !ok {
-		return nil, nil, fmt.Errorf("invalid spec type %T", ps)
+		return nil, nil, errors.Newf(codes.Internal, "invalid spec type %T", ps)
 	}
 	t, d := execute.NewRowSelectorTransformationAndDataset(id, mode, new(LastSelector), ps.SelectorConfig, a.Allocator())
 	return t, d, nil

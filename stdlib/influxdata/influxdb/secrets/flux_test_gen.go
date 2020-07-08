@@ -1284,7 +1284,8 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 				Value: "influxdata/influxdb/secrets",
 			},
 		}},
-		Name: "secrets_test.flux",
+		Metadata: "parser-type=rust",
+		Name:     "secrets_test.flux",
 		Package: &ast.PackageClause{
 			BaseNode: ast.BaseNode{
 				Errors: nil,
@@ -1317,10 +1318,10 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 						},
 					},
 				},
-				Name: "main",
+				Name: "secrets_test",
 			},
 		},
 	}},
-	Package: "main",
-	Path:    "",
+	Package: "secrets_test",
+	Path:    "influxdata/influxdb/secrets",
 }}

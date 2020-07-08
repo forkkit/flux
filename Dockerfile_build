@@ -5,10 +5,14 @@ FROM golang:1.12
 # Install common packages
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
+    gcc-arm-linux-gnueabihf libc6-dev-armhf-cross \
+    gcc-aarch64-linux-gnu libc6-dev-arm64-cross \
+    libtinfo5 \
     ruby \
     ca-certificates curl file \
-    build-essential \
-    autoconf automake autotools-dev libtool xutils-dev && \
+    build-essential cmake \
+    libxml2-dev libssl-dev zlib1g-dev \
+    autoconf automake autotools-dev libtool xutils-dev valgrind && \
     rm -rf /var/lib/apt/lists/*
 
 # Install ragel
@@ -22,8 +26,16 @@ RUN curl http://www.colm.net/files/ragel/ragel-${RAGEL_VERSION}.tar.gz -O && \
     cd .. && rm -rf ragel-${RAGEL_VERSION}*
 ENV PATH="/usr/local/bin:${PATH}"
 
+ENV FLATBUFFERS_VERSION=1.11.0
+RUN curl -LS https://github.com/google/flatbuffers/archive/v${FLATBUFFERS_VERSION}.tar.gz | gunzip -c | tar x && \
+    mkdir flatbuffers-${FLATBUFFERS_VERSION}/build && \
+    cd flatbuffers-${FLATBUFFERS_VERSION}/build && \
+    cmake -G "Unix Makefiles" .. && \
+    make && make install && \
+    cd ../.. && rm -rf flatbuffers-${FLATBUFFERS_VERSION}
+
 # Install and configure openssl - needed for proper Rust install
-ENV SSL_VERSION=1.0.2q
+ENV SSL_VERSION=1.0.2t
 
 RUN curl https://www.openssl.org/source/openssl-$SSL_VERSION.tar.gz -O && \
     tar -xzf openssl-$SSL_VERSION.tar.gz && \
@@ -39,10 +51,25 @@ RUN curl -SL http://releases.llvm.org/8.0.0/clang+llvm-8.0.0-x86_64-linux-gnu-ub
     | tar -xJC . && \
     mv clang+llvm-8.0.0-x86_64-linux-gnu-ubuntu-18.04 clang_8.0.0
 
+COPY xcc.sh /usr/local/bin/xcc
 ENV PATH="/go/clang_8.0.0/bin:${PATH}" \
     LD_LIBRARY_PATH="/clang_8.0.0/lib:${LD_LIBRARY_PATH}" \
     CC=clang
 
+# Install osxcross
+# The `git checkout` line specifies what was HEAD at the time of this authoring. It makes sense to pin
+# our build to that commit, rather than rely on a completely api-stable osxcross for eternity. There is
+# nothing special about that specific commit.
+ENV MACOSX_DEPLOYMENT_TARGET=10.11
+RUN mkdir -p /opt/osxcross && \
+    cd /opt && \
+    git clone https://github.com/tpoechtrager/osxcross.git && \
+    cd osxcross && \
+    git checkout c2ad5e859d12a295c3f686a15bd7181a165bfa82 && \
+    curl -L -o ./tarballs/MacOSX${MACOSX_DEPLOYMENT_TARGET}.sdk.tar.xz \
+        https://macos-sdks.s3.amazonaws.com/MacOSX${MACOSX_DEPLOYMENT_TARGET}.sdk.tar.xz && \
+    UNATTENDED=1 PORTABLE=true OCDEBUG=1 ./build.sh
+ENV PATH="/opt/osxcross/target/bin:${PATH}"
 
 # Add builder user
 ENV UNAME=builder
@@ -59,6 +86,19 @@ RUN curl https://sh.rustup.rs -sSf | \
 ENV PATH="$HOME/.cargo/bin:${PATH}"
 RUN rustup component add rustfmt
 
+# Install additional Rust targets
+ENV CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=gcc
+ENV CARGO_TARGET_ARM_UNKNOWN_LINUX_GNUEABIHF_LINKER=arm-linux-gnueabihf-gcc
+ENV CARGO_TARGET_ARMV7_UNKNOWN_LINUX_GNUEABIHF_LINKER=arm-linux-gnueabihf-gcc
+ENV CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc
+ENV CARGO_TARGET_X86_64_APPLE_DARWIN_LINKER=o64-clang
+# The default osxcross deployment target is 10.6, which doesn't support thread local variables.
+RUN rustup target add \
+    aarch64-unknown-linux-gnu \
+    arm-unknown-linux-gnueabihf \
+    armv7-unknown-linux-gnueabihf \
+    x86_64-apple-darwin
+
 # Install wasm-pack and sccache
 RUN cargo install wasm-pack sccache
 RUN rustup component add rust-std --target wasm32-unknown-unknown
@@ -67,4 +107,3 @@ RUN rustup component add rust-std --target wasm32-unknown-unknown
 ENV RUSTC_WRAPPER=sccache
 
 WORKDIR $HOME
-

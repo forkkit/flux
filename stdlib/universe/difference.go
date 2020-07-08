@@ -1,14 +1,16 @@
 package universe
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/influxdata/flux"
 	"github.com/influxdata/flux/arrow"
+	"github.com/influxdata/flux/codes"
 	"github.com/influxdata/flux/execute"
+	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/interpreter"
 	"github.com/influxdata/flux/plan"
+	"github.com/influxdata/flux/runtime"
 	"github.com/influxdata/flux/semantic"
 )
 
@@ -21,16 +23,9 @@ type DifferenceOpSpec struct {
 }
 
 func init() {
-	differenceSignature := flux.FunctionSignature(
-		map[string]semantic.PolyType{
-			"nonNegative": semantic.Bool,
-			"columns":     semantic.NewArrayPolyType(semantic.String),
-			"keepFirst":   semantic.Bool,
-		},
-		nil,
-	)
+	differenceSignature := runtime.MustLookupBuiltinType("universe", "difference")
 
-	flux.RegisterPackageValue("universe", DifferenceKind, flux.FunctionValue(DifferenceKind, createDifferenceOpSpec, differenceSignature))
+	runtime.RegisterPackageValue("universe", DifferenceKind, flux.MustValue(flux.FunctionValue(DifferenceKind, createDifferenceOpSpec, differenceSignature)))
 	flux.RegisterOpSpec(DifferenceKind, newDifferenceOp)
 	plan.RegisterProcedureSpec(DifferenceKind, newDifferenceProcedure, DifferenceKind)
 	execute.RegisterTransformation(DifferenceKind, createDifferenceTransformation)
@@ -90,7 +85,7 @@ type DifferenceProcedureSpec struct {
 func newDifferenceProcedure(qs flux.OperationSpec, pa plan.Administration) (plan.ProcedureSpec, error) {
 	spec, ok := qs.(*DifferenceOpSpec)
 	if !ok {
-		return nil, fmt.Errorf("invalid spec type %T", qs)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", qs)
 	}
 
 	return &DifferenceProcedureSpec{
@@ -121,7 +116,7 @@ func (s *DifferenceProcedureSpec) TriggerSpec() plan.TriggerSpec {
 func createDifferenceTransformation(id execute.DatasetID, mode execute.AccumulationMode, spec plan.ProcedureSpec, a execute.Administration) (execute.Transformation, execute.Dataset, error) {
 	s, ok := spec.(*DifferenceProcedureSpec)
 	if !ok {
-		return nil, nil, fmt.Errorf("invalid spec type %T", spec)
+		return nil, nil, errors.Newf(codes.Internal, "invalid spec type %T", spec)
 	}
 	cache := execute.NewTableBuilderCache(a.Allocator())
 	d := execute.NewDataset(id, mode, cache)
@@ -155,7 +150,7 @@ func (t *differenceTransformation) RetractTable(id execute.DatasetID, key flux.G
 func (t *differenceTransformation) Process(id execute.DatasetID, tbl flux.Table) error {
 	builder, created := t.cache.TableBuilder(tbl.Key())
 	if !created {
-		return fmt.Errorf("difference found duplicate table with key: %v", tbl.Key())
+		return errors.Newf(codes.FailedPrecondition, "difference found duplicate table with key: %v", tbl.Key())
 	}
 	cols := tbl.Cols()
 	differences := make([]*difference, len(cols))
@@ -176,7 +171,7 @@ func (t *differenceTransformation) Process(id execute.DatasetID, tbl flux.Table)
 			case flux.TFloat:
 				typ = flux.TFloat
 			case flux.TTime:
-				return fmt.Errorf("difference does not support time columns. Try the elapsed function")
+				return errors.New(codes.FailedPrecondition, "difference does not support time columns. Try the elapsed function")
 			}
 			if _, err := builder.AddCol(flux.ColMeta{
 				Label: c.Label,

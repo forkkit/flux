@@ -3,12 +3,12 @@
 package secrets
 
 import (
-	flux "github.com/influxdata/flux"
 	ast "github.com/influxdata/flux/ast"
+	runtime "github.com/influxdata/flux/runtime"
 )
 
 func init() {
-	flux.RegisterPackage(pkgAST)
+	runtime.RegisterPackage(pkgAST)
 }
 
 var pkgAST = &ast.Package{
@@ -67,8 +67,9 @@ var pkgAST = &ast.Package{
 				Name: "get",
 			},
 		}},
-		Imports: nil,
-		Name:    "secrets.flux",
+		Imports:  nil,
+		Metadata: "parser-type=rust",
+		Name:     "secrets.flux",
 		Package: &ast.PackageClause{
 			BaseNode: ast.BaseNode{
 				Errors: nil,

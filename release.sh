@@ -5,15 +5,27 @@ cd $DIR
 
 set -e
 
-# Ensure that the GITHUB_TOKEN is exposed in the environment.
-if ! env | grep GITHUB_TOKEN= > /dev/null; then
-  echo "GITHUB_TOKEN must be exported in the environment to perform a release." 2>&1
-  exit 1
+remote=$(git rev-parse "@{u}") # "@{u}" gets the current upstream branch
+local=$(git rev-parse @) # '@' gets the current local branch
+
+# check if local commit syncs with remote
+if [ "$remote" != "$local" ]; then
+    echo "Error: local commit does not match remote. Exiting release script."
+    exit 1
 fi
 
-export GO111MODULE=on
+# remove any excess brackets, space/tab characters and 'origin' branch and sort the tags
+git_remote_tags () { git ls-remote --tags origin | grep -v '{}' | sort | tr -d [[:blank:]] ; }
+git_local_tags () { git show-ref --tags | grep -v '{}' | grep -v 'origin'| grep -v 'list'| sort | tr -d [[:blank:]] ; }
 
-version=$(go run github.com/influxdata/changelog nextver)
-git tag -s -m "Release $version" $version
+# check if local tags are different from remote tags
+if ! diff -q <(git_remote_tags) <(git_local_tags) &>/dev/null; then
+    echo "Error: local tags do not match remote. Exiting release script."
+    exit 1
+fi
+
+# cut the next Flux release
+version=$(./gotool.sh github.com/influxdata/changelog nextver)
+git tag -s -m "Release $version" "$version"
 git push origin "$version"
-go run github.com/goreleaser/goreleaser release --rm-dist --release-notes <(go run github.com/influxdata/changelog generate --version $version --commit-url https://github.com/influxdata/flux/commit)
+

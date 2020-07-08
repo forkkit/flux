@@ -3,11 +3,14 @@ package sql
 import (
 	"database/sql"
 	"fmt"
-	"github.com/influxdata/flux"
-	"github.com/influxdata/flux/execute"
-	"github.com/influxdata/flux/values"
 	"strconv"
 	"time"
+
+	"github.com/influxdata/flux"
+	"github.com/influxdata/flux/codes"
+	"github.com/influxdata/flux/execute"
+	"github.com/influxdata/flux/internal/errors"
+	"github.com/influxdata/flux/values"
 )
 
 type MySQLRowReader struct {
@@ -16,9 +19,10 @@ type MySQLRowReader struct {
 	columnTypes []flux.ColType
 	columnNames []string
 	NextFunc    func() bool
+	CloseFunc   func() error
 }
 
-//Prepares MySQLRowReader to return rows
+// Next prepares MySQLRowReader to return rows
 func (m *MySQLRowReader) Next() bool {
 	if m.NextFunc != nil {
 		return m.NextFunc()
@@ -122,6 +126,16 @@ func (m *MySQLRowReader) SetColumns(i []interface{}) {
 	m.columns = i
 }
 
+func (m *MySQLRowReader) Close() error {
+	if m.CloseFunc != nil {
+		return m.CloseFunc()
+	}
+	if err := m.Cursor.Err(); err != nil {
+		return err
+	}
+	return m.Cursor.Close()
+}
+
 func UInt8ToFloat(a []uint8) (float64, error) {
 	str := string(a)
 	s, err := strconv.ParseFloat(str, 64)
@@ -157,4 +171,25 @@ func NewMySQLRowReader(r *sql.Rows) (execute.RowReader, error) {
 	reader.InitColumnTypes(types)
 
 	return reader, nil
+}
+
+// MysqlTranslateColumn translates flux colTypes into their corresponding MySQL column type
+func MysqlColumnTranslateFunc() translationFunc {
+	c := map[string]string{
+		flux.TFloat.String():  "FLOAT",
+		flux.TInt.String():    "BIGINT",
+		flux.TUInt.String():   "BIGINT",
+		flux.TString.String(): "TEXT(16383)",
+		flux.TTime.String():   "DATETIME",
+		flux.TBool.String():   "BOOL",
+		// BOOL is a synonym supplied by MySQL for "convenience", and MYSQL turns this into a TINYINT type under the hood
+		// which means that looking at the schema afterwards shows the columntype as TINYINT, and not bool!
+	}
+	return func(f flux.ColType, colName string) (string, error) {
+		s, found := c[f.String()]
+		if !found {
+			return "", errors.Newf(codes.Internal, "MySQL does not support column type %s", f.String())
+		}
+		return colName + " " + s, nil
+	}
 }

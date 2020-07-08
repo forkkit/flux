@@ -17,11 +17,4185 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 			Errors: nil,
 			Loc: &ast.SourceLocation{
 				End: ast.Position{
-					Column: 112,
-					Line:   102,
+					Column: 108,
+					Line:   69,
 				},
-				File:   "measurement_tag_keys_test.flux",
-				Source: "package v1_test\n\nimport \"testing\"\n\ninput = \"\n#datatype,string,long,dateTime:RFC3339,string,string,string,double\n#group,false,false,false,true,true,true,false\n#default,_result,,,,,,\n,result,table,_time,_measurement,host,_field,_value\n,,0,2018-05-22T19:53:26Z,sys,host.local,load1,1.83\n,,0,2018-05-22T19:53:36Z,sys,host.local,load1,1.72\n,,0,2018-05-22T19:53:46Z,sys,host.local,load1,1.74\n,,0,2018-05-22T19:53:56Z,sys,host.local,load1,1.63\n,,0,2018-05-22T19:54:06Z,sys,host.local,load1,1.91\n,,0,2018-05-22T19:54:16Z,sys,host.local,load1,1.84\n\n,,1,2018-05-22T19:53:26Z,sys,host.local,load3,1.98\n,,1,2018-05-22T19:53:36Z,sys,host.local,load3,1.97\n,,1,2018-05-22T19:53:46Z,sys,host.local,load3,1.97\n,,1,2018-05-22T19:53:56Z,sys,host.local,load3,1.96\n,,1,2018-05-22T19:54:06Z,sys,host.local,load3,1.98\n,,1,2018-05-22T19:54:16Z,sys,host.local,load3,1.97\n\n,,2,2018-05-22T19:53:26Z,sys,host.local,load5,1.95\n,,2,2018-05-22T19:53:36Z,sys,host.local,load5,1.92\n,,2,2018-05-22T19:53:46Z,sys,host.local,load5,1.92\n,,2,2018-05-22T19:53:56Z,sys,host.local,load5,1.89\n,,2,2018-05-22T19:54:06Z,sys,host.local,load5,1.94\n,,2,2018-05-22T19:54:16Z,sys,host.local,load5,1.93\n\n#datatype,string,long,dateTime:RFC3339,string,string,string,string,long\n#group,false,false,false,true,true,true,true,false\n#default,_result,,,,,,,\n,result,table,_time,_measurement,reg,host,_field,_value\n,,0,2018-05-22T19:53:26Z,swp,us-east,host.local,load1,10\n,,0,2018-05-22T19:53:36Z,swp,us-east,host.local,load1,11\n,,0,2018-05-22T19:53:46Z,swp,us-east,host.local,load1,18\n,,0,2018-05-22T19:53:56Z,swp,us-east,host.local,load1,19\n,,0,2018-05-22T19:54:06Z,swp,us-east,host.local,load1,17\n,,0,2018-05-22T19:54:16Z,swp,us-east,host.local,load1,17\n\n#datatype,string,long,dateTime:RFC3339,string,string,string,string,long\n#group,false,false,false,true,true,true,true,false\n#default,_result,,,,,,,\n,result,table,_time,_measurement,region,host,_field,_value\n,,0,2018-05-22T19:53:26Z,swp,us-east,host.global,load1,10\n,,0,2018-05-22T19:53:36Z,swp,us-east,host.global,load1,11\n,,0,2018-05-22T19:53:46Z,swp,us-east,host.global,load1,18\n,,0,2018-05-22T19:53:56Z,swp,us-east,host.global,load1,19\n,,0,2018-05-22T19:54:06Z,swp,us-east,host.global,load1,17\n,,0,2018-05-22T19:54:16Z,swp,us-east,host.global,load1,17\n\n,,1,2018-05-22T19:53:26Z,swp,us-east,host.global,load3,16\n,,1,2018-05-22T19:53:36Z,swp,us-east,host.global,load3,16\n,,1,2018-05-22T19:53:46Z,swp,us-east,host.global,load3,15\n,,1,2018-05-22T19:53:56Z,swp,us-east,host.global,load3,19\n,,1,2018-05-22T19:54:06Z,swp,us-east,host.global,load3,19\n,,1,2018-05-22T19:54:16Z,swp,us-east,host.global,load3,19\n\n,,2,2018-05-22T19:53:26Z,swp,us-east,host.global,load5,19\n,,2,2018-05-22T19:53:36Z,swp,us-east,host.global,load5,22\n,,2,2018-05-22T19:53:46Z,swp,us-east,host.global,load5,11\n,,2,2018-05-22T19:53:56Z,swp,us-east,host.global,load5,12\n,,2,2018-05-22T19:54:06Z,swp,us-east,host.global,load5,13\n,,2,2018-05-22T19:54:16Z,swp,us-east,host.global,load5,13\n\n#datatype,string,long,dateTime:RFC3339,string,string,string,string,double\n#group,false,false,false,true,true,true,true,false\n#default,_result,,,,,,,\n,result,table,_time,_measurement,region,host,_field,_value\n,,0,2018-05-22T19:53:26Z,swp,us-east,host.global,load2,10.003\n,,0,2018-05-22T19:53:36Z,swp,us-east,host.global,load2,11.873\n,,0,2018-05-22T19:53:46Z,swp,us-east,host.global,load2,18.832\n,,0,2018-05-22T19:53:56Z,swp,us-east,host.global,load2,19.777\n,,0,2018-05-22T19:54:06Z,swp,us-east,host.global,load2,17.190\n,,0,2018-05-22T19:54:16Z,swp,us-east,host.global,load2,17.192\n\"\n\noutput = \"\n#datatype,string,long,string\n#group,false,false,false\n#default,0,,\n,result,table,_value\n,,0,_field\n,,0,_measurement\n,,0,_start\n,,0,_stop\n,,0,host\n,,0,region\n\"\n\nmeasurement_tag_keys_fn = (tables=<-) => tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => r._measurement == \"swp\")\n    |> filter(fn: (r) => r.host == \"host.global\")\n    |> keys()\n    |> keep(columns: [\"_value\"])\n    |> distinct()\n    |> sort()\n\ntest measurement_tag_keys = () =>\n    ({input: testing.loadStorage(csv: input), want: testing.loadMem(csv: output), fn: measurement_tag_keys_fn})",
+				File:   "influxFieldsAsCols_test.flux",
+				Source: "package v1_test\n \nimport \"testing\"\nimport \"influxdata/influxdb/v1\"\n\noption now = () => (2030-01-01T00:00:00Z)\n\ninData = \"\n#datatype,string,long,dateTime:RFC3339,double,string,string,string\n#group,false,false,false,false,true,true,true\n#default,_result,,,,,,\n,result,table,_time,_value,_field,_measurement,host\n,,0,2018-05-22T19:53:26Z,1.83,load1,system,host.local\n,,0,2018-05-22T19:53:36Z,1.7,load1,system,host.local\n,,0,2018-05-22T19:53:46Z,1.74,load1,system,host.local\n,,0,2018-05-22T19:53:56Z,1.63,load1,system,host.local\n,,0,2018-05-22T19:54:06Z,1.91,load1,system,host.local\n,,0,2018-05-22T19:54:16Z,1.84,load1,system,host.local\n,,1,2018-05-22T19:53:26Z,1.98,load15,system,host.local\n,,1,2018-05-22T19:53:36Z,1.97,load15,system,host.local\n,,1,2018-05-22T19:53:46Z,1.97,load15,system,host.local\n,,1,2018-05-22T19:53:56Z,1.96,load15,system,host.local\n,,1,2018-05-22T19:54:06Z,1.98,load15,system,host.local\n,,1,2018-05-22T19:54:16Z,1.97,load15,system,host.local\n,,2,2018-05-22T19:53:26Z,1.95,load5,system,host.local\n,,2,2018-05-22T19:53:36Z,1.92,load5,system,host.local\n,,2,2018-05-22T19:53:46Z,1.92,load5,system,host.local\n,,2,2018-05-22T19:53:56Z,1.89,load5,system,host.local\n,,2,2018-05-22T19:54:06Z,1.94,load5,system,host.local\n,,2,2018-05-22T19:54:16Z,1.93,load5,system,host.local\n,,3,2018-05-22T19:53:26Z,82.9833984375,used_percent,swap,host.local\n,,3,2018-05-22T19:53:36Z,82.598876953125,used_percent,swap,host.local\n,,3,2018-05-22T19:53:46Z,82.598876953125,used_percent,swap,host.local\n,,3,2018-05-22T19:53:56Z,82.598876953125,used_percent,swap,host.local\n,,3,2018-05-22T19:54:06Z,82.598876953125,used_percent,swap,host.local\n,,3,2018-05-22T19:54:16Z,82.6416015625,used_percent,swap,host.local\n\"\n\noutData = \"\n#datatype,string,long,dateTime:RFC3339,dateTime:RFC3339,dateTime:RFC3339,string,string,double\n#group,false,false,true,true,false,true,true,false\n#default,0,,,,,,,\n,result,table,_start,_stop,_time,_measurement,host,used_percent\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:26Z,swap,host.local,82.9833984375\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:36Z,swap,host.local,82.598876953125\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:46Z,swap,host.local,82.598876953125\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:56Z,swap,host.local,82.598876953125\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:06Z,swap,host.local,82.598876953125\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:16Z,swap,host.local,82.6416015625\n#datatype,string,long,dateTime:RFC3339,dateTime:RFC3339,dateTime:RFC3339,string,string,double,double,double\n#group,false,false,true,true,false,true,true,false,false,false\n#default,0,,,,,,,,,\n,result,table,_start,_stop,_time,_measurement,host,load1,load15,load5\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:26Z,system,host.local,1.83,1.98,1.95\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:36Z,system,host.local,1.7,1.97,1.92\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:46Z,system,host.local,1.74,1.97,1.92\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:56Z,system,host.local,1.63,1.96,1.89\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:06Z,system,host.local,1.91,1.98,1.94\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:16Z,system,host.local,1.84,1.97,1.93\n\"\n\nt_influxFieldsAsCols = (table=<-) =>\n\t(table\n\t\t|> range(start: 2018-05-22T19:53:26Z, stop: 2018-05-22T19:54:17Z)\n\t\t|> v1.fieldsAsCols()\n\t\t|> yield(name: \"0\"))\n\ntest _influxFieldsAsCols = () =>\n\t({input: testing.loadStorage(csv: inData), want: testing.loadMem(csv: outData), fn: t_influxFieldsAsCols})",
+				Start: ast.Position{
+					Column: 1,
+					Line:   1,
+				},
+			},
+		},
+		Body: []ast.Statement{&ast.OptionStatement{
+			Assignment: &ast.VariableAssignment{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 42,
+							Line:   6,
+						},
+						File:   "influxFieldsAsCols_test.flux",
+						Source: "now = () => (2030-01-01T00:00:00Z)",
+						Start: ast.Position{
+							Column: 8,
+							Line:   6,
+						},
+					},
+				},
+				ID: &ast.Identifier{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 11,
+								Line:   6,
+							},
+							File:   "influxFieldsAsCols_test.flux",
+							Source: "now",
+							Start: ast.Position{
+								Column: 8,
+								Line:   6,
+							},
+						},
+					},
+					Name: "now",
+				},
+				Init: &ast.FunctionExpression{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 42,
+								Line:   6,
+							},
+							File:   "influxFieldsAsCols_test.flux",
+							Source: "() => (2030-01-01T00:00:00Z)",
+							Start: ast.Position{
+								Column: 14,
+								Line:   6,
+							},
+						},
+					},
+					Body: &ast.ParenExpression{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 42,
+									Line:   6,
+								},
+								File:   "influxFieldsAsCols_test.flux",
+								Source: "(2030-01-01T00:00:00Z)",
+								Start: ast.Position{
+									Column: 20,
+									Line:   6,
+								},
+							},
+						},
+						Expression: &ast.DateTimeLiteral{
+							BaseNode: ast.BaseNode{
+								Errors: nil,
+								Loc: &ast.SourceLocation{
+									End: ast.Position{
+										Column: 41,
+										Line:   6,
+									},
+									File:   "influxFieldsAsCols_test.flux",
+									Source: "2030-01-01T00:00:00Z",
+									Start: ast.Position{
+										Column: 21,
+										Line:   6,
+									},
+								},
+							},
+							Value: parser.MustParseTime("2030-01-01T00:00:00Z"),
+						},
+					},
+					Params: nil,
+				},
+			},
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 42,
+						Line:   6,
+					},
+					File:   "influxFieldsAsCols_test.flux",
+					Source: "option now = () => (2030-01-01T00:00:00Z)",
+					Start: ast.Position{
+						Column: 1,
+						Line:   6,
+					},
+				},
+			},
+		}, &ast.VariableAssignment{
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 2,
+						Line:   37,
+					},
+					File:   "influxFieldsAsCols_test.flux",
+					Source: "inData = \"\n#datatype,string,long,dateTime:RFC3339,double,string,string,string\n#group,false,false,false,false,true,true,true\n#default,_result,,,,,,\n,result,table,_time,_value,_field,_measurement,host\n,,0,2018-05-22T19:53:26Z,1.83,load1,system,host.local\n,,0,2018-05-22T19:53:36Z,1.7,load1,system,host.local\n,,0,2018-05-22T19:53:46Z,1.74,load1,system,host.local\n,,0,2018-05-22T19:53:56Z,1.63,load1,system,host.local\n,,0,2018-05-22T19:54:06Z,1.91,load1,system,host.local\n,,0,2018-05-22T19:54:16Z,1.84,load1,system,host.local\n,,1,2018-05-22T19:53:26Z,1.98,load15,system,host.local\n,,1,2018-05-22T19:53:36Z,1.97,load15,system,host.local\n,,1,2018-05-22T19:53:46Z,1.97,load15,system,host.local\n,,1,2018-05-22T19:53:56Z,1.96,load15,system,host.local\n,,1,2018-05-22T19:54:06Z,1.98,load15,system,host.local\n,,1,2018-05-22T19:54:16Z,1.97,load15,system,host.local\n,,2,2018-05-22T19:53:26Z,1.95,load5,system,host.local\n,,2,2018-05-22T19:53:36Z,1.92,load5,system,host.local\n,,2,2018-05-22T19:53:46Z,1.92,load5,system,host.local\n,,2,2018-05-22T19:53:56Z,1.89,load5,system,host.local\n,,2,2018-05-22T19:54:06Z,1.94,load5,system,host.local\n,,2,2018-05-22T19:54:16Z,1.93,load5,system,host.local\n,,3,2018-05-22T19:53:26Z,82.9833984375,used_percent,swap,host.local\n,,3,2018-05-22T19:53:36Z,82.598876953125,used_percent,swap,host.local\n,,3,2018-05-22T19:53:46Z,82.598876953125,used_percent,swap,host.local\n,,3,2018-05-22T19:53:56Z,82.598876953125,used_percent,swap,host.local\n,,3,2018-05-22T19:54:06Z,82.598876953125,used_percent,swap,host.local\n,,3,2018-05-22T19:54:16Z,82.6416015625,used_percent,swap,host.local\n\"",
+					Start: ast.Position{
+						Column: 1,
+						Line:   8,
+					},
+				},
+			},
+			ID: &ast.Identifier{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 7,
+							Line:   8,
+						},
+						File:   "influxFieldsAsCols_test.flux",
+						Source: "inData",
+						Start: ast.Position{
+							Column: 1,
+							Line:   8,
+						},
+					},
+				},
+				Name: "inData",
+			},
+			Init: &ast.StringLiteral{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 2,
+							Line:   37,
+						},
+						File:   "influxFieldsAsCols_test.flux",
+						Source: "\"\n#datatype,string,long,dateTime:RFC3339,double,string,string,string\n#group,false,false,false,false,true,true,true\n#default,_result,,,,,,\n,result,table,_time,_value,_field,_measurement,host\n,,0,2018-05-22T19:53:26Z,1.83,load1,system,host.local\n,,0,2018-05-22T19:53:36Z,1.7,load1,system,host.local\n,,0,2018-05-22T19:53:46Z,1.74,load1,system,host.local\n,,0,2018-05-22T19:53:56Z,1.63,load1,system,host.local\n,,0,2018-05-22T19:54:06Z,1.91,load1,system,host.local\n,,0,2018-05-22T19:54:16Z,1.84,load1,system,host.local\n,,1,2018-05-22T19:53:26Z,1.98,load15,system,host.local\n,,1,2018-05-22T19:53:36Z,1.97,load15,system,host.local\n,,1,2018-05-22T19:53:46Z,1.97,load15,system,host.local\n,,1,2018-05-22T19:53:56Z,1.96,load15,system,host.local\n,,1,2018-05-22T19:54:06Z,1.98,load15,system,host.local\n,,1,2018-05-22T19:54:16Z,1.97,load15,system,host.local\n,,2,2018-05-22T19:53:26Z,1.95,load5,system,host.local\n,,2,2018-05-22T19:53:36Z,1.92,load5,system,host.local\n,,2,2018-05-22T19:53:46Z,1.92,load5,system,host.local\n,,2,2018-05-22T19:53:56Z,1.89,load5,system,host.local\n,,2,2018-05-22T19:54:06Z,1.94,load5,system,host.local\n,,2,2018-05-22T19:54:16Z,1.93,load5,system,host.local\n,,3,2018-05-22T19:53:26Z,82.9833984375,used_percent,swap,host.local\n,,3,2018-05-22T19:53:36Z,82.598876953125,used_percent,swap,host.local\n,,3,2018-05-22T19:53:46Z,82.598876953125,used_percent,swap,host.local\n,,3,2018-05-22T19:53:56Z,82.598876953125,used_percent,swap,host.local\n,,3,2018-05-22T19:54:06Z,82.598876953125,used_percent,swap,host.local\n,,3,2018-05-22T19:54:16Z,82.6416015625,used_percent,swap,host.local\n\"",
+						Start: ast.Position{
+							Column: 10,
+							Line:   8,
+						},
+					},
+				},
+				Value: "\n#datatype,string,long,dateTime:RFC3339,double,string,string,string\n#group,false,false,false,false,true,true,true\n#default,_result,,,,,,\n,result,table,_time,_value,_field,_measurement,host\n,,0,2018-05-22T19:53:26Z,1.83,load1,system,host.local\n,,0,2018-05-22T19:53:36Z,1.7,load1,system,host.local\n,,0,2018-05-22T19:53:46Z,1.74,load1,system,host.local\n,,0,2018-05-22T19:53:56Z,1.63,load1,system,host.local\n,,0,2018-05-22T19:54:06Z,1.91,load1,system,host.local\n,,0,2018-05-22T19:54:16Z,1.84,load1,system,host.local\n,,1,2018-05-22T19:53:26Z,1.98,load15,system,host.local\n,,1,2018-05-22T19:53:36Z,1.97,load15,system,host.local\n,,1,2018-05-22T19:53:46Z,1.97,load15,system,host.local\n,,1,2018-05-22T19:53:56Z,1.96,load15,system,host.local\n,,1,2018-05-22T19:54:06Z,1.98,load15,system,host.local\n,,1,2018-05-22T19:54:16Z,1.97,load15,system,host.local\n,,2,2018-05-22T19:53:26Z,1.95,load5,system,host.local\n,,2,2018-05-22T19:53:36Z,1.92,load5,system,host.local\n,,2,2018-05-22T19:53:46Z,1.92,load5,system,host.local\n,,2,2018-05-22T19:53:56Z,1.89,load5,system,host.local\n,,2,2018-05-22T19:54:06Z,1.94,load5,system,host.local\n,,2,2018-05-22T19:54:16Z,1.93,load5,system,host.local\n,,3,2018-05-22T19:53:26Z,82.9833984375,used_percent,swap,host.local\n,,3,2018-05-22T19:53:36Z,82.598876953125,used_percent,swap,host.local\n,,3,2018-05-22T19:53:46Z,82.598876953125,used_percent,swap,host.local\n,,3,2018-05-22T19:53:56Z,82.598876953125,used_percent,swap,host.local\n,,3,2018-05-22T19:54:06Z,82.598876953125,used_percent,swap,host.local\n,,3,2018-05-22T19:54:16Z,82.6416015625,used_percent,swap,host.local\n",
+			},
+		}, &ast.VariableAssignment{
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 2,
+						Line:   60,
+					},
+					File:   "influxFieldsAsCols_test.flux",
+					Source: "outData = \"\n#datatype,string,long,dateTime:RFC3339,dateTime:RFC3339,dateTime:RFC3339,string,string,double\n#group,false,false,true,true,false,true,true,false\n#default,0,,,,,,,\n,result,table,_start,_stop,_time,_measurement,host,used_percent\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:26Z,swap,host.local,82.9833984375\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:36Z,swap,host.local,82.598876953125\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:46Z,swap,host.local,82.598876953125\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:56Z,swap,host.local,82.598876953125\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:06Z,swap,host.local,82.598876953125\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:16Z,swap,host.local,82.6416015625\n#datatype,string,long,dateTime:RFC3339,dateTime:RFC3339,dateTime:RFC3339,string,string,double,double,double\n#group,false,false,true,true,false,true,true,false,false,false\n#default,0,,,,,,,,,\n,result,table,_start,_stop,_time,_measurement,host,load1,load15,load5\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:26Z,system,host.local,1.83,1.98,1.95\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:36Z,system,host.local,1.7,1.97,1.92\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:46Z,system,host.local,1.74,1.97,1.92\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:56Z,system,host.local,1.63,1.96,1.89\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:06Z,system,host.local,1.91,1.98,1.94\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:16Z,system,host.local,1.84,1.97,1.93\n\"",
+					Start: ast.Position{
+						Column: 1,
+						Line:   39,
+					},
+				},
+			},
+			ID: &ast.Identifier{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 8,
+							Line:   39,
+						},
+						File:   "influxFieldsAsCols_test.flux",
+						Source: "outData",
+						Start: ast.Position{
+							Column: 1,
+							Line:   39,
+						},
+					},
+				},
+				Name: "outData",
+			},
+			Init: &ast.StringLiteral{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 2,
+							Line:   60,
+						},
+						File:   "influxFieldsAsCols_test.flux",
+						Source: "\"\n#datatype,string,long,dateTime:RFC3339,dateTime:RFC3339,dateTime:RFC3339,string,string,double\n#group,false,false,true,true,false,true,true,false\n#default,0,,,,,,,\n,result,table,_start,_stop,_time,_measurement,host,used_percent\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:26Z,swap,host.local,82.9833984375\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:36Z,swap,host.local,82.598876953125\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:46Z,swap,host.local,82.598876953125\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:56Z,swap,host.local,82.598876953125\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:06Z,swap,host.local,82.598876953125\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:16Z,swap,host.local,82.6416015625\n#datatype,string,long,dateTime:RFC3339,dateTime:RFC3339,dateTime:RFC3339,string,string,double,double,double\n#group,false,false,true,true,false,true,true,false,false,false\n#default,0,,,,,,,,,\n,result,table,_start,_stop,_time,_measurement,host,load1,load15,load5\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:26Z,system,host.local,1.83,1.98,1.95\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:36Z,system,host.local,1.7,1.97,1.92\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:46Z,system,host.local,1.74,1.97,1.92\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:56Z,system,host.local,1.63,1.96,1.89\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:06Z,system,host.local,1.91,1.98,1.94\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:16Z,system,host.local,1.84,1.97,1.93\n\"",
+						Start: ast.Position{
+							Column: 11,
+							Line:   39,
+						},
+					},
+				},
+				Value: "\n#datatype,string,long,dateTime:RFC3339,dateTime:RFC3339,dateTime:RFC3339,string,string,double\n#group,false,false,true,true,false,true,true,false\n#default,0,,,,,,,\n,result,table,_start,_stop,_time,_measurement,host,used_percent\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:26Z,swap,host.local,82.9833984375\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:36Z,swap,host.local,82.598876953125\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:46Z,swap,host.local,82.598876953125\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:56Z,swap,host.local,82.598876953125\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:06Z,swap,host.local,82.598876953125\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:16Z,swap,host.local,82.6416015625\n#datatype,string,long,dateTime:RFC3339,dateTime:RFC3339,dateTime:RFC3339,string,string,double,double,double\n#group,false,false,true,true,false,true,true,false,false,false\n#default,0,,,,,,,,,\n,result,table,_start,_stop,_time,_measurement,host,load1,load15,load5\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:26Z,system,host.local,1.83,1.98,1.95\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:36Z,system,host.local,1.7,1.97,1.92\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:46Z,system,host.local,1.74,1.97,1.92\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:56Z,system,host.local,1.63,1.96,1.89\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:06Z,system,host.local,1.91,1.98,1.94\n,,1,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:16Z,system,host.local,1.84,1.97,1.93\n",
+			},
+		}, &ast.VariableAssignment{
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 23,
+						Line:   66,
+					},
+					File:   "influxFieldsAsCols_test.flux",
+					Source: "t_influxFieldsAsCols = (table=<-) =>\n\t(table\n\t\t|> range(start: 2018-05-22T19:53:26Z, stop: 2018-05-22T19:54:17Z)\n\t\t|> v1.fieldsAsCols()\n\t\t|> yield(name: \"0\"))",
+					Start: ast.Position{
+						Column: 1,
+						Line:   62,
+					},
+				},
+			},
+			ID: &ast.Identifier{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 21,
+							Line:   62,
+						},
+						File:   "influxFieldsAsCols_test.flux",
+						Source: "t_influxFieldsAsCols",
+						Start: ast.Position{
+							Column: 1,
+							Line:   62,
+						},
+					},
+				},
+				Name: "t_influxFieldsAsCols",
+			},
+			Init: &ast.FunctionExpression{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 23,
+							Line:   66,
+						},
+						File:   "influxFieldsAsCols_test.flux",
+						Source: "(table=<-) =>\n\t(table\n\t\t|> range(start: 2018-05-22T19:53:26Z, stop: 2018-05-22T19:54:17Z)\n\t\t|> v1.fieldsAsCols()\n\t\t|> yield(name: \"0\"))",
+						Start: ast.Position{
+							Column: 24,
+							Line:   62,
+						},
+					},
+				},
+				Body: &ast.ParenExpression{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 23,
+								Line:   66,
+							},
+							File:   "influxFieldsAsCols_test.flux",
+							Source: "(table\n\t\t|> range(start: 2018-05-22T19:53:26Z, stop: 2018-05-22T19:54:17Z)\n\t\t|> v1.fieldsAsCols()\n\t\t|> yield(name: \"0\"))",
+							Start: ast.Position{
+								Column: 2,
+								Line:   63,
+							},
+						},
+					},
+					Expression: &ast.PipeExpression{
+						Argument: &ast.PipeExpression{
+							Argument: &ast.PipeExpression{
+								Argument: &ast.Identifier{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 8,
+												Line:   63,
+											},
+											File:   "influxFieldsAsCols_test.flux",
+											Source: "table",
+											Start: ast.Position{
+												Column: 3,
+												Line:   63,
+											},
+										},
+									},
+									Name: "table",
+								},
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 68,
+											Line:   64,
+										},
+										File:   "influxFieldsAsCols_test.flux",
+										Source: "table\n\t\t|> range(start: 2018-05-22T19:53:26Z, stop: 2018-05-22T19:54:17Z)",
+										Start: ast.Position{
+											Column: 3,
+											Line:   63,
+										},
+									},
+								},
+								Call: &ast.CallExpression{
+									Arguments: []ast.Expression{&ast.ObjectExpression{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 67,
+													Line:   64,
+												},
+												File:   "influxFieldsAsCols_test.flux",
+												Source: "start: 2018-05-22T19:53:26Z, stop: 2018-05-22T19:54:17Z",
+												Start: ast.Position{
+													Column: 12,
+													Line:   64,
+												},
+											},
+										},
+										Properties: []*ast.Property{&ast.Property{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 39,
+														Line:   64,
+													},
+													File:   "influxFieldsAsCols_test.flux",
+													Source: "start: 2018-05-22T19:53:26Z",
+													Start: ast.Position{
+														Column: 12,
+														Line:   64,
+													},
+												},
+											},
+											Key: &ast.Identifier{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 17,
+															Line:   64,
+														},
+														File:   "influxFieldsAsCols_test.flux",
+														Source: "start",
+														Start: ast.Position{
+															Column: 12,
+															Line:   64,
+														},
+													},
+												},
+												Name: "start",
+											},
+											Value: &ast.DateTimeLiteral{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 39,
+															Line:   64,
+														},
+														File:   "influxFieldsAsCols_test.flux",
+														Source: "2018-05-22T19:53:26Z",
+														Start: ast.Position{
+															Column: 19,
+															Line:   64,
+														},
+													},
+												},
+												Value: parser.MustParseTime("2018-05-22T19:53:26Z"),
+											},
+										}, &ast.Property{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 67,
+														Line:   64,
+													},
+													File:   "influxFieldsAsCols_test.flux",
+													Source: "stop: 2018-05-22T19:54:17Z",
+													Start: ast.Position{
+														Column: 41,
+														Line:   64,
+													},
+												},
+											},
+											Key: &ast.Identifier{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 45,
+															Line:   64,
+														},
+														File:   "influxFieldsAsCols_test.flux",
+														Source: "stop",
+														Start: ast.Position{
+															Column: 41,
+															Line:   64,
+														},
+													},
+												},
+												Name: "stop",
+											},
+											Value: &ast.DateTimeLiteral{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 67,
+															Line:   64,
+														},
+														File:   "influxFieldsAsCols_test.flux",
+														Source: "2018-05-22T19:54:17Z",
+														Start: ast.Position{
+															Column: 47,
+															Line:   64,
+														},
+													},
+												},
+												Value: parser.MustParseTime("2018-05-22T19:54:17Z"),
+											},
+										}},
+										With: nil,
+									}},
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 68,
+												Line:   64,
+											},
+											File:   "influxFieldsAsCols_test.flux",
+											Source: "range(start: 2018-05-22T19:53:26Z, stop: 2018-05-22T19:54:17Z)",
+											Start: ast.Position{
+												Column: 6,
+												Line:   64,
+											},
+										},
+									},
+									Callee: &ast.Identifier{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 11,
+													Line:   64,
+												},
+												File:   "influxFieldsAsCols_test.flux",
+												Source: "range",
+												Start: ast.Position{
+													Column: 6,
+													Line:   64,
+												},
+											},
+										},
+										Name: "range",
+									},
+								},
+							},
+							BaseNode: ast.BaseNode{
+								Errors: nil,
+								Loc: &ast.SourceLocation{
+									End: ast.Position{
+										Column: 23,
+										Line:   65,
+									},
+									File:   "influxFieldsAsCols_test.flux",
+									Source: "table\n\t\t|> range(start: 2018-05-22T19:53:26Z, stop: 2018-05-22T19:54:17Z)\n\t\t|> v1.fieldsAsCols()",
+									Start: ast.Position{
+										Column: 3,
+										Line:   63,
+									},
+								},
+							},
+							Call: &ast.CallExpression{
+								Arguments: nil,
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 23,
+											Line:   65,
+										},
+										File:   "influxFieldsAsCols_test.flux",
+										Source: "v1.fieldsAsCols()",
+										Start: ast.Position{
+											Column: 6,
+											Line:   65,
+										},
+									},
+								},
+								Callee: &ast.MemberExpression{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 21,
+												Line:   65,
+											},
+											File:   "influxFieldsAsCols_test.flux",
+											Source: "v1.fieldsAsCols",
+											Start: ast.Position{
+												Column: 6,
+												Line:   65,
+											},
+										},
+									},
+									Object: &ast.Identifier{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 8,
+													Line:   65,
+												},
+												File:   "influxFieldsAsCols_test.flux",
+												Source: "v1",
+												Start: ast.Position{
+													Column: 6,
+													Line:   65,
+												},
+											},
+										},
+										Name: "v1",
+									},
+									Property: &ast.Identifier{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 21,
+													Line:   65,
+												},
+												File:   "influxFieldsAsCols_test.flux",
+												Source: "fieldsAsCols",
+												Start: ast.Position{
+													Column: 9,
+													Line:   65,
+												},
+											},
+										},
+										Name: "fieldsAsCols",
+									},
+								},
+							},
+						},
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 22,
+									Line:   66,
+								},
+								File:   "influxFieldsAsCols_test.flux",
+								Source: "table\n\t\t|> range(start: 2018-05-22T19:53:26Z, stop: 2018-05-22T19:54:17Z)\n\t\t|> v1.fieldsAsCols()\n\t\t|> yield(name: \"0\")",
+								Start: ast.Position{
+									Column: 3,
+									Line:   63,
+								},
+							},
+						},
+						Call: &ast.CallExpression{
+							Arguments: []ast.Expression{&ast.ObjectExpression{
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 21,
+											Line:   66,
+										},
+										File:   "influxFieldsAsCols_test.flux",
+										Source: "name: \"0\"",
+										Start: ast.Position{
+											Column: 12,
+											Line:   66,
+										},
+									},
+								},
+								Properties: []*ast.Property{&ast.Property{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 21,
+												Line:   66,
+											},
+											File:   "influxFieldsAsCols_test.flux",
+											Source: "name: \"0\"",
+											Start: ast.Position{
+												Column: 12,
+												Line:   66,
+											},
+										},
+									},
+									Key: &ast.Identifier{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 16,
+													Line:   66,
+												},
+												File:   "influxFieldsAsCols_test.flux",
+												Source: "name",
+												Start: ast.Position{
+													Column: 12,
+													Line:   66,
+												},
+											},
+										},
+										Name: "name",
+									},
+									Value: &ast.StringLiteral{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 21,
+													Line:   66,
+												},
+												File:   "influxFieldsAsCols_test.flux",
+												Source: "\"0\"",
+												Start: ast.Position{
+													Column: 18,
+													Line:   66,
+												},
+											},
+										},
+										Value: "0",
+									},
+								}},
+								With: nil,
+							}},
+							BaseNode: ast.BaseNode{
+								Errors: nil,
+								Loc: &ast.SourceLocation{
+									End: ast.Position{
+										Column: 22,
+										Line:   66,
+									},
+									File:   "influxFieldsAsCols_test.flux",
+									Source: "yield(name: \"0\")",
+									Start: ast.Position{
+										Column: 6,
+										Line:   66,
+									},
+								},
+							},
+							Callee: &ast.Identifier{
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 11,
+											Line:   66,
+										},
+										File:   "influxFieldsAsCols_test.flux",
+										Source: "yield",
+										Start: ast.Position{
+											Column: 6,
+											Line:   66,
+										},
+									},
+								},
+								Name: "yield",
+							},
+						},
+					},
+				},
+				Params: []*ast.Property{&ast.Property{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 33,
+								Line:   62,
+							},
+							File:   "influxFieldsAsCols_test.flux",
+							Source: "table=<-",
+							Start: ast.Position{
+								Column: 25,
+								Line:   62,
+							},
+						},
+					},
+					Key: &ast.Identifier{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 30,
+									Line:   62,
+								},
+								File:   "influxFieldsAsCols_test.flux",
+								Source: "table",
+								Start: ast.Position{
+									Column: 25,
+									Line:   62,
+								},
+							},
+						},
+						Name: "table",
+					},
+					Value: &ast.PipeLiteral{BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 33,
+								Line:   62,
+							},
+							File:   "influxFieldsAsCols_test.flux",
+							Source: "<-",
+							Start: ast.Position{
+								Column: 31,
+								Line:   62,
+							},
+						},
+					}},
+				}},
+			},
+		}, &ast.TestStatement{
+			Assignment: &ast.VariableAssignment{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 108,
+							Line:   69,
+						},
+						File:   "influxFieldsAsCols_test.flux",
+						Source: "_influxFieldsAsCols = () =>\n\t({input: testing.loadStorage(csv: inData), want: testing.loadMem(csv: outData), fn: t_influxFieldsAsCols})",
+						Start: ast.Position{
+							Column: 6,
+							Line:   68,
+						},
+					},
+				},
+				ID: &ast.Identifier{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 25,
+								Line:   68,
+							},
+							File:   "influxFieldsAsCols_test.flux",
+							Source: "_influxFieldsAsCols",
+							Start: ast.Position{
+								Column: 6,
+								Line:   68,
+							},
+						},
+					},
+					Name: "_influxFieldsAsCols",
+				},
+				Init: &ast.FunctionExpression{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 108,
+								Line:   69,
+							},
+							File:   "influxFieldsAsCols_test.flux",
+							Source: "() =>\n\t({input: testing.loadStorage(csv: inData), want: testing.loadMem(csv: outData), fn: t_influxFieldsAsCols})",
+							Start: ast.Position{
+								Column: 28,
+								Line:   68,
+							},
+						},
+					},
+					Body: &ast.ParenExpression{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 108,
+									Line:   69,
+								},
+								File:   "influxFieldsAsCols_test.flux",
+								Source: "({input: testing.loadStorage(csv: inData), want: testing.loadMem(csv: outData), fn: t_influxFieldsAsCols})",
+								Start: ast.Position{
+									Column: 2,
+									Line:   69,
+								},
+							},
+						},
+						Expression: &ast.ObjectExpression{
+							BaseNode: ast.BaseNode{
+								Errors: nil,
+								Loc: &ast.SourceLocation{
+									End: ast.Position{
+										Column: 107,
+										Line:   69,
+									},
+									File:   "influxFieldsAsCols_test.flux",
+									Source: "{input: testing.loadStorage(csv: inData), want: testing.loadMem(csv: outData), fn: t_influxFieldsAsCols}",
+									Start: ast.Position{
+										Column: 3,
+										Line:   69,
+									},
+								},
+							},
+							Properties: []*ast.Property{&ast.Property{
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 43,
+											Line:   69,
+										},
+										File:   "influxFieldsAsCols_test.flux",
+										Source: "input: testing.loadStorage(csv: inData)",
+										Start: ast.Position{
+											Column: 4,
+											Line:   69,
+										},
+									},
+								},
+								Key: &ast.Identifier{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 9,
+												Line:   69,
+											},
+											File:   "influxFieldsAsCols_test.flux",
+											Source: "input",
+											Start: ast.Position{
+												Column: 4,
+												Line:   69,
+											},
+										},
+									},
+									Name: "input",
+								},
+								Value: &ast.CallExpression{
+									Arguments: []ast.Expression{&ast.ObjectExpression{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 42,
+													Line:   69,
+												},
+												File:   "influxFieldsAsCols_test.flux",
+												Source: "csv: inData",
+												Start: ast.Position{
+													Column: 31,
+													Line:   69,
+												},
+											},
+										},
+										Properties: []*ast.Property{&ast.Property{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 42,
+														Line:   69,
+													},
+													File:   "influxFieldsAsCols_test.flux",
+													Source: "csv: inData",
+													Start: ast.Position{
+														Column: 31,
+														Line:   69,
+													},
+												},
+											},
+											Key: &ast.Identifier{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 34,
+															Line:   69,
+														},
+														File:   "influxFieldsAsCols_test.flux",
+														Source: "csv",
+														Start: ast.Position{
+															Column: 31,
+															Line:   69,
+														},
+													},
+												},
+												Name: "csv",
+											},
+											Value: &ast.Identifier{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 42,
+															Line:   69,
+														},
+														File:   "influxFieldsAsCols_test.flux",
+														Source: "inData",
+														Start: ast.Position{
+															Column: 36,
+															Line:   69,
+														},
+													},
+												},
+												Name: "inData",
+											},
+										}},
+										With: nil,
+									}},
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 43,
+												Line:   69,
+											},
+											File:   "influxFieldsAsCols_test.flux",
+											Source: "testing.loadStorage(csv: inData)",
+											Start: ast.Position{
+												Column: 11,
+												Line:   69,
+											},
+										},
+									},
+									Callee: &ast.MemberExpression{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 30,
+													Line:   69,
+												},
+												File:   "influxFieldsAsCols_test.flux",
+												Source: "testing.loadStorage",
+												Start: ast.Position{
+													Column: 11,
+													Line:   69,
+												},
+											},
+										},
+										Object: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 18,
+														Line:   69,
+													},
+													File:   "influxFieldsAsCols_test.flux",
+													Source: "testing",
+													Start: ast.Position{
+														Column: 11,
+														Line:   69,
+													},
+												},
+											},
+											Name: "testing",
+										},
+										Property: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 30,
+														Line:   69,
+													},
+													File:   "influxFieldsAsCols_test.flux",
+													Source: "loadStorage",
+													Start: ast.Position{
+														Column: 19,
+														Line:   69,
+													},
+												},
+											},
+											Name: "loadStorage",
+										},
+									},
+								},
+							}, &ast.Property{
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 80,
+											Line:   69,
+										},
+										File:   "influxFieldsAsCols_test.flux",
+										Source: "want: testing.loadMem(csv: outData)",
+										Start: ast.Position{
+											Column: 45,
+											Line:   69,
+										},
+									},
+								},
+								Key: &ast.Identifier{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 49,
+												Line:   69,
+											},
+											File:   "influxFieldsAsCols_test.flux",
+											Source: "want",
+											Start: ast.Position{
+												Column: 45,
+												Line:   69,
+											},
+										},
+									},
+									Name: "want",
+								},
+								Value: &ast.CallExpression{
+									Arguments: []ast.Expression{&ast.ObjectExpression{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 79,
+													Line:   69,
+												},
+												File:   "influxFieldsAsCols_test.flux",
+												Source: "csv: outData",
+												Start: ast.Position{
+													Column: 67,
+													Line:   69,
+												},
+											},
+										},
+										Properties: []*ast.Property{&ast.Property{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 79,
+														Line:   69,
+													},
+													File:   "influxFieldsAsCols_test.flux",
+													Source: "csv: outData",
+													Start: ast.Position{
+														Column: 67,
+														Line:   69,
+													},
+												},
+											},
+											Key: &ast.Identifier{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 70,
+															Line:   69,
+														},
+														File:   "influxFieldsAsCols_test.flux",
+														Source: "csv",
+														Start: ast.Position{
+															Column: 67,
+															Line:   69,
+														},
+													},
+												},
+												Name: "csv",
+											},
+											Value: &ast.Identifier{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 79,
+															Line:   69,
+														},
+														File:   "influxFieldsAsCols_test.flux",
+														Source: "outData",
+														Start: ast.Position{
+															Column: 72,
+															Line:   69,
+														},
+													},
+												},
+												Name: "outData",
+											},
+										}},
+										With: nil,
+									}},
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 80,
+												Line:   69,
+											},
+											File:   "influxFieldsAsCols_test.flux",
+											Source: "testing.loadMem(csv: outData)",
+											Start: ast.Position{
+												Column: 51,
+												Line:   69,
+											},
+										},
+									},
+									Callee: &ast.MemberExpression{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 66,
+													Line:   69,
+												},
+												File:   "influxFieldsAsCols_test.flux",
+												Source: "testing.loadMem",
+												Start: ast.Position{
+													Column: 51,
+													Line:   69,
+												},
+											},
+										},
+										Object: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 58,
+														Line:   69,
+													},
+													File:   "influxFieldsAsCols_test.flux",
+													Source: "testing",
+													Start: ast.Position{
+														Column: 51,
+														Line:   69,
+													},
+												},
+											},
+											Name: "testing",
+										},
+										Property: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 66,
+														Line:   69,
+													},
+													File:   "influxFieldsAsCols_test.flux",
+													Source: "loadMem",
+													Start: ast.Position{
+														Column: 59,
+														Line:   69,
+													},
+												},
+											},
+											Name: "loadMem",
+										},
+									},
+								},
+							}, &ast.Property{
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 106,
+											Line:   69,
+										},
+										File:   "influxFieldsAsCols_test.flux",
+										Source: "fn: t_influxFieldsAsCols",
+										Start: ast.Position{
+											Column: 82,
+											Line:   69,
+										},
+									},
+								},
+								Key: &ast.Identifier{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 84,
+												Line:   69,
+											},
+											File:   "influxFieldsAsCols_test.flux",
+											Source: "fn",
+											Start: ast.Position{
+												Column: 82,
+												Line:   69,
+											},
+										},
+									},
+									Name: "fn",
+								},
+								Value: &ast.Identifier{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 106,
+												Line:   69,
+											},
+											File:   "influxFieldsAsCols_test.flux",
+											Source: "t_influxFieldsAsCols",
+											Start: ast.Position{
+												Column: 86,
+												Line:   69,
+											},
+										},
+									},
+									Name: "t_influxFieldsAsCols",
+								},
+							}},
+							With: nil,
+						},
+					},
+					Params: nil,
+				},
+			},
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 108,
+						Line:   69,
+					},
+					File:   "influxFieldsAsCols_test.flux",
+					Source: "test _influxFieldsAsCols = () =>\n\t({input: testing.loadStorage(csv: inData), want: testing.loadMem(csv: outData), fn: t_influxFieldsAsCols})",
+					Start: ast.Position{
+						Column: 1,
+						Line:   68,
+					},
+				},
+			},
+		}},
+		Imports: []*ast.ImportDeclaration{&ast.ImportDeclaration{
+			As: nil,
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 17,
+						Line:   3,
+					},
+					File:   "influxFieldsAsCols_test.flux",
+					Source: "import \"testing\"",
+					Start: ast.Position{
+						Column: 1,
+						Line:   3,
+					},
+				},
+			},
+			Path: &ast.StringLiteral{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 17,
+							Line:   3,
+						},
+						File:   "influxFieldsAsCols_test.flux",
+						Source: "\"testing\"",
+						Start: ast.Position{
+							Column: 8,
+							Line:   3,
+						},
+					},
+				},
+				Value: "testing",
+			},
+		}, &ast.ImportDeclaration{
+			As: nil,
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 32,
+						Line:   4,
+					},
+					File:   "influxFieldsAsCols_test.flux",
+					Source: "import \"influxdata/influxdb/v1\"",
+					Start: ast.Position{
+						Column: 1,
+						Line:   4,
+					},
+				},
+			},
+			Path: &ast.StringLiteral{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 32,
+							Line:   4,
+						},
+						File:   "influxFieldsAsCols_test.flux",
+						Source: "\"influxdata/influxdb/v1\"",
+						Start: ast.Position{
+							Column: 8,
+							Line:   4,
+						},
+					},
+				},
+				Value: "influxdata/influxdb/v1",
+			},
+		}},
+		Metadata: "parser-type=rust",
+		Name:     "influxFieldsAsCols_test.flux",
+		Package: &ast.PackageClause{
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 16,
+						Line:   1,
+					},
+					File:   "influxFieldsAsCols_test.flux",
+					Source: "package v1_test",
+					Start: ast.Position{
+						Column: 1,
+						Line:   1,
+					},
+				},
+			},
+			Name: &ast.Identifier{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 16,
+							Line:   1,
+						},
+						File:   "influxFieldsAsCols_test.flux",
+						Source: "v1_test",
+						Start: ast.Position{
+							Column: 9,
+							Line:   1,
+						},
+					},
+				},
+				Name: "v1_test",
+			},
+		},
+	}, &ast.File{
+		BaseNode: ast.BaseNode{
+			Errors: nil,
+			Loc: &ast.SourceLocation{
+				End: ast.Position{
+					Column: 3,
+					Line:   58,
+				},
+				File:   "influxRawQuery_test.flux",
+				Source: "package v1_test\n\nimport \"testing\"\nimport \"influxdata/influxdb/v1\"\n\noption now = () => 2030-01-01T00:00:00Z\n\ninData = \"\n#datatype,string,long,dateTime:RFC3339,double,string,string,string\n#group,false,false,false,false,true,true,true\n#default,_result,,,,,,\n,result,table,_time,_value,_field,_measurement,host\n,,0,2018-05-22T19:53:26Z,1.83,load1,system,host.local\n,,0,2018-05-22T19:53:36Z,1.7,load1,system,host.local\n,,0,2018-05-22T19:53:46Z,1.74,load1,system,host.local\n,,0,2018-05-22T19:53:56Z,1.63,load1,system,host.local\n,,0,2018-05-22T19:54:06Z,1.91,load1,system,host.local\n,,0,2018-05-22T19:54:16Z,1.84,load1,system,host.local\n,,1,2018-05-22T19:53:26Z,1.98,load15,system,host.local\n,,1,2018-05-22T19:53:36Z,1.97,load15,system,host.local\n,,1,2018-05-22T19:53:46Z,1.97,load15,system,host.local\n,,1,2018-05-22T19:53:56Z,1.96,load15,system,host.local\n,,1,2018-05-22T19:54:06Z,1.98,load15,system,host.local\n,,1,2018-05-22T19:54:16Z,1.97,load15,system,host.local\n,,2,2018-05-22T19:53:26Z,1.95,load5,system,host.local\n,,2,2018-05-22T19:53:36Z,1.92,load5,system,host.local\n,,2,2018-05-22T19:53:46Z,1.92,load5,system,host.local\n,,2,2018-05-22T19:53:56Z,1.89,load5,system,host.local\n,,2,2018-05-22T19:54:06Z,1.94,load5,system,host.local\n,,2,2018-05-22T19:54:16Z,1.93,load5,system,host.local\n\"\noutData = \"\n#datatype,string,long,dateTime:RFC3339,dateTime:RFC3339,dateTime:RFC3339,string,string,double,double,double\n#group,false,false,true,true,false,true,true,false,false,false\n#default,0,,,,,,,,,\n,result,table,_start,_stop,_time,_measurement,host,load1,load15,load5\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:26Z,system,host.local,1.83,1.98,1.95\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:36Z,system,host.local,1.7,1.97,1.92\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:46Z,system,host.local,1.74,1.97,1.92\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:56Z,system,host.local,1.63,1.96,1.89\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:06Z,system,host.local,1.91,1.98,1.94\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:16Z,system,host.local,1.84,1.97,1.93\n\"\n\n// select load1, load15\nrawQuery = (stream=<-, start, stop, measurement, fields=[], groupBy=[\"_time\", \"_value\"], groupMode=\"except\", every=inf, period=0s) =>\n  stream\n    |> range(start:start, stop: stop)\n    |> filter(fn: (r) => r._measurement == measurement and contains(value: r._field, set: fields))\n    |> group(columns: groupBy, mode:groupMode)\n    |> v1.fieldsAsCols()\n    |> window(every: every, period: period)\n\ntest influx_raw_query = () => ({\n    input: testing.loadStorage(csv: inData),\n    want: testing.loadMem(csv: outData),\n    fn: (table=<-) => table |> rawQuery(measurement: \"system\",fields: [\"load1\", \"load15\", \"load5\"], start: 2018-05-22T19:53:26Z, stop: 2018-05-22T19:54:17Z)\n})",
+				Start: ast.Position{
+					Column: 1,
+					Line:   1,
+				},
+			},
+		},
+		Body: []ast.Statement{&ast.OptionStatement{
+			Assignment: &ast.VariableAssignment{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 40,
+							Line:   6,
+						},
+						File:   "influxRawQuery_test.flux",
+						Source: "now = () => 2030-01-01T00:00:00Z",
+						Start: ast.Position{
+							Column: 8,
+							Line:   6,
+						},
+					},
+				},
+				ID: &ast.Identifier{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 11,
+								Line:   6,
+							},
+							File:   "influxRawQuery_test.flux",
+							Source: "now",
+							Start: ast.Position{
+								Column: 8,
+								Line:   6,
+							},
+						},
+					},
+					Name: "now",
+				},
+				Init: &ast.FunctionExpression{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 40,
+								Line:   6,
+							},
+							File:   "influxRawQuery_test.flux",
+							Source: "() => 2030-01-01T00:00:00Z",
+							Start: ast.Position{
+								Column: 14,
+								Line:   6,
+							},
+						},
+					},
+					Body: &ast.DateTimeLiteral{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 40,
+									Line:   6,
+								},
+								File:   "influxRawQuery_test.flux",
+								Source: "2030-01-01T00:00:00Z",
+								Start: ast.Position{
+									Column: 20,
+									Line:   6,
+								},
+							},
+						},
+						Value: parser.MustParseTime("2030-01-01T00:00:00Z"),
+					},
+					Params: nil,
+				},
+			},
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 40,
+						Line:   6,
+					},
+					File:   "influxRawQuery_test.flux",
+					Source: "option now = () => 2030-01-01T00:00:00Z",
+					Start: ast.Position{
+						Column: 1,
+						Line:   6,
+					},
+				},
+			},
+		}, &ast.VariableAssignment{
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 2,
+						Line:   31,
+					},
+					File:   "influxRawQuery_test.flux",
+					Source: "inData = \"\n#datatype,string,long,dateTime:RFC3339,double,string,string,string\n#group,false,false,false,false,true,true,true\n#default,_result,,,,,,\n,result,table,_time,_value,_field,_measurement,host\n,,0,2018-05-22T19:53:26Z,1.83,load1,system,host.local\n,,0,2018-05-22T19:53:36Z,1.7,load1,system,host.local\n,,0,2018-05-22T19:53:46Z,1.74,load1,system,host.local\n,,0,2018-05-22T19:53:56Z,1.63,load1,system,host.local\n,,0,2018-05-22T19:54:06Z,1.91,load1,system,host.local\n,,0,2018-05-22T19:54:16Z,1.84,load1,system,host.local\n,,1,2018-05-22T19:53:26Z,1.98,load15,system,host.local\n,,1,2018-05-22T19:53:36Z,1.97,load15,system,host.local\n,,1,2018-05-22T19:53:46Z,1.97,load15,system,host.local\n,,1,2018-05-22T19:53:56Z,1.96,load15,system,host.local\n,,1,2018-05-22T19:54:06Z,1.98,load15,system,host.local\n,,1,2018-05-22T19:54:16Z,1.97,load15,system,host.local\n,,2,2018-05-22T19:53:26Z,1.95,load5,system,host.local\n,,2,2018-05-22T19:53:36Z,1.92,load5,system,host.local\n,,2,2018-05-22T19:53:46Z,1.92,load5,system,host.local\n,,2,2018-05-22T19:53:56Z,1.89,load5,system,host.local\n,,2,2018-05-22T19:54:06Z,1.94,load5,system,host.local\n,,2,2018-05-22T19:54:16Z,1.93,load5,system,host.local\n\"",
+					Start: ast.Position{
+						Column: 1,
+						Line:   8,
+					},
+				},
+			},
+			ID: &ast.Identifier{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 7,
+							Line:   8,
+						},
+						File:   "influxRawQuery_test.flux",
+						Source: "inData",
+						Start: ast.Position{
+							Column: 1,
+							Line:   8,
+						},
+					},
+				},
+				Name: "inData",
+			},
+			Init: &ast.StringLiteral{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 2,
+							Line:   31,
+						},
+						File:   "influxRawQuery_test.flux",
+						Source: "\"\n#datatype,string,long,dateTime:RFC3339,double,string,string,string\n#group,false,false,false,false,true,true,true\n#default,_result,,,,,,\n,result,table,_time,_value,_field,_measurement,host\n,,0,2018-05-22T19:53:26Z,1.83,load1,system,host.local\n,,0,2018-05-22T19:53:36Z,1.7,load1,system,host.local\n,,0,2018-05-22T19:53:46Z,1.74,load1,system,host.local\n,,0,2018-05-22T19:53:56Z,1.63,load1,system,host.local\n,,0,2018-05-22T19:54:06Z,1.91,load1,system,host.local\n,,0,2018-05-22T19:54:16Z,1.84,load1,system,host.local\n,,1,2018-05-22T19:53:26Z,1.98,load15,system,host.local\n,,1,2018-05-22T19:53:36Z,1.97,load15,system,host.local\n,,1,2018-05-22T19:53:46Z,1.97,load15,system,host.local\n,,1,2018-05-22T19:53:56Z,1.96,load15,system,host.local\n,,1,2018-05-22T19:54:06Z,1.98,load15,system,host.local\n,,1,2018-05-22T19:54:16Z,1.97,load15,system,host.local\n,,2,2018-05-22T19:53:26Z,1.95,load5,system,host.local\n,,2,2018-05-22T19:53:36Z,1.92,load5,system,host.local\n,,2,2018-05-22T19:53:46Z,1.92,load5,system,host.local\n,,2,2018-05-22T19:53:56Z,1.89,load5,system,host.local\n,,2,2018-05-22T19:54:06Z,1.94,load5,system,host.local\n,,2,2018-05-22T19:54:16Z,1.93,load5,system,host.local\n\"",
+						Start: ast.Position{
+							Column: 10,
+							Line:   8,
+						},
+					},
+				},
+				Value: "\n#datatype,string,long,dateTime:RFC3339,double,string,string,string\n#group,false,false,false,false,true,true,true\n#default,_result,,,,,,\n,result,table,_time,_value,_field,_measurement,host\n,,0,2018-05-22T19:53:26Z,1.83,load1,system,host.local\n,,0,2018-05-22T19:53:36Z,1.7,load1,system,host.local\n,,0,2018-05-22T19:53:46Z,1.74,load1,system,host.local\n,,0,2018-05-22T19:53:56Z,1.63,load1,system,host.local\n,,0,2018-05-22T19:54:06Z,1.91,load1,system,host.local\n,,0,2018-05-22T19:54:16Z,1.84,load1,system,host.local\n,,1,2018-05-22T19:53:26Z,1.98,load15,system,host.local\n,,1,2018-05-22T19:53:36Z,1.97,load15,system,host.local\n,,1,2018-05-22T19:53:46Z,1.97,load15,system,host.local\n,,1,2018-05-22T19:53:56Z,1.96,load15,system,host.local\n,,1,2018-05-22T19:54:06Z,1.98,load15,system,host.local\n,,1,2018-05-22T19:54:16Z,1.97,load15,system,host.local\n,,2,2018-05-22T19:53:26Z,1.95,load5,system,host.local\n,,2,2018-05-22T19:53:36Z,1.92,load5,system,host.local\n,,2,2018-05-22T19:53:46Z,1.92,load5,system,host.local\n,,2,2018-05-22T19:53:56Z,1.89,load5,system,host.local\n,,2,2018-05-22T19:54:06Z,1.94,load5,system,host.local\n,,2,2018-05-22T19:54:16Z,1.93,load5,system,host.local\n",
+			},
+		}, &ast.VariableAssignment{
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 2,
+						Line:   43,
+					},
+					File:   "influxRawQuery_test.flux",
+					Source: "outData = \"\n#datatype,string,long,dateTime:RFC3339,dateTime:RFC3339,dateTime:RFC3339,string,string,double,double,double\n#group,false,false,true,true,false,true,true,false,false,false\n#default,0,,,,,,,,,\n,result,table,_start,_stop,_time,_measurement,host,load1,load15,load5\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:26Z,system,host.local,1.83,1.98,1.95\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:36Z,system,host.local,1.7,1.97,1.92\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:46Z,system,host.local,1.74,1.97,1.92\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:56Z,system,host.local,1.63,1.96,1.89\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:06Z,system,host.local,1.91,1.98,1.94\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:16Z,system,host.local,1.84,1.97,1.93\n\"",
+					Start: ast.Position{
+						Column: 1,
+						Line:   32,
+					},
+				},
+			},
+			ID: &ast.Identifier{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 8,
+							Line:   32,
+						},
+						File:   "influxRawQuery_test.flux",
+						Source: "outData",
+						Start: ast.Position{
+							Column: 1,
+							Line:   32,
+						},
+					},
+				},
+				Name: "outData",
+			},
+			Init: &ast.StringLiteral{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 2,
+							Line:   43,
+						},
+						File:   "influxRawQuery_test.flux",
+						Source: "\"\n#datatype,string,long,dateTime:RFC3339,dateTime:RFC3339,dateTime:RFC3339,string,string,double,double,double\n#group,false,false,true,true,false,true,true,false,false,false\n#default,0,,,,,,,,,\n,result,table,_start,_stop,_time,_measurement,host,load1,load15,load5\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:26Z,system,host.local,1.83,1.98,1.95\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:36Z,system,host.local,1.7,1.97,1.92\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:46Z,system,host.local,1.74,1.97,1.92\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:56Z,system,host.local,1.63,1.96,1.89\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:06Z,system,host.local,1.91,1.98,1.94\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:16Z,system,host.local,1.84,1.97,1.93\n\"",
+						Start: ast.Position{
+							Column: 11,
+							Line:   32,
+						},
+					},
+				},
+				Value: "\n#datatype,string,long,dateTime:RFC3339,dateTime:RFC3339,dateTime:RFC3339,string,string,double,double,double\n#group,false,false,true,true,false,true,true,false,false,false\n#default,0,,,,,,,,,\n,result,table,_start,_stop,_time,_measurement,host,load1,load15,load5\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:26Z,system,host.local,1.83,1.98,1.95\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:36Z,system,host.local,1.7,1.97,1.92\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:46Z,system,host.local,1.74,1.97,1.92\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:53:56Z,system,host.local,1.63,1.96,1.89\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:06Z,system,host.local,1.91,1.98,1.94\n,,0,2018-05-22T19:53:26Z,2018-05-22T19:54:17Z,2018-05-22T19:54:16Z,system,host.local,1.84,1.97,1.93\n",
+			},
+		}, &ast.VariableAssignment{
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 44,
+						Line:   52,
+					},
+					File:   "influxRawQuery_test.flux",
+					Source: "rawQuery = (stream=<-, start, stop, measurement, fields=[], groupBy=[\"_time\", \"_value\"], groupMode=\"except\", every=inf, period=0s) =>\n  stream\n    |> range(start:start, stop: stop)\n    |> filter(fn: (r) => r._measurement == measurement and contains(value: r._field, set: fields))\n    |> group(columns: groupBy, mode:groupMode)\n    |> v1.fieldsAsCols()\n    |> window(every: every, period: period)",
+					Start: ast.Position{
+						Column: 1,
+						Line:   46,
+					},
+				},
+			},
+			ID: &ast.Identifier{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 9,
+							Line:   46,
+						},
+						File:   "influxRawQuery_test.flux",
+						Source: "rawQuery",
+						Start: ast.Position{
+							Column: 1,
+							Line:   46,
+						},
+					},
+				},
+				Name: "rawQuery",
+			},
+			Init: &ast.FunctionExpression{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 44,
+							Line:   52,
+						},
+						File:   "influxRawQuery_test.flux",
+						Source: "(stream=<-, start, stop, measurement, fields=[], groupBy=[\"_time\", \"_value\"], groupMode=\"except\", every=inf, period=0s) =>\n  stream\n    |> range(start:start, stop: stop)\n    |> filter(fn: (r) => r._measurement == measurement and contains(value: r._field, set: fields))\n    |> group(columns: groupBy, mode:groupMode)\n    |> v1.fieldsAsCols()\n    |> window(every: every, period: period)",
+						Start: ast.Position{
+							Column: 12,
+							Line:   46,
+						},
+					},
+				},
+				Body: &ast.PipeExpression{
+					Argument: &ast.PipeExpression{
+						Argument: &ast.PipeExpression{
+							Argument: &ast.PipeExpression{
+								Argument: &ast.PipeExpression{
+									Argument: &ast.Identifier{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 9,
+													Line:   47,
+												},
+												File:   "influxRawQuery_test.flux",
+												Source: "stream",
+												Start: ast.Position{
+													Column: 3,
+													Line:   47,
+												},
+											},
+										},
+										Name: "stream",
+									},
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 38,
+												Line:   48,
+											},
+											File:   "influxRawQuery_test.flux",
+											Source: "stream\n    |> range(start:start, stop: stop)",
+											Start: ast.Position{
+												Column: 3,
+												Line:   47,
+											},
+										},
+									},
+									Call: &ast.CallExpression{
+										Arguments: []ast.Expression{&ast.ObjectExpression{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 37,
+														Line:   48,
+													},
+													File:   "influxRawQuery_test.flux",
+													Source: "start:start, stop: stop",
+													Start: ast.Position{
+														Column: 14,
+														Line:   48,
+													},
+												},
+											},
+											Properties: []*ast.Property{&ast.Property{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 25,
+															Line:   48,
+														},
+														File:   "influxRawQuery_test.flux",
+														Source: "start:start",
+														Start: ast.Position{
+															Column: 14,
+															Line:   48,
+														},
+													},
+												},
+												Key: &ast.Identifier{
+													BaseNode: ast.BaseNode{
+														Errors: nil,
+														Loc: &ast.SourceLocation{
+															End: ast.Position{
+																Column: 19,
+																Line:   48,
+															},
+															File:   "influxRawQuery_test.flux",
+															Source: "start",
+															Start: ast.Position{
+																Column: 14,
+																Line:   48,
+															},
+														},
+													},
+													Name: "start",
+												},
+												Value: &ast.Identifier{
+													BaseNode: ast.BaseNode{
+														Errors: nil,
+														Loc: &ast.SourceLocation{
+															End: ast.Position{
+																Column: 25,
+																Line:   48,
+															},
+															File:   "influxRawQuery_test.flux",
+															Source: "start",
+															Start: ast.Position{
+																Column: 20,
+																Line:   48,
+															},
+														},
+													},
+													Name: "start",
+												},
+											}, &ast.Property{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 37,
+															Line:   48,
+														},
+														File:   "influxRawQuery_test.flux",
+														Source: "stop: stop",
+														Start: ast.Position{
+															Column: 27,
+															Line:   48,
+														},
+													},
+												},
+												Key: &ast.Identifier{
+													BaseNode: ast.BaseNode{
+														Errors: nil,
+														Loc: &ast.SourceLocation{
+															End: ast.Position{
+																Column: 31,
+																Line:   48,
+															},
+															File:   "influxRawQuery_test.flux",
+															Source: "stop",
+															Start: ast.Position{
+																Column: 27,
+																Line:   48,
+															},
+														},
+													},
+													Name: "stop",
+												},
+												Value: &ast.Identifier{
+													BaseNode: ast.BaseNode{
+														Errors: nil,
+														Loc: &ast.SourceLocation{
+															End: ast.Position{
+																Column: 37,
+																Line:   48,
+															},
+															File:   "influxRawQuery_test.flux",
+															Source: "stop",
+															Start: ast.Position{
+																Column: 33,
+																Line:   48,
+															},
+														},
+													},
+													Name: "stop",
+												},
+											}},
+											With: nil,
+										}},
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 38,
+													Line:   48,
+												},
+												File:   "influxRawQuery_test.flux",
+												Source: "range(start:start, stop: stop)",
+												Start: ast.Position{
+													Column: 8,
+													Line:   48,
+												},
+											},
+										},
+										Callee: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 13,
+														Line:   48,
+													},
+													File:   "influxRawQuery_test.flux",
+													Source: "range",
+													Start: ast.Position{
+														Column: 8,
+														Line:   48,
+													},
+												},
+											},
+											Name: "range",
+										},
+									},
+								},
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 99,
+											Line:   49,
+										},
+										File:   "influxRawQuery_test.flux",
+										Source: "stream\n    |> range(start:start, stop: stop)\n    |> filter(fn: (r) => r._measurement == measurement and contains(value: r._field, set: fields))",
+										Start: ast.Position{
+											Column: 3,
+											Line:   47,
+										},
+									},
+								},
+								Call: &ast.CallExpression{
+									Arguments: []ast.Expression{&ast.ObjectExpression{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 98,
+													Line:   49,
+												},
+												File:   "influxRawQuery_test.flux",
+												Source: "fn: (r) => r._measurement == measurement and contains(value: r._field, set: fields)",
+												Start: ast.Position{
+													Column: 15,
+													Line:   49,
+												},
+											},
+										},
+										Properties: []*ast.Property{&ast.Property{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 98,
+														Line:   49,
+													},
+													File:   "influxRawQuery_test.flux",
+													Source: "fn: (r) => r._measurement == measurement and contains(value: r._field, set: fields)",
+													Start: ast.Position{
+														Column: 15,
+														Line:   49,
+													},
+												},
+											},
+											Key: &ast.Identifier{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 17,
+															Line:   49,
+														},
+														File:   "influxRawQuery_test.flux",
+														Source: "fn",
+														Start: ast.Position{
+															Column: 15,
+															Line:   49,
+														},
+													},
+												},
+												Name: "fn",
+											},
+											Value: &ast.FunctionExpression{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 98,
+															Line:   49,
+														},
+														File:   "influxRawQuery_test.flux",
+														Source: "(r) => r._measurement == measurement and contains(value: r._field, set: fields)",
+														Start: ast.Position{
+															Column: 19,
+															Line:   49,
+														},
+													},
+												},
+												Body: &ast.LogicalExpression{
+													BaseNode: ast.BaseNode{
+														Errors: nil,
+														Loc: &ast.SourceLocation{
+															End: ast.Position{
+																Column: 98,
+																Line:   49,
+															},
+															File:   "influxRawQuery_test.flux",
+															Source: "r._measurement == measurement and contains(value: r._field, set: fields)",
+															Start: ast.Position{
+																Column: 26,
+																Line:   49,
+															},
+														},
+													},
+													Left: &ast.BinaryExpression{
+														BaseNode: ast.BaseNode{
+															Errors: nil,
+															Loc: &ast.SourceLocation{
+																End: ast.Position{
+																	Column: 55,
+																	Line:   49,
+																},
+																File:   "influxRawQuery_test.flux",
+																Source: "r._measurement == measurement",
+																Start: ast.Position{
+																	Column: 26,
+																	Line:   49,
+																},
+															},
+														},
+														Left: &ast.MemberExpression{
+															BaseNode: ast.BaseNode{
+																Errors: nil,
+																Loc: &ast.SourceLocation{
+																	End: ast.Position{
+																		Column: 40,
+																		Line:   49,
+																	},
+																	File:   "influxRawQuery_test.flux",
+																	Source: "r._measurement",
+																	Start: ast.Position{
+																		Column: 26,
+																		Line:   49,
+																	},
+																},
+															},
+															Object: &ast.Identifier{
+																BaseNode: ast.BaseNode{
+																	Errors: nil,
+																	Loc: &ast.SourceLocation{
+																		End: ast.Position{
+																			Column: 27,
+																			Line:   49,
+																		},
+																		File:   "influxRawQuery_test.flux",
+																		Source: "r",
+																		Start: ast.Position{
+																			Column: 26,
+																			Line:   49,
+																		},
+																	},
+																},
+																Name: "r",
+															},
+															Property: &ast.Identifier{
+																BaseNode: ast.BaseNode{
+																	Errors: nil,
+																	Loc: &ast.SourceLocation{
+																		End: ast.Position{
+																			Column: 40,
+																			Line:   49,
+																		},
+																		File:   "influxRawQuery_test.flux",
+																		Source: "_measurement",
+																		Start: ast.Position{
+																			Column: 28,
+																			Line:   49,
+																		},
+																	},
+																},
+																Name: "_measurement",
+															},
+														},
+														Operator: 17,
+														Right: &ast.Identifier{
+															BaseNode: ast.BaseNode{
+																Errors: nil,
+																Loc: &ast.SourceLocation{
+																	End: ast.Position{
+																		Column: 55,
+																		Line:   49,
+																	},
+																	File:   "influxRawQuery_test.flux",
+																	Source: "measurement",
+																	Start: ast.Position{
+																		Column: 44,
+																		Line:   49,
+																	},
+																},
+															},
+															Name: "measurement",
+														},
+													},
+													Operator: 1,
+													Right: &ast.CallExpression{
+														Arguments: []ast.Expression{&ast.ObjectExpression{
+															BaseNode: ast.BaseNode{
+																Errors: nil,
+																Loc: &ast.SourceLocation{
+																	End: ast.Position{
+																		Column: 97,
+																		Line:   49,
+																	},
+																	File:   "influxRawQuery_test.flux",
+																	Source: "value: r._field, set: fields",
+																	Start: ast.Position{
+																		Column: 69,
+																		Line:   49,
+																	},
+																},
+															},
+															Properties: []*ast.Property{&ast.Property{
+																BaseNode: ast.BaseNode{
+																	Errors: nil,
+																	Loc: &ast.SourceLocation{
+																		End: ast.Position{
+																			Column: 84,
+																			Line:   49,
+																		},
+																		File:   "influxRawQuery_test.flux",
+																		Source: "value: r._field",
+																		Start: ast.Position{
+																			Column: 69,
+																			Line:   49,
+																		},
+																	},
+																},
+																Key: &ast.Identifier{
+																	BaseNode: ast.BaseNode{
+																		Errors: nil,
+																		Loc: &ast.SourceLocation{
+																			End: ast.Position{
+																				Column: 74,
+																				Line:   49,
+																			},
+																			File:   "influxRawQuery_test.flux",
+																			Source: "value",
+																			Start: ast.Position{
+																				Column: 69,
+																				Line:   49,
+																			},
+																		},
+																	},
+																	Name: "value",
+																},
+																Value: &ast.MemberExpression{
+																	BaseNode: ast.BaseNode{
+																		Errors: nil,
+																		Loc: &ast.SourceLocation{
+																			End: ast.Position{
+																				Column: 84,
+																				Line:   49,
+																			},
+																			File:   "influxRawQuery_test.flux",
+																			Source: "r._field",
+																			Start: ast.Position{
+																				Column: 76,
+																				Line:   49,
+																			},
+																		},
+																	},
+																	Object: &ast.Identifier{
+																		BaseNode: ast.BaseNode{
+																			Errors: nil,
+																			Loc: &ast.SourceLocation{
+																				End: ast.Position{
+																					Column: 77,
+																					Line:   49,
+																				},
+																				File:   "influxRawQuery_test.flux",
+																				Source: "r",
+																				Start: ast.Position{
+																					Column: 76,
+																					Line:   49,
+																				},
+																			},
+																		},
+																		Name: "r",
+																	},
+																	Property: &ast.Identifier{
+																		BaseNode: ast.BaseNode{
+																			Errors: nil,
+																			Loc: &ast.SourceLocation{
+																				End: ast.Position{
+																					Column: 84,
+																					Line:   49,
+																				},
+																				File:   "influxRawQuery_test.flux",
+																				Source: "_field",
+																				Start: ast.Position{
+																					Column: 78,
+																					Line:   49,
+																				},
+																			},
+																		},
+																		Name: "_field",
+																	},
+																},
+															}, &ast.Property{
+																BaseNode: ast.BaseNode{
+																	Errors: nil,
+																	Loc: &ast.SourceLocation{
+																		End: ast.Position{
+																			Column: 97,
+																			Line:   49,
+																		},
+																		File:   "influxRawQuery_test.flux",
+																		Source: "set: fields",
+																		Start: ast.Position{
+																			Column: 86,
+																			Line:   49,
+																		},
+																	},
+																},
+																Key: &ast.Identifier{
+																	BaseNode: ast.BaseNode{
+																		Errors: nil,
+																		Loc: &ast.SourceLocation{
+																			End: ast.Position{
+																				Column: 89,
+																				Line:   49,
+																			},
+																			File:   "influxRawQuery_test.flux",
+																			Source: "set",
+																			Start: ast.Position{
+																				Column: 86,
+																				Line:   49,
+																			},
+																		},
+																	},
+																	Name: "set",
+																},
+																Value: &ast.Identifier{
+																	BaseNode: ast.BaseNode{
+																		Errors: nil,
+																		Loc: &ast.SourceLocation{
+																			End: ast.Position{
+																				Column: 97,
+																				Line:   49,
+																			},
+																			File:   "influxRawQuery_test.flux",
+																			Source: "fields",
+																			Start: ast.Position{
+																				Column: 91,
+																				Line:   49,
+																			},
+																		},
+																	},
+																	Name: "fields",
+																},
+															}},
+															With: nil,
+														}},
+														BaseNode: ast.BaseNode{
+															Errors: nil,
+															Loc: &ast.SourceLocation{
+																End: ast.Position{
+																	Column: 98,
+																	Line:   49,
+																},
+																File:   "influxRawQuery_test.flux",
+																Source: "contains(value: r._field, set: fields)",
+																Start: ast.Position{
+																	Column: 60,
+																	Line:   49,
+																},
+															},
+														},
+														Callee: &ast.Identifier{
+															BaseNode: ast.BaseNode{
+																Errors: nil,
+																Loc: &ast.SourceLocation{
+																	End: ast.Position{
+																		Column: 68,
+																		Line:   49,
+																	},
+																	File:   "influxRawQuery_test.flux",
+																	Source: "contains",
+																	Start: ast.Position{
+																		Column: 60,
+																		Line:   49,
+																	},
+																},
+															},
+															Name: "contains",
+														},
+													},
+												},
+												Params: []*ast.Property{&ast.Property{
+													BaseNode: ast.BaseNode{
+														Errors: nil,
+														Loc: &ast.SourceLocation{
+															End: ast.Position{
+																Column: 21,
+																Line:   49,
+															},
+															File:   "influxRawQuery_test.flux",
+															Source: "r",
+															Start: ast.Position{
+																Column: 20,
+																Line:   49,
+															},
+														},
+													},
+													Key: &ast.Identifier{
+														BaseNode: ast.BaseNode{
+															Errors: nil,
+															Loc: &ast.SourceLocation{
+																End: ast.Position{
+																	Column: 21,
+																	Line:   49,
+																},
+																File:   "influxRawQuery_test.flux",
+																Source: "r",
+																Start: ast.Position{
+																	Column: 20,
+																	Line:   49,
+																},
+															},
+														},
+														Name: "r",
+													},
+													Value: nil,
+												}},
+											},
+										}},
+										With: nil,
+									}},
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 99,
+												Line:   49,
+											},
+											File:   "influxRawQuery_test.flux",
+											Source: "filter(fn: (r) => r._measurement == measurement and contains(value: r._field, set: fields))",
+											Start: ast.Position{
+												Column: 8,
+												Line:   49,
+											},
+										},
+									},
+									Callee: &ast.Identifier{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 14,
+													Line:   49,
+												},
+												File:   "influxRawQuery_test.flux",
+												Source: "filter",
+												Start: ast.Position{
+													Column: 8,
+													Line:   49,
+												},
+											},
+										},
+										Name: "filter",
+									},
+								},
+							},
+							BaseNode: ast.BaseNode{
+								Errors: nil,
+								Loc: &ast.SourceLocation{
+									End: ast.Position{
+										Column: 47,
+										Line:   50,
+									},
+									File:   "influxRawQuery_test.flux",
+									Source: "stream\n    |> range(start:start, stop: stop)\n    |> filter(fn: (r) => r._measurement == measurement and contains(value: r._field, set: fields))\n    |> group(columns: groupBy, mode:groupMode)",
+									Start: ast.Position{
+										Column: 3,
+										Line:   47,
+									},
+								},
+							},
+							Call: &ast.CallExpression{
+								Arguments: []ast.Expression{&ast.ObjectExpression{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 46,
+												Line:   50,
+											},
+											File:   "influxRawQuery_test.flux",
+											Source: "columns: groupBy, mode:groupMode",
+											Start: ast.Position{
+												Column: 14,
+												Line:   50,
+											},
+										},
+									},
+									Properties: []*ast.Property{&ast.Property{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 30,
+													Line:   50,
+												},
+												File:   "influxRawQuery_test.flux",
+												Source: "columns: groupBy",
+												Start: ast.Position{
+													Column: 14,
+													Line:   50,
+												},
+											},
+										},
+										Key: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 21,
+														Line:   50,
+													},
+													File:   "influxRawQuery_test.flux",
+													Source: "columns",
+													Start: ast.Position{
+														Column: 14,
+														Line:   50,
+													},
+												},
+											},
+											Name: "columns",
+										},
+										Value: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 30,
+														Line:   50,
+													},
+													File:   "influxRawQuery_test.flux",
+													Source: "groupBy",
+													Start: ast.Position{
+														Column: 23,
+														Line:   50,
+													},
+												},
+											},
+											Name: "groupBy",
+										},
+									}, &ast.Property{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 46,
+													Line:   50,
+												},
+												File:   "influxRawQuery_test.flux",
+												Source: "mode:groupMode",
+												Start: ast.Position{
+													Column: 32,
+													Line:   50,
+												},
+											},
+										},
+										Key: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 36,
+														Line:   50,
+													},
+													File:   "influxRawQuery_test.flux",
+													Source: "mode",
+													Start: ast.Position{
+														Column: 32,
+														Line:   50,
+													},
+												},
+											},
+											Name: "mode",
+										},
+										Value: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 46,
+														Line:   50,
+													},
+													File:   "influxRawQuery_test.flux",
+													Source: "groupMode",
+													Start: ast.Position{
+														Column: 37,
+														Line:   50,
+													},
+												},
+											},
+											Name: "groupMode",
+										},
+									}},
+									With: nil,
+								}},
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 47,
+											Line:   50,
+										},
+										File:   "influxRawQuery_test.flux",
+										Source: "group(columns: groupBy, mode:groupMode)",
+										Start: ast.Position{
+											Column: 8,
+											Line:   50,
+										},
+									},
+								},
+								Callee: &ast.Identifier{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 13,
+												Line:   50,
+											},
+											File:   "influxRawQuery_test.flux",
+											Source: "group",
+											Start: ast.Position{
+												Column: 8,
+												Line:   50,
+											},
+										},
+									},
+									Name: "group",
+								},
+							},
+						},
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 25,
+									Line:   51,
+								},
+								File:   "influxRawQuery_test.flux",
+								Source: "stream\n    |> range(start:start, stop: stop)\n    |> filter(fn: (r) => r._measurement == measurement and contains(value: r._field, set: fields))\n    |> group(columns: groupBy, mode:groupMode)\n    |> v1.fieldsAsCols()",
+								Start: ast.Position{
+									Column: 3,
+									Line:   47,
+								},
+							},
+						},
+						Call: &ast.CallExpression{
+							Arguments: nil,
+							BaseNode: ast.BaseNode{
+								Errors: nil,
+								Loc: &ast.SourceLocation{
+									End: ast.Position{
+										Column: 25,
+										Line:   51,
+									},
+									File:   "influxRawQuery_test.flux",
+									Source: "v1.fieldsAsCols()",
+									Start: ast.Position{
+										Column: 8,
+										Line:   51,
+									},
+								},
+							},
+							Callee: &ast.MemberExpression{
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 23,
+											Line:   51,
+										},
+										File:   "influxRawQuery_test.flux",
+										Source: "v1.fieldsAsCols",
+										Start: ast.Position{
+											Column: 8,
+											Line:   51,
+										},
+									},
+								},
+								Object: &ast.Identifier{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 10,
+												Line:   51,
+											},
+											File:   "influxRawQuery_test.flux",
+											Source: "v1",
+											Start: ast.Position{
+												Column: 8,
+												Line:   51,
+											},
+										},
+									},
+									Name: "v1",
+								},
+								Property: &ast.Identifier{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 23,
+												Line:   51,
+											},
+											File:   "influxRawQuery_test.flux",
+											Source: "fieldsAsCols",
+											Start: ast.Position{
+												Column: 11,
+												Line:   51,
+											},
+										},
+									},
+									Name: "fieldsAsCols",
+								},
+							},
+						},
+					},
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 44,
+								Line:   52,
+							},
+							File:   "influxRawQuery_test.flux",
+							Source: "stream\n    |> range(start:start, stop: stop)\n    |> filter(fn: (r) => r._measurement == measurement and contains(value: r._field, set: fields))\n    |> group(columns: groupBy, mode:groupMode)\n    |> v1.fieldsAsCols()\n    |> window(every: every, period: period)",
+							Start: ast.Position{
+								Column: 3,
+								Line:   47,
+							},
+						},
+					},
+					Call: &ast.CallExpression{
+						Arguments: []ast.Expression{&ast.ObjectExpression{
+							BaseNode: ast.BaseNode{
+								Errors: nil,
+								Loc: &ast.SourceLocation{
+									End: ast.Position{
+										Column: 43,
+										Line:   52,
+									},
+									File:   "influxRawQuery_test.flux",
+									Source: "every: every, period: period",
+									Start: ast.Position{
+										Column: 15,
+										Line:   52,
+									},
+								},
+							},
+							Properties: []*ast.Property{&ast.Property{
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 27,
+											Line:   52,
+										},
+										File:   "influxRawQuery_test.flux",
+										Source: "every: every",
+										Start: ast.Position{
+											Column: 15,
+											Line:   52,
+										},
+									},
+								},
+								Key: &ast.Identifier{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 20,
+												Line:   52,
+											},
+											File:   "influxRawQuery_test.flux",
+											Source: "every",
+											Start: ast.Position{
+												Column: 15,
+												Line:   52,
+											},
+										},
+									},
+									Name: "every",
+								},
+								Value: &ast.Identifier{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 27,
+												Line:   52,
+											},
+											File:   "influxRawQuery_test.flux",
+											Source: "every",
+											Start: ast.Position{
+												Column: 22,
+												Line:   52,
+											},
+										},
+									},
+									Name: "every",
+								},
+							}, &ast.Property{
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 43,
+											Line:   52,
+										},
+										File:   "influxRawQuery_test.flux",
+										Source: "period: period",
+										Start: ast.Position{
+											Column: 29,
+											Line:   52,
+										},
+									},
+								},
+								Key: &ast.Identifier{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 35,
+												Line:   52,
+											},
+											File:   "influxRawQuery_test.flux",
+											Source: "period",
+											Start: ast.Position{
+												Column: 29,
+												Line:   52,
+											},
+										},
+									},
+									Name: "period",
+								},
+								Value: &ast.Identifier{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 43,
+												Line:   52,
+											},
+											File:   "influxRawQuery_test.flux",
+											Source: "period",
+											Start: ast.Position{
+												Column: 37,
+												Line:   52,
+											},
+										},
+									},
+									Name: "period",
+								},
+							}},
+							With: nil,
+						}},
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 44,
+									Line:   52,
+								},
+								File:   "influxRawQuery_test.flux",
+								Source: "window(every: every, period: period)",
+								Start: ast.Position{
+									Column: 8,
+									Line:   52,
+								},
+							},
+						},
+						Callee: &ast.Identifier{
+							BaseNode: ast.BaseNode{
+								Errors: nil,
+								Loc: &ast.SourceLocation{
+									End: ast.Position{
+										Column: 14,
+										Line:   52,
+									},
+									File:   "influxRawQuery_test.flux",
+									Source: "window",
+									Start: ast.Position{
+										Column: 8,
+										Line:   52,
+									},
+								},
+							},
+							Name: "window",
+						},
+					},
+				},
+				Params: []*ast.Property{&ast.Property{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 22,
+								Line:   46,
+							},
+							File:   "influxRawQuery_test.flux",
+							Source: "stream=<-",
+							Start: ast.Position{
+								Column: 13,
+								Line:   46,
+							},
+						},
+					},
+					Key: &ast.Identifier{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 19,
+									Line:   46,
+								},
+								File:   "influxRawQuery_test.flux",
+								Source: "stream",
+								Start: ast.Position{
+									Column: 13,
+									Line:   46,
+								},
+							},
+						},
+						Name: "stream",
+					},
+					Value: &ast.PipeLiteral{BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 22,
+								Line:   46,
+							},
+							File:   "influxRawQuery_test.flux",
+							Source: "<-",
+							Start: ast.Position{
+								Column: 20,
+								Line:   46,
+							},
+						},
+					}},
+				}, &ast.Property{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 29,
+								Line:   46,
+							},
+							File:   "influxRawQuery_test.flux",
+							Source: "start",
+							Start: ast.Position{
+								Column: 24,
+								Line:   46,
+							},
+						},
+					},
+					Key: &ast.Identifier{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 29,
+									Line:   46,
+								},
+								File:   "influxRawQuery_test.flux",
+								Source: "start",
+								Start: ast.Position{
+									Column: 24,
+									Line:   46,
+								},
+							},
+						},
+						Name: "start",
+					},
+					Value: nil,
+				}, &ast.Property{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 35,
+								Line:   46,
+							},
+							File:   "influxRawQuery_test.flux",
+							Source: "stop",
+							Start: ast.Position{
+								Column: 31,
+								Line:   46,
+							},
+						},
+					},
+					Key: &ast.Identifier{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 35,
+									Line:   46,
+								},
+								File:   "influxRawQuery_test.flux",
+								Source: "stop",
+								Start: ast.Position{
+									Column: 31,
+									Line:   46,
+								},
+							},
+						},
+						Name: "stop",
+					},
+					Value: nil,
+				}, &ast.Property{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 48,
+								Line:   46,
+							},
+							File:   "influxRawQuery_test.flux",
+							Source: "measurement",
+							Start: ast.Position{
+								Column: 37,
+								Line:   46,
+							},
+						},
+					},
+					Key: &ast.Identifier{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 48,
+									Line:   46,
+								},
+								File:   "influxRawQuery_test.flux",
+								Source: "measurement",
+								Start: ast.Position{
+									Column: 37,
+									Line:   46,
+								},
+							},
+						},
+						Name: "measurement",
+					},
+					Value: nil,
+				}, &ast.Property{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 59,
+								Line:   46,
+							},
+							File:   "influxRawQuery_test.flux",
+							Source: "fields=[]",
+							Start: ast.Position{
+								Column: 50,
+								Line:   46,
+							},
+						},
+					},
+					Key: &ast.Identifier{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 56,
+									Line:   46,
+								},
+								File:   "influxRawQuery_test.flux",
+								Source: "fields",
+								Start: ast.Position{
+									Column: 50,
+									Line:   46,
+								},
+							},
+						},
+						Name: "fields",
+					},
+					Value: &ast.ArrayExpression{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 59,
+									Line:   46,
+								},
+								File:   "influxRawQuery_test.flux",
+								Source: "[]",
+								Start: ast.Position{
+									Column: 57,
+									Line:   46,
+								},
+							},
+						},
+						Elements: []ast.Expression{},
+					},
+				}, &ast.Property{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 88,
+								Line:   46,
+							},
+							File:   "influxRawQuery_test.flux",
+							Source: "groupBy=[\"_time\", \"_value\"]",
+							Start: ast.Position{
+								Column: 61,
+								Line:   46,
+							},
+						},
+					},
+					Key: &ast.Identifier{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 68,
+									Line:   46,
+								},
+								File:   "influxRawQuery_test.flux",
+								Source: "groupBy",
+								Start: ast.Position{
+									Column: 61,
+									Line:   46,
+								},
+							},
+						},
+						Name: "groupBy",
+					},
+					Value: &ast.ArrayExpression{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 88,
+									Line:   46,
+								},
+								File:   "influxRawQuery_test.flux",
+								Source: "[\"_time\", \"_value\"]",
+								Start: ast.Position{
+									Column: 69,
+									Line:   46,
+								},
+							},
+						},
+						Elements: []ast.Expression{&ast.StringLiteral{
+							BaseNode: ast.BaseNode{
+								Errors: nil,
+								Loc: &ast.SourceLocation{
+									End: ast.Position{
+										Column: 77,
+										Line:   46,
+									},
+									File:   "influxRawQuery_test.flux",
+									Source: "\"_time\"",
+									Start: ast.Position{
+										Column: 70,
+										Line:   46,
+									},
+								},
+							},
+							Value: "_time",
+						}, &ast.StringLiteral{
+							BaseNode: ast.BaseNode{
+								Errors: nil,
+								Loc: &ast.SourceLocation{
+									End: ast.Position{
+										Column: 87,
+										Line:   46,
+									},
+									File:   "influxRawQuery_test.flux",
+									Source: "\"_value\"",
+									Start: ast.Position{
+										Column: 79,
+										Line:   46,
+									},
+								},
+							},
+							Value: "_value",
+						}},
+					},
+				}, &ast.Property{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 108,
+								Line:   46,
+							},
+							File:   "influxRawQuery_test.flux",
+							Source: "groupMode=\"except\"",
+							Start: ast.Position{
+								Column: 90,
+								Line:   46,
+							},
+						},
+					},
+					Key: &ast.Identifier{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 99,
+									Line:   46,
+								},
+								File:   "influxRawQuery_test.flux",
+								Source: "groupMode",
+								Start: ast.Position{
+									Column: 90,
+									Line:   46,
+								},
+							},
+						},
+						Name: "groupMode",
+					},
+					Value: &ast.StringLiteral{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 108,
+									Line:   46,
+								},
+								File:   "influxRawQuery_test.flux",
+								Source: "\"except\"",
+								Start: ast.Position{
+									Column: 100,
+									Line:   46,
+								},
+							},
+						},
+						Value: "except",
+					},
+				}, &ast.Property{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 119,
+								Line:   46,
+							},
+							File:   "influxRawQuery_test.flux",
+							Source: "every=inf",
+							Start: ast.Position{
+								Column: 110,
+								Line:   46,
+							},
+						},
+					},
+					Key: &ast.Identifier{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 115,
+									Line:   46,
+								},
+								File:   "influxRawQuery_test.flux",
+								Source: "every",
+								Start: ast.Position{
+									Column: 110,
+									Line:   46,
+								},
+							},
+						},
+						Name: "every",
+					},
+					Value: &ast.Identifier{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 119,
+									Line:   46,
+								},
+								File:   "influxRawQuery_test.flux",
+								Source: "inf",
+								Start: ast.Position{
+									Column: 116,
+									Line:   46,
+								},
+							},
+						},
+						Name: "inf",
+					},
+				}, &ast.Property{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 130,
+								Line:   46,
+							},
+							File:   "influxRawQuery_test.flux",
+							Source: "period=0s",
+							Start: ast.Position{
+								Column: 121,
+								Line:   46,
+							},
+						},
+					},
+					Key: &ast.Identifier{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 127,
+									Line:   46,
+								},
+								File:   "influxRawQuery_test.flux",
+								Source: "period",
+								Start: ast.Position{
+									Column: 121,
+									Line:   46,
+								},
+							},
+						},
+						Name: "period",
+					},
+					Value: &ast.DurationLiteral{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 130,
+									Line:   46,
+								},
+								File:   "influxRawQuery_test.flux",
+								Source: "0s",
+								Start: ast.Position{
+									Column: 128,
+									Line:   46,
+								},
+							},
+						},
+						Values: []ast.Duration{ast.Duration{
+							Magnitude: int64(0),
+							Unit:      "s",
+						}},
+					},
+				}},
+			},
+		}, &ast.TestStatement{
+			Assignment: &ast.VariableAssignment{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 3,
+							Line:   58,
+						},
+						File:   "influxRawQuery_test.flux",
+						Source: "influx_raw_query = () => ({\n    input: testing.loadStorage(csv: inData),\n    want: testing.loadMem(csv: outData),\n    fn: (table=<-) => table |> rawQuery(measurement: \"system\",fields: [\"load1\", \"load15\", \"load5\"], start: 2018-05-22T19:53:26Z, stop: 2018-05-22T19:54:17Z)\n})",
+						Start: ast.Position{
+							Column: 6,
+							Line:   54,
+						},
+					},
+				},
+				ID: &ast.Identifier{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 22,
+								Line:   54,
+							},
+							File:   "influxRawQuery_test.flux",
+							Source: "influx_raw_query",
+							Start: ast.Position{
+								Column: 6,
+								Line:   54,
+							},
+						},
+					},
+					Name: "influx_raw_query",
+				},
+				Init: &ast.FunctionExpression{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 3,
+								Line:   58,
+							},
+							File:   "influxRawQuery_test.flux",
+							Source: "() => ({\n    input: testing.loadStorage(csv: inData),\n    want: testing.loadMem(csv: outData),\n    fn: (table=<-) => table |> rawQuery(measurement: \"system\",fields: [\"load1\", \"load15\", \"load5\"], start: 2018-05-22T19:53:26Z, stop: 2018-05-22T19:54:17Z)\n})",
+							Start: ast.Position{
+								Column: 25,
+								Line:   54,
+							},
+						},
+					},
+					Body: &ast.ParenExpression{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 3,
+									Line:   58,
+								},
+								File:   "influxRawQuery_test.flux",
+								Source: "({\n    input: testing.loadStorage(csv: inData),\n    want: testing.loadMem(csv: outData),\n    fn: (table=<-) => table |> rawQuery(measurement: \"system\",fields: [\"load1\", \"load15\", \"load5\"], start: 2018-05-22T19:53:26Z, stop: 2018-05-22T19:54:17Z)\n})",
+								Start: ast.Position{
+									Column: 31,
+									Line:   54,
+								},
+							},
+						},
+						Expression: &ast.ObjectExpression{
+							BaseNode: ast.BaseNode{
+								Errors: nil,
+								Loc: &ast.SourceLocation{
+									End: ast.Position{
+										Column: 2,
+										Line:   58,
+									},
+									File:   "influxRawQuery_test.flux",
+									Source: "{\n    input: testing.loadStorage(csv: inData),\n    want: testing.loadMem(csv: outData),\n    fn: (table=<-) => table |> rawQuery(measurement: \"system\",fields: [\"load1\", \"load15\", \"load5\"], start: 2018-05-22T19:53:26Z, stop: 2018-05-22T19:54:17Z)\n}",
+									Start: ast.Position{
+										Column: 32,
+										Line:   54,
+									},
+								},
+							},
+							Properties: []*ast.Property{&ast.Property{
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 44,
+											Line:   55,
+										},
+										File:   "influxRawQuery_test.flux",
+										Source: "input: testing.loadStorage(csv: inData)",
+										Start: ast.Position{
+											Column: 5,
+											Line:   55,
+										},
+									},
+								},
+								Key: &ast.Identifier{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 10,
+												Line:   55,
+											},
+											File:   "influxRawQuery_test.flux",
+											Source: "input",
+											Start: ast.Position{
+												Column: 5,
+												Line:   55,
+											},
+										},
+									},
+									Name: "input",
+								},
+								Value: &ast.CallExpression{
+									Arguments: []ast.Expression{&ast.ObjectExpression{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 43,
+													Line:   55,
+												},
+												File:   "influxRawQuery_test.flux",
+												Source: "csv: inData",
+												Start: ast.Position{
+													Column: 32,
+													Line:   55,
+												},
+											},
+										},
+										Properties: []*ast.Property{&ast.Property{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 43,
+														Line:   55,
+													},
+													File:   "influxRawQuery_test.flux",
+													Source: "csv: inData",
+													Start: ast.Position{
+														Column: 32,
+														Line:   55,
+													},
+												},
+											},
+											Key: &ast.Identifier{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 35,
+															Line:   55,
+														},
+														File:   "influxRawQuery_test.flux",
+														Source: "csv",
+														Start: ast.Position{
+															Column: 32,
+															Line:   55,
+														},
+													},
+												},
+												Name: "csv",
+											},
+											Value: &ast.Identifier{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 43,
+															Line:   55,
+														},
+														File:   "influxRawQuery_test.flux",
+														Source: "inData",
+														Start: ast.Position{
+															Column: 37,
+															Line:   55,
+														},
+													},
+												},
+												Name: "inData",
+											},
+										}},
+										With: nil,
+									}},
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 44,
+												Line:   55,
+											},
+											File:   "influxRawQuery_test.flux",
+											Source: "testing.loadStorage(csv: inData)",
+											Start: ast.Position{
+												Column: 12,
+												Line:   55,
+											},
+										},
+									},
+									Callee: &ast.MemberExpression{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 31,
+													Line:   55,
+												},
+												File:   "influxRawQuery_test.flux",
+												Source: "testing.loadStorage",
+												Start: ast.Position{
+													Column: 12,
+													Line:   55,
+												},
+											},
+										},
+										Object: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 19,
+														Line:   55,
+													},
+													File:   "influxRawQuery_test.flux",
+													Source: "testing",
+													Start: ast.Position{
+														Column: 12,
+														Line:   55,
+													},
+												},
+											},
+											Name: "testing",
+										},
+										Property: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 31,
+														Line:   55,
+													},
+													File:   "influxRawQuery_test.flux",
+													Source: "loadStorage",
+													Start: ast.Position{
+														Column: 20,
+														Line:   55,
+													},
+												},
+											},
+											Name: "loadStorage",
+										},
+									},
+								},
+							}, &ast.Property{
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 40,
+											Line:   56,
+										},
+										File:   "influxRawQuery_test.flux",
+										Source: "want: testing.loadMem(csv: outData)",
+										Start: ast.Position{
+											Column: 5,
+											Line:   56,
+										},
+									},
+								},
+								Key: &ast.Identifier{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 9,
+												Line:   56,
+											},
+											File:   "influxRawQuery_test.flux",
+											Source: "want",
+											Start: ast.Position{
+												Column: 5,
+												Line:   56,
+											},
+										},
+									},
+									Name: "want",
+								},
+								Value: &ast.CallExpression{
+									Arguments: []ast.Expression{&ast.ObjectExpression{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 39,
+													Line:   56,
+												},
+												File:   "influxRawQuery_test.flux",
+												Source: "csv: outData",
+												Start: ast.Position{
+													Column: 27,
+													Line:   56,
+												},
+											},
+										},
+										Properties: []*ast.Property{&ast.Property{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 39,
+														Line:   56,
+													},
+													File:   "influxRawQuery_test.flux",
+													Source: "csv: outData",
+													Start: ast.Position{
+														Column: 27,
+														Line:   56,
+													},
+												},
+											},
+											Key: &ast.Identifier{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 30,
+															Line:   56,
+														},
+														File:   "influxRawQuery_test.flux",
+														Source: "csv",
+														Start: ast.Position{
+															Column: 27,
+															Line:   56,
+														},
+													},
+												},
+												Name: "csv",
+											},
+											Value: &ast.Identifier{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 39,
+															Line:   56,
+														},
+														File:   "influxRawQuery_test.flux",
+														Source: "outData",
+														Start: ast.Position{
+															Column: 32,
+															Line:   56,
+														},
+													},
+												},
+												Name: "outData",
+											},
+										}},
+										With: nil,
+									}},
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 40,
+												Line:   56,
+											},
+											File:   "influxRawQuery_test.flux",
+											Source: "testing.loadMem(csv: outData)",
+											Start: ast.Position{
+												Column: 11,
+												Line:   56,
+											},
+										},
+									},
+									Callee: &ast.MemberExpression{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 26,
+													Line:   56,
+												},
+												File:   "influxRawQuery_test.flux",
+												Source: "testing.loadMem",
+												Start: ast.Position{
+													Column: 11,
+													Line:   56,
+												},
+											},
+										},
+										Object: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 18,
+														Line:   56,
+													},
+													File:   "influxRawQuery_test.flux",
+													Source: "testing",
+													Start: ast.Position{
+														Column: 11,
+														Line:   56,
+													},
+												},
+											},
+											Name: "testing",
+										},
+										Property: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 26,
+														Line:   56,
+													},
+													File:   "influxRawQuery_test.flux",
+													Source: "loadMem",
+													Start: ast.Position{
+														Column: 19,
+														Line:   56,
+													},
+												},
+											},
+											Name: "loadMem",
+										},
+									},
+								},
+							}, &ast.Property{
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 157,
+											Line:   57,
+										},
+										File:   "influxRawQuery_test.flux",
+										Source: "fn: (table=<-) => table |> rawQuery(measurement: \"system\",fields: [\"load1\", \"load15\", \"load5\"], start: 2018-05-22T19:53:26Z, stop: 2018-05-22T19:54:17Z)",
+										Start: ast.Position{
+											Column: 5,
+											Line:   57,
+										},
+									},
+								},
+								Key: &ast.Identifier{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 7,
+												Line:   57,
+											},
+											File:   "influxRawQuery_test.flux",
+											Source: "fn",
+											Start: ast.Position{
+												Column: 5,
+												Line:   57,
+											},
+										},
+									},
+									Name: "fn",
+								},
+								Value: &ast.FunctionExpression{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 157,
+												Line:   57,
+											},
+											File:   "influxRawQuery_test.flux",
+											Source: "(table=<-) => table |> rawQuery(measurement: \"system\",fields: [\"load1\", \"load15\", \"load5\"], start: 2018-05-22T19:53:26Z, stop: 2018-05-22T19:54:17Z)",
+											Start: ast.Position{
+												Column: 9,
+												Line:   57,
+											},
+										},
+									},
+									Body: &ast.PipeExpression{
+										Argument: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 28,
+														Line:   57,
+													},
+													File:   "influxRawQuery_test.flux",
+													Source: "table",
+													Start: ast.Position{
+														Column: 23,
+														Line:   57,
+													},
+												},
+											},
+											Name: "table",
+										},
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 157,
+													Line:   57,
+												},
+												File:   "influxRawQuery_test.flux",
+												Source: "table |> rawQuery(measurement: \"system\",fields: [\"load1\", \"load15\", \"load5\"], start: 2018-05-22T19:53:26Z, stop: 2018-05-22T19:54:17Z)",
+												Start: ast.Position{
+													Column: 23,
+													Line:   57,
+												},
+											},
+										},
+										Call: &ast.CallExpression{
+											Arguments: []ast.Expression{&ast.ObjectExpression{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 156,
+															Line:   57,
+														},
+														File:   "influxRawQuery_test.flux",
+														Source: "measurement: \"system\",fields: [\"load1\", \"load15\", \"load5\"], start: 2018-05-22T19:53:26Z, stop: 2018-05-22T19:54:17Z",
+														Start: ast.Position{
+															Column: 41,
+															Line:   57,
+														},
+													},
+												},
+												Properties: []*ast.Property{&ast.Property{
+													BaseNode: ast.BaseNode{
+														Errors: nil,
+														Loc: &ast.SourceLocation{
+															End: ast.Position{
+																Column: 62,
+																Line:   57,
+															},
+															File:   "influxRawQuery_test.flux",
+															Source: "measurement: \"system\"",
+															Start: ast.Position{
+																Column: 41,
+																Line:   57,
+															},
+														},
+													},
+													Key: &ast.Identifier{
+														BaseNode: ast.BaseNode{
+															Errors: nil,
+															Loc: &ast.SourceLocation{
+																End: ast.Position{
+																	Column: 52,
+																	Line:   57,
+																},
+																File:   "influxRawQuery_test.flux",
+																Source: "measurement",
+																Start: ast.Position{
+																	Column: 41,
+																	Line:   57,
+																},
+															},
+														},
+														Name: "measurement",
+													},
+													Value: &ast.StringLiteral{
+														BaseNode: ast.BaseNode{
+															Errors: nil,
+															Loc: &ast.SourceLocation{
+																End: ast.Position{
+																	Column: 62,
+																	Line:   57,
+																},
+																File:   "influxRawQuery_test.flux",
+																Source: "\"system\"",
+																Start: ast.Position{
+																	Column: 54,
+																	Line:   57,
+																},
+															},
+														},
+														Value: "system",
+													},
+												}, &ast.Property{
+													BaseNode: ast.BaseNode{
+														Errors: nil,
+														Loc: &ast.SourceLocation{
+															End: ast.Position{
+																Column: 99,
+																Line:   57,
+															},
+															File:   "influxRawQuery_test.flux",
+															Source: "fields: [\"load1\", \"load15\", \"load5\"]",
+															Start: ast.Position{
+																Column: 63,
+																Line:   57,
+															},
+														},
+													},
+													Key: &ast.Identifier{
+														BaseNode: ast.BaseNode{
+															Errors: nil,
+															Loc: &ast.SourceLocation{
+																End: ast.Position{
+																	Column: 69,
+																	Line:   57,
+																},
+																File:   "influxRawQuery_test.flux",
+																Source: "fields",
+																Start: ast.Position{
+																	Column: 63,
+																	Line:   57,
+																},
+															},
+														},
+														Name: "fields",
+													},
+													Value: &ast.ArrayExpression{
+														BaseNode: ast.BaseNode{
+															Errors: nil,
+															Loc: &ast.SourceLocation{
+																End: ast.Position{
+																	Column: 99,
+																	Line:   57,
+																},
+																File:   "influxRawQuery_test.flux",
+																Source: "[\"load1\", \"load15\", \"load5\"]",
+																Start: ast.Position{
+																	Column: 71,
+																	Line:   57,
+																},
+															},
+														},
+														Elements: []ast.Expression{&ast.StringLiteral{
+															BaseNode: ast.BaseNode{
+																Errors: nil,
+																Loc: &ast.SourceLocation{
+																	End: ast.Position{
+																		Column: 79,
+																		Line:   57,
+																	},
+																	File:   "influxRawQuery_test.flux",
+																	Source: "\"load1\"",
+																	Start: ast.Position{
+																		Column: 72,
+																		Line:   57,
+																	},
+																},
+															},
+															Value: "load1",
+														}, &ast.StringLiteral{
+															BaseNode: ast.BaseNode{
+																Errors: nil,
+																Loc: &ast.SourceLocation{
+																	End: ast.Position{
+																		Column: 89,
+																		Line:   57,
+																	},
+																	File:   "influxRawQuery_test.flux",
+																	Source: "\"load15\"",
+																	Start: ast.Position{
+																		Column: 81,
+																		Line:   57,
+																	},
+																},
+															},
+															Value: "load15",
+														}, &ast.StringLiteral{
+															BaseNode: ast.BaseNode{
+																Errors: nil,
+																Loc: &ast.SourceLocation{
+																	End: ast.Position{
+																		Column: 98,
+																		Line:   57,
+																	},
+																	File:   "influxRawQuery_test.flux",
+																	Source: "\"load5\"",
+																	Start: ast.Position{
+																		Column: 91,
+																		Line:   57,
+																	},
+																},
+															},
+															Value: "load5",
+														}},
+													},
+												}, &ast.Property{
+													BaseNode: ast.BaseNode{
+														Errors: nil,
+														Loc: &ast.SourceLocation{
+															End: ast.Position{
+																Column: 128,
+																Line:   57,
+															},
+															File:   "influxRawQuery_test.flux",
+															Source: "start: 2018-05-22T19:53:26Z",
+															Start: ast.Position{
+																Column: 101,
+																Line:   57,
+															},
+														},
+													},
+													Key: &ast.Identifier{
+														BaseNode: ast.BaseNode{
+															Errors: nil,
+															Loc: &ast.SourceLocation{
+																End: ast.Position{
+																	Column: 106,
+																	Line:   57,
+																},
+																File:   "influxRawQuery_test.flux",
+																Source: "start",
+																Start: ast.Position{
+																	Column: 101,
+																	Line:   57,
+																},
+															},
+														},
+														Name: "start",
+													},
+													Value: &ast.DateTimeLiteral{
+														BaseNode: ast.BaseNode{
+															Errors: nil,
+															Loc: &ast.SourceLocation{
+																End: ast.Position{
+																	Column: 128,
+																	Line:   57,
+																},
+																File:   "influxRawQuery_test.flux",
+																Source: "2018-05-22T19:53:26Z",
+																Start: ast.Position{
+																	Column: 108,
+																	Line:   57,
+																},
+															},
+														},
+														Value: parser.MustParseTime("2018-05-22T19:53:26Z"),
+													},
+												}, &ast.Property{
+													BaseNode: ast.BaseNode{
+														Errors: nil,
+														Loc: &ast.SourceLocation{
+															End: ast.Position{
+																Column: 156,
+																Line:   57,
+															},
+															File:   "influxRawQuery_test.flux",
+															Source: "stop: 2018-05-22T19:54:17Z",
+															Start: ast.Position{
+																Column: 130,
+																Line:   57,
+															},
+														},
+													},
+													Key: &ast.Identifier{
+														BaseNode: ast.BaseNode{
+															Errors: nil,
+															Loc: &ast.SourceLocation{
+																End: ast.Position{
+																	Column: 134,
+																	Line:   57,
+																},
+																File:   "influxRawQuery_test.flux",
+																Source: "stop",
+																Start: ast.Position{
+																	Column: 130,
+																	Line:   57,
+																},
+															},
+														},
+														Name: "stop",
+													},
+													Value: &ast.DateTimeLiteral{
+														BaseNode: ast.BaseNode{
+															Errors: nil,
+															Loc: &ast.SourceLocation{
+																End: ast.Position{
+																	Column: 156,
+																	Line:   57,
+																},
+																File:   "influxRawQuery_test.flux",
+																Source: "2018-05-22T19:54:17Z",
+																Start: ast.Position{
+																	Column: 136,
+																	Line:   57,
+																},
+															},
+														},
+														Value: parser.MustParseTime("2018-05-22T19:54:17Z"),
+													},
+												}},
+												With: nil,
+											}},
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 157,
+														Line:   57,
+													},
+													File:   "influxRawQuery_test.flux",
+													Source: "rawQuery(measurement: \"system\",fields: [\"load1\", \"load15\", \"load5\"], start: 2018-05-22T19:53:26Z, stop: 2018-05-22T19:54:17Z)",
+													Start: ast.Position{
+														Column: 32,
+														Line:   57,
+													},
+												},
+											},
+											Callee: &ast.Identifier{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 40,
+															Line:   57,
+														},
+														File:   "influxRawQuery_test.flux",
+														Source: "rawQuery",
+														Start: ast.Position{
+															Column: 32,
+															Line:   57,
+														},
+													},
+												},
+												Name: "rawQuery",
+											},
+										},
+									},
+									Params: []*ast.Property{&ast.Property{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 18,
+													Line:   57,
+												},
+												File:   "influxRawQuery_test.flux",
+												Source: "table=<-",
+												Start: ast.Position{
+													Column: 10,
+													Line:   57,
+												},
+											},
+										},
+										Key: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 15,
+														Line:   57,
+													},
+													File:   "influxRawQuery_test.flux",
+													Source: "table",
+													Start: ast.Position{
+														Column: 10,
+														Line:   57,
+													},
+												},
+											},
+											Name: "table",
+										},
+										Value: &ast.PipeLiteral{BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 18,
+													Line:   57,
+												},
+												File:   "influxRawQuery_test.flux",
+												Source: "<-",
+												Start: ast.Position{
+													Column: 16,
+													Line:   57,
+												},
+											},
+										}},
+									}},
+								},
+							}},
+							With: nil,
+						},
+					},
+					Params: nil,
+				},
+			},
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 3,
+						Line:   58,
+					},
+					File:   "influxRawQuery_test.flux",
+					Source: "test influx_raw_query = () => ({\n    input: testing.loadStorage(csv: inData),\n    want: testing.loadMem(csv: outData),\n    fn: (table=<-) => table |> rawQuery(measurement: \"system\",fields: [\"load1\", \"load15\", \"load5\"], start: 2018-05-22T19:53:26Z, stop: 2018-05-22T19:54:17Z)\n})",
+					Start: ast.Position{
+						Column: 1,
+						Line:   54,
+					},
+				},
+			},
+		}},
+		Imports: []*ast.ImportDeclaration{&ast.ImportDeclaration{
+			As: nil,
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 17,
+						Line:   3,
+					},
+					File:   "influxRawQuery_test.flux",
+					Source: "import \"testing\"",
+					Start: ast.Position{
+						Column: 1,
+						Line:   3,
+					},
+				},
+			},
+			Path: &ast.StringLiteral{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 17,
+							Line:   3,
+						},
+						File:   "influxRawQuery_test.flux",
+						Source: "\"testing\"",
+						Start: ast.Position{
+							Column: 8,
+							Line:   3,
+						},
+					},
+				},
+				Value: "testing",
+			},
+		}, &ast.ImportDeclaration{
+			As: nil,
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 32,
+						Line:   4,
+					},
+					File:   "influxRawQuery_test.flux",
+					Source: "import \"influxdata/influxdb/v1\"",
+					Start: ast.Position{
+						Column: 1,
+						Line:   4,
+					},
+				},
+			},
+			Path: &ast.StringLiteral{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 32,
+							Line:   4,
+						},
+						File:   "influxRawQuery_test.flux",
+						Source: "\"influxdata/influxdb/v1\"",
+						Start: ast.Position{
+							Column: 8,
+							Line:   4,
+						},
+					},
+				},
+				Value: "influxdata/influxdb/v1",
+			},
+		}},
+		Metadata: "parser-type=rust",
+		Name:     "influxRawQuery_test.flux",
+		Package: &ast.PackageClause{
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 16,
+						Line:   1,
+					},
+					File:   "influxRawQuery_test.flux",
+					Source: "package v1_test",
+					Start: ast.Position{
+						Column: 1,
+						Line:   1,
+					},
+				},
+			},
+			Name: &ast.Identifier{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 16,
+							Line:   1,
+						},
+						File:   "influxRawQuery_test.flux",
+						Source: "v1_test",
+						Start: ast.Position{
+							Column: 9,
+							Line:   1,
+						},
+					},
+				},
+				Name: "v1_test",
+			},
+		},
+	}, &ast.File{
+		BaseNode: ast.BaseNode{
+			Errors: nil,
+			Loc: &ast.SourceLocation{
+				End: ast.Position{
+					Column: 114,
+					Line:   90,
+				},
+				File:   "measurement_field_keys_test.flux",
+				Source: "package v1_test\n\nimport \"testing\"\n\ninput = \"\n#datatype,string,long,dateTime:RFC3339,string,string,string,double\n#group,false,false,false,true,true,true,false\n#default,_result,,,,,,\n,result,table,_time,_measurement,host,_field,_value\n,,0,2018-05-22T19:53:26Z,system,host.local,load1,1.83\n,,0,2018-05-22T19:53:36Z,system,host.local,load1,1.72\n,,0,2018-05-22T19:53:46Z,system,host.local,load1,1.74\n,,0,2018-05-22T19:53:56Z,system,host.local,load1,1.63\n,,0,2018-05-22T19:54:06Z,system,host.local,load1,1.91\n,,0,2018-05-22T19:54:16Z,system,host.local,load1,1.84\n\n,,1,2018-05-22T19:53:26Z,sys,host.local,load3,1.98\n,,1,2018-05-22T19:53:36Z,sys,host.local,load3,1.97\n,,1,2018-05-22T19:53:46Z,sys,host.local,load3,1.97\n,,1,2018-05-22T19:53:56Z,sys,host.local,load3,1.96\n,,1,2018-05-22T19:54:06Z,sys,host.local,load3,1.98\n,,1,2018-05-22T19:54:16Z,sys,host.local,load3,1.97\n\n,,2,2018-05-22T19:53:26Z,system,host.local,load5,1.95\n,,2,2018-05-22T19:53:36Z,system,host.local,load5,1.92\n,,2,2018-05-22T19:53:46Z,system,host.local,load5,1.92\n,,2,2018-05-22T19:53:56Z,system,host.local,load5,1.89\n,,2,2018-05-22T19:54:06Z,system,host.local,load5,1.94\n,,2,2018-05-22T19:54:16Z,system,host.local,load5,1.93\n\n,,3,2018-05-22T19:53:26Z,swap,host.global,used_percent,82.98\n,,3,2018-05-22T19:53:36Z,swap,host.global,used_percent,82.59\n,,3,2018-05-22T19:53:46Z,swap,host.global,used_percent,82.59\n,,3,2018-05-22T19:53:56Z,swap,host.global,used_percent,82.59\n,,3,2018-05-22T19:54:06Z,swap,host.global,used_percent,82.59\n,,3,2018-05-22T19:54:16Z,swap,host.global,used_percent,82.64\n\n#datatype,string,long,dateTime:RFC3339,string,string,string,long\n#group,false,false,false,true,true,true,false\n#default,_result,,,,,,\n,result,table,_time,_measurement,host,_field,_value\n,,0,2018-05-22T19:53:26Z,sys,host.global,load7,183\n,,0,2018-05-22T19:53:36Z,sys,host.global,load7,172\n,,0,2018-05-22T19:53:46Z,sys,host.global,load7,174\n,,0,2018-05-22T19:53:56Z,sys,host.global,load7,163\n,,0,2018-05-22T19:54:06Z,sys,host.global,load7,191\n,,0,2018-05-22T19:54:16Z,sys,host.global,load7,184\n\n,,1,2018-05-22T19:53:26Z,sys,host.local,load8,198\n,,1,2018-05-22T19:53:36Z,sys,host.local,load8,197\n,,1,2018-05-22T19:53:46Z,sys,host.local,load8,197\n,,1,2018-05-22T19:53:56Z,sys,host.local,load8,196\n,,1,2018-05-22T19:54:06Z,sys,host.local,load8,198\n,,1,2018-05-22T19:54:16Z,sys,host.local,load8,197\n\n,,2,2018-05-22T19:53:26Z,sys,host.global,load9,195\n,,2,2018-05-22T19:53:36Z,sys,host.global,load9,192\n,,2,2018-05-22T19:53:46Z,sys,host.global,load9,192\n,,2,2018-05-22T19:53:56Z,sys,host.global,load9,189\n,,2,2018-05-22T19:54:06Z,sys,host.global,load9,194\n,,2,2018-05-22T19:54:16Z,sys,host.global,load9,193\n\n,,3,2018-05-22T19:53:26Z,swp,host.global,used_percent,8298\n,,3,2018-05-22T19:53:36Z,swp,host.global,used_percent,8259\n,,3,2018-05-22T19:53:46Z,swp,host.global,used_percent,8259\n,,3,2018-05-22T19:53:56Z,swp,host.global,used_percent,8259\n,,3,2018-05-22T19:54:06Z,swp,host.global,used_percent,8259\n,,3,2018-05-22T19:54:16Z,swp,host.global,used_percent,8264\n\"\n\noutput = \"\n#datatype,string,long,string\n#group,false,false,false\n#default,0,,\n,result,table,_value\n,,0,load3\n,,0,load8\n\"\n\nmeasurement_field_keys_fn = (tables=<-) => tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => r._measurement == \"sys\")\n    |> filter(fn: (r) => r.host == \"host.local\")\n    |> keep(columns: [\"_field\"])\n    |> group()\n    |> distinct(column: \"_field\")\n    |> sort()\n\ntest measurement_field_keys = () =>\n    ({input: testing.loadStorage(csv: input), want: testing.loadMem(csv: output), fn: measurement_field_keys_fn})",
 				Start: ast.Position{
 					Column: 1,
 					Line:   1,
@@ -34,10 +4208,10 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 				Loc: &ast.SourceLocation{
 					End: ast.Position{
 						Column: 2,
-						Line:   77,
+						Line:   69,
 					},
-					File:   "measurement_tag_keys_test.flux",
-					Source: "input = \"\n#datatype,string,long,dateTime:RFC3339,string,string,string,double\n#group,false,false,false,true,true,true,false\n#default,_result,,,,,,\n,result,table,_time,_measurement,host,_field,_value\n,,0,2018-05-22T19:53:26Z,sys,host.local,load1,1.83\n,,0,2018-05-22T19:53:36Z,sys,host.local,load1,1.72\n,,0,2018-05-22T19:53:46Z,sys,host.local,load1,1.74\n,,0,2018-05-22T19:53:56Z,sys,host.local,load1,1.63\n,,0,2018-05-22T19:54:06Z,sys,host.local,load1,1.91\n,,0,2018-05-22T19:54:16Z,sys,host.local,load1,1.84\n\n,,1,2018-05-22T19:53:26Z,sys,host.local,load3,1.98\n,,1,2018-05-22T19:53:36Z,sys,host.local,load3,1.97\n,,1,2018-05-22T19:53:46Z,sys,host.local,load3,1.97\n,,1,2018-05-22T19:53:56Z,sys,host.local,load3,1.96\n,,1,2018-05-22T19:54:06Z,sys,host.local,load3,1.98\n,,1,2018-05-22T19:54:16Z,sys,host.local,load3,1.97\n\n,,2,2018-05-22T19:53:26Z,sys,host.local,load5,1.95\n,,2,2018-05-22T19:53:36Z,sys,host.local,load5,1.92\n,,2,2018-05-22T19:53:46Z,sys,host.local,load5,1.92\n,,2,2018-05-22T19:53:56Z,sys,host.local,load5,1.89\n,,2,2018-05-22T19:54:06Z,sys,host.local,load5,1.94\n,,2,2018-05-22T19:54:16Z,sys,host.local,load5,1.93\n\n#datatype,string,long,dateTime:RFC3339,string,string,string,string,long\n#group,false,false,false,true,true,true,true,false\n#default,_result,,,,,,,\n,result,table,_time,_measurement,reg,host,_field,_value\n,,0,2018-05-22T19:53:26Z,swp,us-east,host.local,load1,10\n,,0,2018-05-22T19:53:36Z,swp,us-east,host.local,load1,11\n,,0,2018-05-22T19:53:46Z,swp,us-east,host.local,load1,18\n,,0,2018-05-22T19:53:56Z,swp,us-east,host.local,load1,19\n,,0,2018-05-22T19:54:06Z,swp,us-east,host.local,load1,17\n,,0,2018-05-22T19:54:16Z,swp,us-east,host.local,load1,17\n\n#datatype,string,long,dateTime:RFC3339,string,string,string,string,long\n#group,false,false,false,true,true,true,true,false\n#default,_result,,,,,,,\n,result,table,_time,_measurement,region,host,_field,_value\n,,0,2018-05-22T19:53:26Z,swp,us-east,host.global,load1,10\n,,0,2018-05-22T19:53:36Z,swp,us-east,host.global,load1,11\n,,0,2018-05-22T19:53:46Z,swp,us-east,host.global,load1,18\n,,0,2018-05-22T19:53:56Z,swp,us-east,host.global,load1,19\n,,0,2018-05-22T19:54:06Z,swp,us-east,host.global,load1,17\n,,0,2018-05-22T19:54:16Z,swp,us-east,host.global,load1,17\n\n,,1,2018-05-22T19:53:26Z,swp,us-east,host.global,load3,16\n,,1,2018-05-22T19:53:36Z,swp,us-east,host.global,load3,16\n,,1,2018-05-22T19:53:46Z,swp,us-east,host.global,load3,15\n,,1,2018-05-22T19:53:56Z,swp,us-east,host.global,load3,19\n,,1,2018-05-22T19:54:06Z,swp,us-east,host.global,load3,19\n,,1,2018-05-22T19:54:16Z,swp,us-east,host.global,load3,19\n\n,,2,2018-05-22T19:53:26Z,swp,us-east,host.global,load5,19\n,,2,2018-05-22T19:53:36Z,swp,us-east,host.global,load5,22\n,,2,2018-05-22T19:53:46Z,swp,us-east,host.global,load5,11\n,,2,2018-05-22T19:53:56Z,swp,us-east,host.global,load5,12\n,,2,2018-05-22T19:54:06Z,swp,us-east,host.global,load5,13\n,,2,2018-05-22T19:54:16Z,swp,us-east,host.global,load5,13\n\n#datatype,string,long,dateTime:RFC3339,string,string,string,string,double\n#group,false,false,false,true,true,true,true,false\n#default,_result,,,,,,,\n,result,table,_time,_measurement,region,host,_field,_value\n,,0,2018-05-22T19:53:26Z,swp,us-east,host.global,load2,10.003\n,,0,2018-05-22T19:53:36Z,swp,us-east,host.global,load2,11.873\n,,0,2018-05-22T19:53:46Z,swp,us-east,host.global,load2,18.832\n,,0,2018-05-22T19:53:56Z,swp,us-east,host.global,load2,19.777\n,,0,2018-05-22T19:54:06Z,swp,us-east,host.global,load2,17.190\n,,0,2018-05-22T19:54:16Z,swp,us-east,host.global,load2,17.192\n\"",
+					File:   "measurement_field_keys_test.flux",
+					Source: "input = \"\n#datatype,string,long,dateTime:RFC3339,string,string,string,double\n#group,false,false,false,true,true,true,false\n#default,_result,,,,,,\n,result,table,_time,_measurement,host,_field,_value\n,,0,2018-05-22T19:53:26Z,system,host.local,load1,1.83\n,,0,2018-05-22T19:53:36Z,system,host.local,load1,1.72\n,,0,2018-05-22T19:53:46Z,system,host.local,load1,1.74\n,,0,2018-05-22T19:53:56Z,system,host.local,load1,1.63\n,,0,2018-05-22T19:54:06Z,system,host.local,load1,1.91\n,,0,2018-05-22T19:54:16Z,system,host.local,load1,1.84\n\n,,1,2018-05-22T19:53:26Z,sys,host.local,load3,1.98\n,,1,2018-05-22T19:53:36Z,sys,host.local,load3,1.97\n,,1,2018-05-22T19:53:46Z,sys,host.local,load3,1.97\n,,1,2018-05-22T19:53:56Z,sys,host.local,load3,1.96\n,,1,2018-05-22T19:54:06Z,sys,host.local,load3,1.98\n,,1,2018-05-22T19:54:16Z,sys,host.local,load3,1.97\n\n,,2,2018-05-22T19:53:26Z,system,host.local,load5,1.95\n,,2,2018-05-22T19:53:36Z,system,host.local,load5,1.92\n,,2,2018-05-22T19:53:46Z,system,host.local,load5,1.92\n,,2,2018-05-22T19:53:56Z,system,host.local,load5,1.89\n,,2,2018-05-22T19:54:06Z,system,host.local,load5,1.94\n,,2,2018-05-22T19:54:16Z,system,host.local,load5,1.93\n\n,,3,2018-05-22T19:53:26Z,swap,host.global,used_percent,82.98\n,,3,2018-05-22T19:53:36Z,swap,host.global,used_percent,82.59\n,,3,2018-05-22T19:53:46Z,swap,host.global,used_percent,82.59\n,,3,2018-05-22T19:53:56Z,swap,host.global,used_percent,82.59\n,,3,2018-05-22T19:54:06Z,swap,host.global,used_percent,82.59\n,,3,2018-05-22T19:54:16Z,swap,host.global,used_percent,82.64\n\n#datatype,string,long,dateTime:RFC3339,string,string,string,long\n#group,false,false,false,true,true,true,false\n#default,_result,,,,,,\n,result,table,_time,_measurement,host,_field,_value\n,,0,2018-05-22T19:53:26Z,sys,host.global,load7,183\n,,0,2018-05-22T19:53:36Z,sys,host.global,load7,172\n,,0,2018-05-22T19:53:46Z,sys,host.global,load7,174\n,,0,2018-05-22T19:53:56Z,sys,host.global,load7,163\n,,0,2018-05-22T19:54:06Z,sys,host.global,load7,191\n,,0,2018-05-22T19:54:16Z,sys,host.global,load7,184\n\n,,1,2018-05-22T19:53:26Z,sys,host.local,load8,198\n,,1,2018-05-22T19:53:36Z,sys,host.local,load8,197\n,,1,2018-05-22T19:53:46Z,sys,host.local,load8,197\n,,1,2018-05-22T19:53:56Z,sys,host.local,load8,196\n,,1,2018-05-22T19:54:06Z,sys,host.local,load8,198\n,,1,2018-05-22T19:54:16Z,sys,host.local,load8,197\n\n,,2,2018-05-22T19:53:26Z,sys,host.global,load9,195\n,,2,2018-05-22T19:53:36Z,sys,host.global,load9,192\n,,2,2018-05-22T19:53:46Z,sys,host.global,load9,192\n,,2,2018-05-22T19:53:56Z,sys,host.global,load9,189\n,,2,2018-05-22T19:54:06Z,sys,host.global,load9,194\n,,2,2018-05-22T19:54:16Z,sys,host.global,load9,193\n\n,,3,2018-05-22T19:53:26Z,swp,host.global,used_percent,8298\n,,3,2018-05-22T19:53:36Z,swp,host.global,used_percent,8259\n,,3,2018-05-22T19:53:46Z,swp,host.global,used_percent,8259\n,,3,2018-05-22T19:53:56Z,swp,host.global,used_percent,8259\n,,3,2018-05-22T19:54:06Z,swp,host.global,used_percent,8259\n,,3,2018-05-22T19:54:16Z,swp,host.global,used_percent,8264\n\"",
 					Start: ast.Position{
 						Column: 1,
 						Line:   5,
@@ -52,7 +4226,7 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 							Column: 6,
 							Line:   5,
 						},
-						File:   "measurement_tag_keys_test.flux",
+						File:   "measurement_field_keys_test.flux",
 						Source: "input",
 						Start: ast.Position{
 							Column: 1,
@@ -68,17 +4242,17 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 					Loc: &ast.SourceLocation{
 						End: ast.Position{
 							Column: 2,
-							Line:   77,
+							Line:   69,
 						},
-						File:   "measurement_tag_keys_test.flux",
-						Source: "\"\n#datatype,string,long,dateTime:RFC3339,string,string,string,double\n#group,false,false,false,true,true,true,false\n#default,_result,,,,,,\n,result,table,_time,_measurement,host,_field,_value\n,,0,2018-05-22T19:53:26Z,sys,host.local,load1,1.83\n,,0,2018-05-22T19:53:36Z,sys,host.local,load1,1.72\n,,0,2018-05-22T19:53:46Z,sys,host.local,load1,1.74\n,,0,2018-05-22T19:53:56Z,sys,host.local,load1,1.63\n,,0,2018-05-22T19:54:06Z,sys,host.local,load1,1.91\n,,0,2018-05-22T19:54:16Z,sys,host.local,load1,1.84\n\n,,1,2018-05-22T19:53:26Z,sys,host.local,load3,1.98\n,,1,2018-05-22T19:53:36Z,sys,host.local,load3,1.97\n,,1,2018-05-22T19:53:46Z,sys,host.local,load3,1.97\n,,1,2018-05-22T19:53:56Z,sys,host.local,load3,1.96\n,,1,2018-05-22T19:54:06Z,sys,host.local,load3,1.98\n,,1,2018-05-22T19:54:16Z,sys,host.local,load3,1.97\n\n,,2,2018-05-22T19:53:26Z,sys,host.local,load5,1.95\n,,2,2018-05-22T19:53:36Z,sys,host.local,load5,1.92\n,,2,2018-05-22T19:53:46Z,sys,host.local,load5,1.92\n,,2,2018-05-22T19:53:56Z,sys,host.local,load5,1.89\n,,2,2018-05-22T19:54:06Z,sys,host.local,load5,1.94\n,,2,2018-05-22T19:54:16Z,sys,host.local,load5,1.93\n\n#datatype,string,long,dateTime:RFC3339,string,string,string,string,long\n#group,false,false,false,true,true,true,true,false\n#default,_result,,,,,,,\n,result,table,_time,_measurement,reg,host,_field,_value\n,,0,2018-05-22T19:53:26Z,swp,us-east,host.local,load1,10\n,,0,2018-05-22T19:53:36Z,swp,us-east,host.local,load1,11\n,,0,2018-05-22T19:53:46Z,swp,us-east,host.local,load1,18\n,,0,2018-05-22T19:53:56Z,swp,us-east,host.local,load1,19\n,,0,2018-05-22T19:54:06Z,swp,us-east,host.local,load1,17\n,,0,2018-05-22T19:54:16Z,swp,us-east,host.local,load1,17\n\n#datatype,string,long,dateTime:RFC3339,string,string,string,string,long\n#group,false,false,false,true,true,true,true,false\n#default,_result,,,,,,,\n,result,table,_time,_measurement,region,host,_field,_value\n,,0,2018-05-22T19:53:26Z,swp,us-east,host.global,load1,10\n,,0,2018-05-22T19:53:36Z,swp,us-east,host.global,load1,11\n,,0,2018-05-22T19:53:46Z,swp,us-east,host.global,load1,18\n,,0,2018-05-22T19:53:56Z,swp,us-east,host.global,load1,19\n,,0,2018-05-22T19:54:06Z,swp,us-east,host.global,load1,17\n,,0,2018-05-22T19:54:16Z,swp,us-east,host.global,load1,17\n\n,,1,2018-05-22T19:53:26Z,swp,us-east,host.global,load3,16\n,,1,2018-05-22T19:53:36Z,swp,us-east,host.global,load3,16\n,,1,2018-05-22T19:53:46Z,swp,us-east,host.global,load3,15\n,,1,2018-05-22T19:53:56Z,swp,us-east,host.global,load3,19\n,,1,2018-05-22T19:54:06Z,swp,us-east,host.global,load3,19\n,,1,2018-05-22T19:54:16Z,swp,us-east,host.global,load3,19\n\n,,2,2018-05-22T19:53:26Z,swp,us-east,host.global,load5,19\n,,2,2018-05-22T19:53:36Z,swp,us-east,host.global,load5,22\n,,2,2018-05-22T19:53:46Z,swp,us-east,host.global,load5,11\n,,2,2018-05-22T19:53:56Z,swp,us-east,host.global,load5,12\n,,2,2018-05-22T19:54:06Z,swp,us-east,host.global,load5,13\n,,2,2018-05-22T19:54:16Z,swp,us-east,host.global,load5,13\n\n#datatype,string,long,dateTime:RFC3339,string,string,string,string,double\n#group,false,false,false,true,true,true,true,false\n#default,_result,,,,,,,\n,result,table,_time,_measurement,region,host,_field,_value\n,,0,2018-05-22T19:53:26Z,swp,us-east,host.global,load2,10.003\n,,0,2018-05-22T19:53:36Z,swp,us-east,host.global,load2,11.873\n,,0,2018-05-22T19:53:46Z,swp,us-east,host.global,load2,18.832\n,,0,2018-05-22T19:53:56Z,swp,us-east,host.global,load2,19.777\n,,0,2018-05-22T19:54:06Z,swp,us-east,host.global,load2,17.190\n,,0,2018-05-22T19:54:16Z,swp,us-east,host.global,load2,17.192\n\"",
+						File:   "measurement_field_keys_test.flux",
+						Source: "\"\n#datatype,string,long,dateTime:RFC3339,string,string,string,double\n#group,false,false,false,true,true,true,false\n#default,_result,,,,,,\n,result,table,_time,_measurement,host,_field,_value\n,,0,2018-05-22T19:53:26Z,system,host.local,load1,1.83\n,,0,2018-05-22T19:53:36Z,system,host.local,load1,1.72\n,,0,2018-05-22T19:53:46Z,system,host.local,load1,1.74\n,,0,2018-05-22T19:53:56Z,system,host.local,load1,1.63\n,,0,2018-05-22T19:54:06Z,system,host.local,load1,1.91\n,,0,2018-05-22T19:54:16Z,system,host.local,load1,1.84\n\n,,1,2018-05-22T19:53:26Z,sys,host.local,load3,1.98\n,,1,2018-05-22T19:53:36Z,sys,host.local,load3,1.97\n,,1,2018-05-22T19:53:46Z,sys,host.local,load3,1.97\n,,1,2018-05-22T19:53:56Z,sys,host.local,load3,1.96\n,,1,2018-05-22T19:54:06Z,sys,host.local,load3,1.98\n,,1,2018-05-22T19:54:16Z,sys,host.local,load3,1.97\n\n,,2,2018-05-22T19:53:26Z,system,host.local,load5,1.95\n,,2,2018-05-22T19:53:36Z,system,host.local,load5,1.92\n,,2,2018-05-22T19:53:46Z,system,host.local,load5,1.92\n,,2,2018-05-22T19:53:56Z,system,host.local,load5,1.89\n,,2,2018-05-22T19:54:06Z,system,host.local,load5,1.94\n,,2,2018-05-22T19:54:16Z,system,host.local,load5,1.93\n\n,,3,2018-05-22T19:53:26Z,swap,host.global,used_percent,82.98\n,,3,2018-05-22T19:53:36Z,swap,host.global,used_percent,82.59\n,,3,2018-05-22T19:53:46Z,swap,host.global,used_percent,82.59\n,,3,2018-05-22T19:53:56Z,swap,host.global,used_percent,82.59\n,,3,2018-05-22T19:54:06Z,swap,host.global,used_percent,82.59\n,,3,2018-05-22T19:54:16Z,swap,host.global,used_percent,82.64\n\n#datatype,string,long,dateTime:RFC3339,string,string,string,long\n#group,false,false,false,true,true,true,false\n#default,_result,,,,,,\n,result,table,_time,_measurement,host,_field,_value\n,,0,2018-05-22T19:53:26Z,sys,host.global,load7,183\n,,0,2018-05-22T19:53:36Z,sys,host.global,load7,172\n,,0,2018-05-22T19:53:46Z,sys,host.global,load7,174\n,,0,2018-05-22T19:53:56Z,sys,host.global,load7,163\n,,0,2018-05-22T19:54:06Z,sys,host.global,load7,191\n,,0,2018-05-22T19:54:16Z,sys,host.global,load7,184\n\n,,1,2018-05-22T19:53:26Z,sys,host.local,load8,198\n,,1,2018-05-22T19:53:36Z,sys,host.local,load8,197\n,,1,2018-05-22T19:53:46Z,sys,host.local,load8,197\n,,1,2018-05-22T19:53:56Z,sys,host.local,load8,196\n,,1,2018-05-22T19:54:06Z,sys,host.local,load8,198\n,,1,2018-05-22T19:54:16Z,sys,host.local,load8,197\n\n,,2,2018-05-22T19:53:26Z,sys,host.global,load9,195\n,,2,2018-05-22T19:53:36Z,sys,host.global,load9,192\n,,2,2018-05-22T19:53:46Z,sys,host.global,load9,192\n,,2,2018-05-22T19:53:56Z,sys,host.global,load9,189\n,,2,2018-05-22T19:54:06Z,sys,host.global,load9,194\n,,2,2018-05-22T19:54:16Z,sys,host.global,load9,193\n\n,,3,2018-05-22T19:53:26Z,swp,host.global,used_percent,8298\n,,3,2018-05-22T19:53:36Z,swp,host.global,used_percent,8259\n,,3,2018-05-22T19:53:46Z,swp,host.global,used_percent,8259\n,,3,2018-05-22T19:53:56Z,swp,host.global,used_percent,8259\n,,3,2018-05-22T19:54:06Z,swp,host.global,used_percent,8259\n,,3,2018-05-22T19:54:16Z,swp,host.global,used_percent,8264\n\"",
 						Start: ast.Position{
 							Column: 9,
 							Line:   5,
 						},
 					},
 				},
-				Value: "\n#datatype,string,long,dateTime:RFC3339,string,string,string,double\n#group,false,false,false,true,true,true,false\n#default,_result,,,,,,\n,result,table,_time,_measurement,host,_field,_value\n,,0,2018-05-22T19:53:26Z,sys,host.local,load1,1.83\n,,0,2018-05-22T19:53:36Z,sys,host.local,load1,1.72\n,,0,2018-05-22T19:53:46Z,sys,host.local,load1,1.74\n,,0,2018-05-22T19:53:56Z,sys,host.local,load1,1.63\n,,0,2018-05-22T19:54:06Z,sys,host.local,load1,1.91\n,,0,2018-05-22T19:54:16Z,sys,host.local,load1,1.84\n\n,,1,2018-05-22T19:53:26Z,sys,host.local,load3,1.98\n,,1,2018-05-22T19:53:36Z,sys,host.local,load3,1.97\n,,1,2018-05-22T19:53:46Z,sys,host.local,load3,1.97\n,,1,2018-05-22T19:53:56Z,sys,host.local,load3,1.96\n,,1,2018-05-22T19:54:06Z,sys,host.local,load3,1.98\n,,1,2018-05-22T19:54:16Z,sys,host.local,load3,1.97\n\n,,2,2018-05-22T19:53:26Z,sys,host.local,load5,1.95\n,,2,2018-05-22T19:53:36Z,sys,host.local,load5,1.92\n,,2,2018-05-22T19:53:46Z,sys,host.local,load5,1.92\n,,2,2018-05-22T19:53:56Z,sys,host.local,load5,1.89\n,,2,2018-05-22T19:54:06Z,sys,host.local,load5,1.94\n,,2,2018-05-22T19:54:16Z,sys,host.local,load5,1.93\n\n#datatype,string,long,dateTime:RFC3339,string,string,string,string,long\n#group,false,false,false,true,true,true,true,false\n#default,_result,,,,,,,\n,result,table,_time,_measurement,reg,host,_field,_value\n,,0,2018-05-22T19:53:26Z,swp,us-east,host.local,load1,10\n,,0,2018-05-22T19:53:36Z,swp,us-east,host.local,load1,11\n,,0,2018-05-22T19:53:46Z,swp,us-east,host.local,load1,18\n,,0,2018-05-22T19:53:56Z,swp,us-east,host.local,load1,19\n,,0,2018-05-22T19:54:06Z,swp,us-east,host.local,load1,17\n,,0,2018-05-22T19:54:16Z,swp,us-east,host.local,load1,17\n\n#datatype,string,long,dateTime:RFC3339,string,string,string,string,long\n#group,false,false,false,true,true,true,true,false\n#default,_result,,,,,,,\n,result,table,_time,_measurement,region,host,_field,_value\n,,0,2018-05-22T19:53:26Z,swp,us-east,host.global,load1,10\n,,0,2018-05-22T19:53:36Z,swp,us-east,host.global,load1,11\n,,0,2018-05-22T19:53:46Z,swp,us-east,host.global,load1,18\n,,0,2018-05-22T19:53:56Z,swp,us-east,host.global,load1,19\n,,0,2018-05-22T19:54:06Z,swp,us-east,host.global,load1,17\n,,0,2018-05-22T19:54:16Z,swp,us-east,host.global,load1,17\n\n,,1,2018-05-22T19:53:26Z,swp,us-east,host.global,load3,16\n,,1,2018-05-22T19:53:36Z,swp,us-east,host.global,load3,16\n,,1,2018-05-22T19:53:46Z,swp,us-east,host.global,load3,15\n,,1,2018-05-22T19:53:56Z,swp,us-east,host.global,load3,19\n,,1,2018-05-22T19:54:06Z,swp,us-east,host.global,load3,19\n,,1,2018-05-22T19:54:16Z,swp,us-east,host.global,load3,19\n\n,,2,2018-05-22T19:53:26Z,swp,us-east,host.global,load5,19\n,,2,2018-05-22T19:53:36Z,swp,us-east,host.global,load5,22\n,,2,2018-05-22T19:53:46Z,swp,us-east,host.global,load5,11\n,,2,2018-05-22T19:53:56Z,swp,us-east,host.global,load5,12\n,,2,2018-05-22T19:54:06Z,swp,us-east,host.global,load5,13\n,,2,2018-05-22T19:54:16Z,swp,us-east,host.global,load5,13\n\n#datatype,string,long,dateTime:RFC3339,string,string,string,string,double\n#group,false,false,false,true,true,true,true,false\n#default,_result,,,,,,,\n,result,table,_time,_measurement,region,host,_field,_value\n,,0,2018-05-22T19:53:26Z,swp,us-east,host.global,load2,10.003\n,,0,2018-05-22T19:53:36Z,swp,us-east,host.global,load2,11.873\n,,0,2018-05-22T19:53:46Z,swp,us-east,host.global,load2,18.832\n,,0,2018-05-22T19:53:56Z,swp,us-east,host.global,load2,19.777\n,,0,2018-05-22T19:54:06Z,swp,us-east,host.global,load2,17.190\n,,0,2018-05-22T19:54:16Z,swp,us-east,host.global,load2,17.192\n",
+				Value: "\n#datatype,string,long,dateTime:RFC3339,string,string,string,double\n#group,false,false,false,true,true,true,false\n#default,_result,,,,,,\n,result,table,_time,_measurement,host,_field,_value\n,,0,2018-05-22T19:53:26Z,system,host.local,load1,1.83\n,,0,2018-05-22T19:53:36Z,system,host.local,load1,1.72\n,,0,2018-05-22T19:53:46Z,system,host.local,load1,1.74\n,,0,2018-05-22T19:53:56Z,system,host.local,load1,1.63\n,,0,2018-05-22T19:54:06Z,system,host.local,load1,1.91\n,,0,2018-05-22T19:54:16Z,system,host.local,load1,1.84\n\n,,1,2018-05-22T19:53:26Z,sys,host.local,load3,1.98\n,,1,2018-05-22T19:53:36Z,sys,host.local,load3,1.97\n,,1,2018-05-22T19:53:46Z,sys,host.local,load3,1.97\n,,1,2018-05-22T19:53:56Z,sys,host.local,load3,1.96\n,,1,2018-05-22T19:54:06Z,sys,host.local,load3,1.98\n,,1,2018-05-22T19:54:16Z,sys,host.local,load3,1.97\n\n,,2,2018-05-22T19:53:26Z,system,host.local,load5,1.95\n,,2,2018-05-22T19:53:36Z,system,host.local,load5,1.92\n,,2,2018-05-22T19:53:46Z,system,host.local,load5,1.92\n,,2,2018-05-22T19:53:56Z,system,host.local,load5,1.89\n,,2,2018-05-22T19:54:06Z,system,host.local,load5,1.94\n,,2,2018-05-22T19:54:16Z,system,host.local,load5,1.93\n\n,,3,2018-05-22T19:53:26Z,swap,host.global,used_percent,82.98\n,,3,2018-05-22T19:53:36Z,swap,host.global,used_percent,82.59\n,,3,2018-05-22T19:53:46Z,swap,host.global,used_percent,82.59\n,,3,2018-05-22T19:53:56Z,swap,host.global,used_percent,82.59\n,,3,2018-05-22T19:54:06Z,swap,host.global,used_percent,82.59\n,,3,2018-05-22T19:54:16Z,swap,host.global,used_percent,82.64\n\n#datatype,string,long,dateTime:RFC3339,string,string,string,long\n#group,false,false,false,true,true,true,false\n#default,_result,,,,,,\n,result,table,_time,_measurement,host,_field,_value\n,,0,2018-05-22T19:53:26Z,sys,host.global,load7,183\n,,0,2018-05-22T19:53:36Z,sys,host.global,load7,172\n,,0,2018-05-22T19:53:46Z,sys,host.global,load7,174\n,,0,2018-05-22T19:53:56Z,sys,host.global,load7,163\n,,0,2018-05-22T19:54:06Z,sys,host.global,load7,191\n,,0,2018-05-22T19:54:16Z,sys,host.global,load7,184\n\n,,1,2018-05-22T19:53:26Z,sys,host.local,load8,198\n,,1,2018-05-22T19:53:36Z,sys,host.local,load8,197\n,,1,2018-05-22T19:53:46Z,sys,host.local,load8,197\n,,1,2018-05-22T19:53:56Z,sys,host.local,load8,196\n,,1,2018-05-22T19:54:06Z,sys,host.local,load8,198\n,,1,2018-05-22T19:54:16Z,sys,host.local,load8,197\n\n,,2,2018-05-22T19:53:26Z,sys,host.global,load9,195\n,,2,2018-05-22T19:53:36Z,sys,host.global,load9,192\n,,2,2018-05-22T19:53:46Z,sys,host.global,load9,192\n,,2,2018-05-22T19:53:56Z,sys,host.global,load9,189\n,,2,2018-05-22T19:54:06Z,sys,host.global,load9,194\n,,2,2018-05-22T19:54:16Z,sys,host.global,load9,193\n\n,,3,2018-05-22T19:53:26Z,swp,host.global,used_percent,8298\n,,3,2018-05-22T19:53:36Z,swp,host.global,used_percent,8259\n,,3,2018-05-22T19:53:46Z,swp,host.global,used_percent,8259\n,,3,2018-05-22T19:53:56Z,swp,host.global,used_percent,8259\n,,3,2018-05-22T19:54:06Z,swp,host.global,used_percent,8259\n,,3,2018-05-22T19:54:16Z,swp,host.global,used_percent,8264\n",
 			},
 		}, &ast.VariableAssignment{
 			BaseNode: ast.BaseNode{
@@ -86,13 +4260,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 				Loc: &ast.SourceLocation{
 					End: ast.Position{
 						Column: 2,
-						Line:   90,
+						Line:   78,
 					},
-					File:   "measurement_tag_keys_test.flux",
-					Source: "output = \"\n#datatype,string,long,string\n#group,false,false,false\n#default,0,,\n,result,table,_value\n,,0,_field\n,,0,_measurement\n,,0,_start\n,,0,_stop\n,,0,host\n,,0,region\n\"",
+					File:   "measurement_field_keys_test.flux",
+					Source: "output = \"\n#datatype,string,long,string\n#group,false,false,false\n#default,0,,\n,result,table,_value\n,,0,load3\n,,0,load8\n\"",
 					Start: ast.Position{
 						Column: 1,
-						Line:   79,
+						Line:   71,
 					},
 				},
 			},
@@ -102,13 +4276,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 					Loc: &ast.SourceLocation{
 						End: ast.Position{
 							Column: 7,
-							Line:   79,
+							Line:   71,
 						},
-						File:   "measurement_tag_keys_test.flux",
+						File:   "measurement_field_keys_test.flux",
 						Source: "output",
 						Start: ast.Position{
 							Column: 1,
-							Line:   79,
+							Line:   71,
 						},
 					},
 				},
@@ -120,17 +4294,17 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 					Loc: &ast.SourceLocation{
 						End: ast.Position{
 							Column: 2,
-							Line:   90,
+							Line:   78,
 						},
-						File:   "measurement_tag_keys_test.flux",
-						Source: "\"\n#datatype,string,long,string\n#group,false,false,false\n#default,0,,\n,result,table,_value\n,,0,_field\n,,0,_measurement\n,,0,_start\n,,0,_stop\n,,0,host\n,,0,region\n\"",
+						File:   "measurement_field_keys_test.flux",
+						Source: "\"\n#datatype,string,long,string\n#group,false,false,false\n#default,0,,\n,result,table,_value\n,,0,load3\n,,0,load8\n\"",
 						Start: ast.Position{
 							Column: 10,
-							Line:   79,
+							Line:   71,
 						},
 					},
 				},
-				Value: "\n#datatype,string,long,string\n#group,false,false,false\n#default,0,,\n,result,table,_value\n,,0,_field\n,,0,_measurement\n,,0,_start\n,,0,_stop\n,,0,host\n,,0,region\n",
+				Value: "\n#datatype,string,long,string\n#group,false,false,false\n#default,0,,\n,result,table,_value\n,,0,load3\n,,0,load8\n",
 			},
 		}, &ast.VariableAssignment{
 			BaseNode: ast.BaseNode{
@@ -138,13 +4312,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 				Loc: &ast.SourceLocation{
 					End: ast.Position{
 						Column: 14,
-						Line:   99,
+						Line:   87,
 					},
-					File:   "measurement_tag_keys_test.flux",
-					Source: "measurement_tag_keys_fn = (tables=<-) => tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => r._measurement == \"swp\")\n    |> filter(fn: (r) => r.host == \"host.global\")\n    |> keys()\n    |> keep(columns: [\"_value\"])\n    |> distinct()\n    |> sort()",
+					File:   "measurement_field_keys_test.flux",
+					Source: "measurement_field_keys_fn = (tables=<-) => tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => r._measurement == \"sys\")\n    |> filter(fn: (r) => r.host == \"host.local\")\n    |> keep(columns: [\"_field\"])\n    |> group()\n    |> distinct(column: \"_field\")\n    |> sort()",
 					Start: ast.Position{
 						Column: 1,
-						Line:   92,
+						Line:   80,
 					},
 				},
 			},
@@ -153,18 +4327,18 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 					Errors: nil,
 					Loc: &ast.SourceLocation{
 						End: ast.Position{
-							Column: 24,
-							Line:   92,
+							Column: 26,
+							Line:   80,
 						},
-						File:   "measurement_tag_keys_test.flux",
-						Source: "measurement_tag_keys_fn",
+						File:   "measurement_field_keys_test.flux",
+						Source: "measurement_field_keys_fn",
 						Start: ast.Position{
 							Column: 1,
-							Line:   92,
+							Line:   80,
 						},
 					},
 				},
-				Name: "measurement_tag_keys_fn",
+				Name: "measurement_field_keys_fn",
 			},
 			Init: &ast.FunctionExpression{
 				BaseNode: ast.BaseNode{
@@ -172,13 +4346,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 					Loc: &ast.SourceLocation{
 						End: ast.Position{
 							Column: 14,
-							Line:   99,
+							Line:   87,
 						},
-						File:   "measurement_tag_keys_test.flux",
-						Source: "(tables=<-) => tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => r._measurement == \"swp\")\n    |> filter(fn: (r) => r.host == \"host.global\")\n    |> keys()\n    |> keep(columns: [\"_value\"])\n    |> distinct()\n    |> sort()",
+						File:   "measurement_field_keys_test.flux",
+						Source: "(tables=<-) => tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => r._measurement == \"sys\")\n    |> filter(fn: (r) => r.host == \"host.local\")\n    |> keep(columns: [\"_field\"])\n    |> group()\n    |> distinct(column: \"_field\")\n    |> sort()",
 						Start: ast.Position{
-							Column: 27,
-							Line:   92,
+							Column: 29,
+							Line:   80,
 						},
 					},
 				},
@@ -194,14 +4368,14 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 													Errors: nil,
 													Loc: &ast.SourceLocation{
 														End: ast.Position{
-															Column: 48,
-															Line:   92,
+															Column: 50,
+															Line:   80,
 														},
-														File:   "measurement_tag_keys_test.flux",
+														File:   "measurement_field_keys_test.flux",
 														Source: "tables",
 														Start: ast.Position{
-															Column: 42,
-															Line:   92,
+															Column: 44,
+															Line:   80,
 														},
 													},
 												},
@@ -212,13 +4386,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 												Loc: &ast.SourceLocation{
 													End: ast.Position{
 														Column: 70,
-														Line:   93,
+														Line:   81,
 													},
-													File:   "measurement_tag_keys_test.flux",
+													File:   "measurement_field_keys_test.flux",
 													Source: "tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)",
 													Start: ast.Position{
-														Column: 42,
-														Line:   92,
+														Column: 44,
+														Line:   80,
 													},
 												},
 											},
@@ -229,13 +4403,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 														Loc: &ast.SourceLocation{
 															End: ast.Position{
 																Column: 69,
-																Line:   93,
+																Line:   81,
 															},
-															File:   "measurement_tag_keys_test.flux",
+															File:   "measurement_field_keys_test.flux",
 															Source: "start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z",
 															Start: ast.Position{
 																Column: 14,
-																Line:   93,
+																Line:   81,
 															},
 														},
 													},
@@ -245,13 +4419,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 															Loc: &ast.SourceLocation{
 																End: ast.Position{
 																	Column: 41,
-																	Line:   93,
+																	Line:   81,
 																},
-																File:   "measurement_tag_keys_test.flux",
+																File:   "measurement_field_keys_test.flux",
 																Source: "start: 2018-01-01T00:00:00Z",
 																Start: ast.Position{
 																	Column: 14,
-																	Line:   93,
+																	Line:   81,
 																},
 															},
 														},
@@ -261,13 +4435,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 																Loc: &ast.SourceLocation{
 																	End: ast.Position{
 																		Column: 19,
-																		Line:   93,
+																		Line:   81,
 																	},
-																	File:   "measurement_tag_keys_test.flux",
+																	File:   "measurement_field_keys_test.flux",
 																	Source: "start",
 																	Start: ast.Position{
 																		Column: 14,
-																		Line:   93,
+																		Line:   81,
 																	},
 																},
 															},
@@ -279,13 +4453,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 																Loc: &ast.SourceLocation{
 																	End: ast.Position{
 																		Column: 41,
-																		Line:   93,
+																		Line:   81,
 																	},
-																	File:   "measurement_tag_keys_test.flux",
+																	File:   "measurement_field_keys_test.flux",
 																	Source: "2018-01-01T00:00:00Z",
 																	Start: ast.Position{
 																		Column: 21,
-																		Line:   93,
+																		Line:   81,
 																	},
 																},
 															},
@@ -297,13 +4471,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 															Loc: &ast.SourceLocation{
 																End: ast.Position{
 																	Column: 69,
-																	Line:   93,
+																	Line:   81,
 																},
-																File:   "measurement_tag_keys_test.flux",
+																File:   "measurement_field_keys_test.flux",
 																Source: "stop: 2019-01-01T00:00:00Z",
 																Start: ast.Position{
 																	Column: 43,
-																	Line:   93,
+																	Line:   81,
 																},
 															},
 														},
@@ -313,13 +4487,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 																Loc: &ast.SourceLocation{
 																	End: ast.Position{
 																		Column: 47,
-																		Line:   93,
+																		Line:   81,
 																	},
-																	File:   "measurement_tag_keys_test.flux",
+																	File:   "measurement_field_keys_test.flux",
 																	Source: "stop",
 																	Start: ast.Position{
 																		Column: 43,
-																		Line:   93,
+																		Line:   81,
 																	},
 																},
 															},
@@ -331,13 +4505,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 																Loc: &ast.SourceLocation{
 																	End: ast.Position{
 																		Column: 69,
-																		Line:   93,
+																		Line:   81,
 																	},
-																	File:   "measurement_tag_keys_test.flux",
+																	File:   "measurement_field_keys_test.flux",
 																	Source: "2019-01-01T00:00:00Z",
 																	Start: ast.Position{
 																		Column: 49,
-																		Line:   93,
+																		Line:   81,
 																	},
 																},
 															},
@@ -351,13 +4525,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 													Loc: &ast.SourceLocation{
 														End: ast.Position{
 															Column: 70,
-															Line:   93,
+															Line:   81,
 														},
-														File:   "measurement_tag_keys_test.flux",
+														File:   "measurement_field_keys_test.flux",
 														Source: "range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)",
 														Start: ast.Position{
 															Column: 8,
-															Line:   93,
+															Line:   81,
 														},
 													},
 												},
@@ -367,13 +4541,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 														Loc: &ast.SourceLocation{
 															End: ast.Position{
 																Column: 13,
-																Line:   93,
+																Line:   81,
 															},
-															File:   "measurement_tag_keys_test.flux",
+															File:   "measurement_field_keys_test.flux",
 															Source: "range",
 															Start: ast.Position{
 																Column: 8,
-																Line:   93,
+																Line:   81,
 															},
 														},
 													},
@@ -386,13 +4560,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 											Loc: &ast.SourceLocation{
 												End: ast.Position{
 													Column: 50,
-													Line:   94,
+													Line:   82,
 												},
-												File:   "measurement_tag_keys_test.flux",
-												Source: "tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => r._measurement == \"swp\")",
+												File:   "measurement_field_keys_test.flux",
+												Source: "tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => r._measurement == \"sys\")",
 												Start: ast.Position{
-													Column: 42,
-													Line:   92,
+													Column: 44,
+													Line:   80,
 												},
 											},
 										},
@@ -403,13 +4577,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 													Loc: &ast.SourceLocation{
 														End: ast.Position{
 															Column: 49,
-															Line:   94,
+															Line:   82,
 														},
-														File:   "measurement_tag_keys_test.flux",
-														Source: "fn: (r) => r._measurement == \"swp\"",
+														File:   "measurement_field_keys_test.flux",
+														Source: "fn: (r) => r._measurement == \"sys\"",
 														Start: ast.Position{
 															Column: 15,
-															Line:   94,
+															Line:   82,
 														},
 													},
 												},
@@ -419,13 +4593,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 														Loc: &ast.SourceLocation{
 															End: ast.Position{
 																Column: 49,
-																Line:   94,
+																Line:   82,
 															},
-															File:   "measurement_tag_keys_test.flux",
-															Source: "fn: (r) => r._measurement == \"swp\"",
+															File:   "measurement_field_keys_test.flux",
+															Source: "fn: (r) => r._measurement == \"sys\"",
 															Start: ast.Position{
 																Column: 15,
-																Line:   94,
+																Line:   82,
 															},
 														},
 													},
@@ -435,13 +4609,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 															Loc: &ast.SourceLocation{
 																End: ast.Position{
 																	Column: 17,
-																	Line:   94,
+																	Line:   82,
 																},
-																File:   "measurement_tag_keys_test.flux",
+																File:   "measurement_field_keys_test.flux",
 																Source: "fn",
 																Start: ast.Position{
 																	Column: 15,
-																	Line:   94,
+																	Line:   82,
 																},
 															},
 														},
@@ -453,13 +4627,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 															Loc: &ast.SourceLocation{
 																End: ast.Position{
 																	Column: 49,
-																	Line:   94,
+																	Line:   82,
 																},
-																File:   "measurement_tag_keys_test.flux",
-																Source: "(r) => r._measurement == \"swp\"",
+																File:   "measurement_field_keys_test.flux",
+																Source: "(r) => r._measurement == \"sys\"",
 																Start: ast.Position{
 																	Column: 19,
-																	Line:   94,
+																	Line:   82,
 																},
 															},
 														},
@@ -469,13 +4643,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 																Loc: &ast.SourceLocation{
 																	End: ast.Position{
 																		Column: 49,
-																		Line:   94,
+																		Line:   82,
 																	},
-																	File:   "measurement_tag_keys_test.flux",
-																	Source: "r._measurement == \"swp\"",
+																	File:   "measurement_field_keys_test.flux",
+																	Source: "r._measurement == \"sys\"",
 																	Start: ast.Position{
 																		Column: 26,
-																		Line:   94,
+																		Line:   82,
 																	},
 																},
 															},
@@ -485,13 +4659,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 																	Loc: &ast.SourceLocation{
 																		End: ast.Position{
 																			Column: 40,
-																			Line:   94,
+																			Line:   82,
 																		},
-																		File:   "measurement_tag_keys_test.flux",
+																		File:   "measurement_field_keys_test.flux",
 																		Source: "r._measurement",
 																		Start: ast.Position{
 																			Column: 26,
-																			Line:   94,
+																			Line:   82,
 																		},
 																	},
 																},
@@ -501,13 +4675,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 																		Loc: &ast.SourceLocation{
 																			End: ast.Position{
 																				Column: 27,
-																				Line:   94,
+																				Line:   82,
 																			},
-																			File:   "measurement_tag_keys_test.flux",
+																			File:   "measurement_field_keys_test.flux",
 																			Source: "r",
 																			Start: ast.Position{
 																				Column: 26,
-																				Line:   94,
+																				Line:   82,
 																			},
 																		},
 																	},
@@ -519,13 +4693,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 																		Loc: &ast.SourceLocation{
 																			End: ast.Position{
 																				Column: 40,
-																				Line:   94,
+																				Line:   82,
 																			},
-																			File:   "measurement_tag_keys_test.flux",
+																			File:   "measurement_field_keys_test.flux",
 																			Source: "_measurement",
 																			Start: ast.Position{
 																				Column: 28,
-																				Line:   94,
+																				Line:   82,
 																			},
 																		},
 																	},
@@ -539,17 +4713,17 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 																	Loc: &ast.SourceLocation{
 																		End: ast.Position{
 																			Column: 49,
-																			Line:   94,
+																			Line:   82,
 																		},
-																		File:   "measurement_tag_keys_test.flux",
-																		Source: "\"swp\"",
+																		File:   "measurement_field_keys_test.flux",
+																		Source: "\"sys\"",
 																		Start: ast.Position{
 																			Column: 44,
-																			Line:   94,
+																			Line:   82,
 																		},
 																	},
 																},
-																Value: "swp",
+																Value: "sys",
 															},
 														},
 														Params: []*ast.Property{&ast.Property{
@@ -558,13 +4732,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 																Loc: &ast.SourceLocation{
 																	End: ast.Position{
 																		Column: 21,
-																		Line:   94,
+																		Line:   82,
 																	},
-																	File:   "measurement_tag_keys_test.flux",
+																	File:   "measurement_field_keys_test.flux",
 																	Source: "r",
 																	Start: ast.Position{
 																		Column: 20,
-																		Line:   94,
+																		Line:   82,
 																	},
 																},
 															},
@@ -574,13 +4748,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 																	Loc: &ast.SourceLocation{
 																		End: ast.Position{
 																			Column: 21,
-																			Line:   94,
+																			Line:   82,
 																		},
-																		File:   "measurement_tag_keys_test.flux",
+																		File:   "measurement_field_keys_test.flux",
 																		Source: "r",
 																		Start: ast.Position{
 																			Column: 20,
-																			Line:   94,
+																			Line:   82,
 																		},
 																	},
 																},
@@ -597,13 +4771,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 												Loc: &ast.SourceLocation{
 													End: ast.Position{
 														Column: 50,
-														Line:   94,
+														Line:   82,
 													},
-													File:   "measurement_tag_keys_test.flux",
-													Source: "filter(fn: (r) => r._measurement == \"swp\")",
+													File:   "measurement_field_keys_test.flux",
+													Source: "filter(fn: (r) => r._measurement == \"sys\")",
 													Start: ast.Position{
 														Column: 8,
-														Line:   94,
+														Line:   82,
 													},
 												},
 											},
@@ -613,13 +4787,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 													Loc: &ast.SourceLocation{
 														End: ast.Position{
 															Column: 14,
-															Line:   94,
+															Line:   82,
 														},
-														File:   "measurement_tag_keys_test.flux",
+														File:   "measurement_field_keys_test.flux",
 														Source: "filter",
 														Start: ast.Position{
 															Column: 8,
-															Line:   94,
+															Line:   82,
 														},
 													},
 												},
@@ -631,14 +4805,14 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 										Errors: nil,
 										Loc: &ast.SourceLocation{
 											End: ast.Position{
-												Column: 50,
-												Line:   95,
+												Column: 49,
+												Line:   83,
 											},
-											File:   "measurement_tag_keys_test.flux",
-											Source: "tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => r._measurement == \"swp\")\n    |> filter(fn: (r) => r.host == \"host.global\")",
+											File:   "measurement_field_keys_test.flux",
+											Source: "tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => r._measurement == \"sys\")\n    |> filter(fn: (r) => r.host == \"host.local\")",
 											Start: ast.Position{
-												Column: 42,
-												Line:   92,
+												Column: 44,
+												Line:   80,
 											},
 										},
 									},
@@ -648,14 +4822,14 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 												Errors: nil,
 												Loc: &ast.SourceLocation{
 													End: ast.Position{
-														Column: 49,
-														Line:   95,
+														Column: 48,
+														Line:   83,
 													},
-													File:   "measurement_tag_keys_test.flux",
-													Source: "fn: (r) => r.host == \"host.global\"",
+													File:   "measurement_field_keys_test.flux",
+													Source: "fn: (r) => r.host == \"host.local\"",
 													Start: ast.Position{
 														Column: 15,
-														Line:   95,
+														Line:   83,
 													},
 												},
 											},
@@ -664,14 +4838,14 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 													Errors: nil,
 													Loc: &ast.SourceLocation{
 														End: ast.Position{
-															Column: 49,
-															Line:   95,
+															Column: 48,
+															Line:   83,
 														},
-														File:   "measurement_tag_keys_test.flux",
-														Source: "fn: (r) => r.host == \"host.global\"",
+														File:   "measurement_field_keys_test.flux",
+														Source: "fn: (r) => r.host == \"host.local\"",
 														Start: ast.Position{
 															Column: 15,
-															Line:   95,
+															Line:   83,
 														},
 													},
 												},
@@ -681,13 +4855,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 														Loc: &ast.SourceLocation{
 															End: ast.Position{
 																Column: 17,
-																Line:   95,
+																Line:   83,
 															},
-															File:   "measurement_tag_keys_test.flux",
+															File:   "measurement_field_keys_test.flux",
 															Source: "fn",
 															Start: ast.Position{
 																Column: 15,
-																Line:   95,
+																Line:   83,
 															},
 														},
 													},
@@ -698,14 +4872,14 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 														Errors: nil,
 														Loc: &ast.SourceLocation{
 															End: ast.Position{
-																Column: 49,
-																Line:   95,
+																Column: 48,
+																Line:   83,
 															},
-															File:   "measurement_tag_keys_test.flux",
-															Source: "(r) => r.host == \"host.global\"",
+															File:   "measurement_field_keys_test.flux",
+															Source: "(r) => r.host == \"host.local\"",
 															Start: ast.Position{
 																Column: 19,
-																Line:   95,
+																Line:   83,
 															},
 														},
 													},
@@ -714,14 +4888,14 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 															Errors: nil,
 															Loc: &ast.SourceLocation{
 																End: ast.Position{
-																	Column: 49,
-																	Line:   95,
+																	Column: 48,
+																	Line:   83,
 																},
-																File:   "measurement_tag_keys_test.flux",
-																Source: "r.host == \"host.global\"",
+																File:   "measurement_field_keys_test.flux",
+																Source: "r.host == \"host.local\"",
 																Start: ast.Position{
 																	Column: 26,
-																	Line:   95,
+																	Line:   83,
 																},
 															},
 														},
@@ -731,13 +4905,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 																Loc: &ast.SourceLocation{
 																	End: ast.Position{
 																		Column: 32,
-																		Line:   95,
+																		Line:   83,
 																	},
-																	File:   "measurement_tag_keys_test.flux",
+																	File:   "measurement_field_keys_test.flux",
 																	Source: "r.host",
 																	Start: ast.Position{
 																		Column: 26,
-																		Line:   95,
+																		Line:   83,
 																	},
 																},
 															},
@@ -747,13 +4921,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 																	Loc: &ast.SourceLocation{
 																		End: ast.Position{
 																			Column: 27,
-																			Line:   95,
+																			Line:   83,
 																		},
-																		File:   "measurement_tag_keys_test.flux",
+																		File:   "measurement_field_keys_test.flux",
 																		Source: "r",
 																		Start: ast.Position{
 																			Column: 26,
-																			Line:   95,
+																			Line:   83,
 																		},
 																	},
 																},
@@ -765,13 +4939,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 																	Loc: &ast.SourceLocation{
 																		End: ast.Position{
 																			Column: 32,
-																			Line:   95,
+																			Line:   83,
 																		},
-																		File:   "measurement_tag_keys_test.flux",
+																		File:   "measurement_field_keys_test.flux",
 																		Source: "host",
 																		Start: ast.Position{
 																			Column: 28,
-																			Line:   95,
+																			Line:   83,
 																		},
 																	},
 																},
@@ -784,18 +4958,18 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 																Errors: nil,
 																Loc: &ast.SourceLocation{
 																	End: ast.Position{
-																		Column: 49,
-																		Line:   95,
+																		Column: 48,
+																		Line:   83,
 																	},
-																	File:   "measurement_tag_keys_test.flux",
-																	Source: "\"host.global\"",
+																	File:   "measurement_field_keys_test.flux",
+																	Source: "\"host.local\"",
 																	Start: ast.Position{
 																		Column: 36,
-																		Line:   95,
+																		Line:   83,
 																	},
 																},
 															},
-															Value: "host.global",
+															Value: "host.local",
 														},
 													},
 													Params: []*ast.Property{&ast.Property{
@@ -804,13 +4978,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 															Loc: &ast.SourceLocation{
 																End: ast.Position{
 																	Column: 21,
-																	Line:   95,
+																	Line:   83,
 																},
-																File:   "measurement_tag_keys_test.flux",
+																File:   "measurement_field_keys_test.flux",
 																Source: "r",
 																Start: ast.Position{
 																	Column: 20,
-																	Line:   95,
+																	Line:   83,
 																},
 															},
 														},
@@ -820,13 +4994,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 																Loc: &ast.SourceLocation{
 																	End: ast.Position{
 																		Column: 21,
-																		Line:   95,
+																		Line:   83,
 																	},
-																	File:   "measurement_tag_keys_test.flux",
+																	File:   "measurement_field_keys_test.flux",
 																	Source: "r",
 																	Start: ast.Position{
 																		Column: 20,
-																		Line:   95,
+																		Line:   83,
 																	},
 																},
 															},
@@ -842,14 +5016,14 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 											Errors: nil,
 											Loc: &ast.SourceLocation{
 												End: ast.Position{
-													Column: 50,
-													Line:   95,
+													Column: 49,
+													Line:   83,
 												},
-												File:   "measurement_tag_keys_test.flux",
-												Source: "filter(fn: (r) => r.host == \"host.global\")",
+												File:   "measurement_field_keys_test.flux",
+												Source: "filter(fn: (r) => r.host == \"host.local\")",
 												Start: ast.Position{
 													Column: 8,
-													Line:   95,
+													Line:   83,
 												},
 											},
 										},
@@ -859,13 +5033,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 												Loc: &ast.SourceLocation{
 													End: ast.Position{
 														Column: 14,
-														Line:   95,
+														Line:   83,
 													},
-													File:   "measurement_tag_keys_test.flux",
+													File:   "measurement_field_keys_test.flux",
 													Source: "filter",
 													Start: ast.Position{
 														Column: 8,
-														Line:   95,
+														Line:   83,
 													},
 												},
 											},
@@ -877,31 +5051,118 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 									Errors: nil,
 									Loc: &ast.SourceLocation{
 										End: ast.Position{
-											Column: 14,
-											Line:   96,
+											Column: 33,
+											Line:   84,
 										},
-										File:   "measurement_tag_keys_test.flux",
-										Source: "tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => r._measurement == \"swp\")\n    |> filter(fn: (r) => r.host == \"host.global\")\n    |> keys()",
+										File:   "measurement_field_keys_test.flux",
+										Source: "tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => r._measurement == \"sys\")\n    |> filter(fn: (r) => r.host == \"host.local\")\n    |> keep(columns: [\"_field\"])",
 										Start: ast.Position{
-											Column: 42,
-											Line:   92,
+											Column: 44,
+											Line:   80,
 										},
 									},
 								},
 								Call: &ast.CallExpression{
-									Arguments: nil,
+									Arguments: []ast.Expression{&ast.ObjectExpression{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 32,
+													Line:   84,
+												},
+												File:   "measurement_field_keys_test.flux",
+												Source: "columns: [\"_field\"]",
+												Start: ast.Position{
+													Column: 13,
+													Line:   84,
+												},
+											},
+										},
+										Properties: []*ast.Property{&ast.Property{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 32,
+														Line:   84,
+													},
+													File:   "measurement_field_keys_test.flux",
+													Source: "columns: [\"_field\"]",
+													Start: ast.Position{
+														Column: 13,
+														Line:   84,
+													},
+												},
+											},
+											Key: &ast.Identifier{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 20,
+															Line:   84,
+														},
+														File:   "measurement_field_keys_test.flux",
+														Source: "columns",
+														Start: ast.Position{
+															Column: 13,
+															Line:   84,
+														},
+													},
+												},
+												Name: "columns",
+											},
+											Value: &ast.ArrayExpression{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 32,
+															Line:   84,
+														},
+														File:   "measurement_field_keys_test.flux",
+														Source: "[\"_field\"]",
+														Start: ast.Position{
+															Column: 22,
+															Line:   84,
+														},
+													},
+												},
+												Elements: []ast.Expression{&ast.StringLiteral{
+													BaseNode: ast.BaseNode{
+														Errors: nil,
+														Loc: &ast.SourceLocation{
+															End: ast.Position{
+																Column: 31,
+																Line:   84,
+															},
+															File:   "measurement_field_keys_test.flux",
+															Source: "\"_field\"",
+															Start: ast.Position{
+																Column: 23,
+																Line:   84,
+															},
+														},
+													},
+													Value: "_field",
+												}},
+											},
+										}},
+										With: nil,
+									}},
 									BaseNode: ast.BaseNode{
 										Errors: nil,
 										Loc: &ast.SourceLocation{
 											End: ast.Position{
-												Column: 14,
-												Line:   96,
+												Column: 33,
+												Line:   84,
 											},
-											File:   "measurement_tag_keys_test.flux",
-											Source: "keys()",
+											File:   "measurement_field_keys_test.flux",
+											Source: "keep(columns: [\"_field\"])",
 											Start: ast.Position{
 												Column: 8,
-												Line:   96,
+												Line:   84,
 											},
 										},
 									},
@@ -911,17 +5172,17 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 											Loc: &ast.SourceLocation{
 												End: ast.Position{
 													Column: 12,
-													Line:   96,
+													Line:   84,
 												},
-												File:   "measurement_tag_keys_test.flux",
-												Source: "keys",
+												File:   "measurement_field_keys_test.flux",
+												Source: "keep",
 												Start: ast.Position{
 													Column: 8,
-													Line:   96,
+													Line:   84,
 												},
 											},
 										},
-										Name: "keys",
+										Name: "keep",
 									},
 								},
 							},
@@ -929,118 +5190,31 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 								Errors: nil,
 								Loc: &ast.SourceLocation{
 									End: ast.Position{
-										Column: 33,
-										Line:   97,
+										Column: 15,
+										Line:   85,
 									},
-									File:   "measurement_tag_keys_test.flux",
-									Source: "tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => r._measurement == \"swp\")\n    |> filter(fn: (r) => r.host == \"host.global\")\n    |> keys()\n    |> keep(columns: [\"_value\"])",
+									File:   "measurement_field_keys_test.flux",
+									Source: "tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => r._measurement == \"sys\")\n    |> filter(fn: (r) => r.host == \"host.local\")\n    |> keep(columns: [\"_field\"])\n    |> group()",
 									Start: ast.Position{
-										Column: 42,
-										Line:   92,
+										Column: 44,
+										Line:   80,
 									},
 								},
 							},
 							Call: &ast.CallExpression{
-								Arguments: []ast.Expression{&ast.ObjectExpression{
-									BaseNode: ast.BaseNode{
-										Errors: nil,
-										Loc: &ast.SourceLocation{
-											End: ast.Position{
-												Column: 32,
-												Line:   97,
-											},
-											File:   "measurement_tag_keys_test.flux",
-											Source: "columns: [\"_value\"]",
-											Start: ast.Position{
-												Column: 13,
-												Line:   97,
-											},
-										},
-									},
-									Properties: []*ast.Property{&ast.Property{
-										BaseNode: ast.BaseNode{
-											Errors: nil,
-											Loc: &ast.SourceLocation{
-												End: ast.Position{
-													Column: 32,
-													Line:   97,
-												},
-												File:   "measurement_tag_keys_test.flux",
-												Source: "columns: [\"_value\"]",
-												Start: ast.Position{
-													Column: 13,
-													Line:   97,
-												},
-											},
-										},
-										Key: &ast.Identifier{
-											BaseNode: ast.BaseNode{
-												Errors: nil,
-												Loc: &ast.SourceLocation{
-													End: ast.Position{
-														Column: 20,
-														Line:   97,
-													},
-													File:   "measurement_tag_keys_test.flux",
-													Source: "columns",
-													Start: ast.Position{
-														Column: 13,
-														Line:   97,
-													},
-												},
-											},
-											Name: "columns",
-										},
-										Value: &ast.ArrayExpression{
-											BaseNode: ast.BaseNode{
-												Errors: nil,
-												Loc: &ast.SourceLocation{
-													End: ast.Position{
-														Column: 32,
-														Line:   97,
-													},
-													File:   "measurement_tag_keys_test.flux",
-													Source: "[\"_value\"]",
-													Start: ast.Position{
-														Column: 22,
-														Line:   97,
-													},
-												},
-											},
-											Elements: []ast.Expression{&ast.StringLiteral{
-												BaseNode: ast.BaseNode{
-													Errors: nil,
-													Loc: &ast.SourceLocation{
-														End: ast.Position{
-															Column: 31,
-															Line:   97,
-														},
-														File:   "measurement_tag_keys_test.flux",
-														Source: "\"_value\"",
-														Start: ast.Position{
-															Column: 23,
-															Line:   97,
-														},
-													},
-												},
-												Value: "_value",
-											}},
-										},
-									}},
-									With: nil,
-								}},
+								Arguments: nil,
 								BaseNode: ast.BaseNode{
 									Errors: nil,
 									Loc: &ast.SourceLocation{
 										End: ast.Position{
-											Column: 33,
-											Line:   97,
+											Column: 15,
+											Line:   85,
 										},
-										File:   "measurement_tag_keys_test.flux",
-										Source: "keep(columns: [\"_value\"])",
+										File:   "measurement_field_keys_test.flux",
+										Source: "group()",
 										Start: ast.Position{
 											Column: 8,
-											Line:   97,
+											Line:   85,
 										},
 									},
 								},
@@ -1049,18 +5223,18 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 										Errors: nil,
 										Loc: &ast.SourceLocation{
 											End: ast.Position{
-												Column: 12,
-												Line:   97,
+												Column: 13,
+												Line:   85,
 											},
-											File:   "measurement_tag_keys_test.flux",
-											Source: "keep",
+											File:   "measurement_field_keys_test.flux",
+											Source: "group",
 											Start: ast.Position{
 												Column: 8,
-												Line:   97,
+												Line:   85,
 											},
 										},
 									},
-									Name: "keep",
+									Name: "group",
 								},
 							},
 						},
@@ -1068,31 +5242,101 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 							Errors: nil,
 							Loc: &ast.SourceLocation{
 								End: ast.Position{
-									Column: 18,
-									Line:   98,
+									Column: 34,
+									Line:   86,
 								},
-								File:   "measurement_tag_keys_test.flux",
-								Source: "tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => r._measurement == \"swp\")\n    |> filter(fn: (r) => r.host == \"host.global\")\n    |> keys()\n    |> keep(columns: [\"_value\"])\n    |> distinct()",
+								File:   "measurement_field_keys_test.flux",
+								Source: "tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => r._measurement == \"sys\")\n    |> filter(fn: (r) => r.host == \"host.local\")\n    |> keep(columns: [\"_field\"])\n    |> group()\n    |> distinct(column: \"_field\")",
 								Start: ast.Position{
-									Column: 42,
-									Line:   92,
+									Column: 44,
+									Line:   80,
 								},
 							},
 						},
 						Call: &ast.CallExpression{
-							Arguments: nil,
+							Arguments: []ast.Expression{&ast.ObjectExpression{
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 33,
+											Line:   86,
+										},
+										File:   "measurement_field_keys_test.flux",
+										Source: "column: \"_field\"",
+										Start: ast.Position{
+											Column: 17,
+											Line:   86,
+										},
+									},
+								},
+								Properties: []*ast.Property{&ast.Property{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 33,
+												Line:   86,
+											},
+											File:   "measurement_field_keys_test.flux",
+											Source: "column: \"_field\"",
+											Start: ast.Position{
+												Column: 17,
+												Line:   86,
+											},
+										},
+									},
+									Key: &ast.Identifier{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 23,
+													Line:   86,
+												},
+												File:   "measurement_field_keys_test.flux",
+												Source: "column",
+												Start: ast.Position{
+													Column: 17,
+													Line:   86,
+												},
+											},
+										},
+										Name: "column",
+									},
+									Value: &ast.StringLiteral{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 33,
+													Line:   86,
+												},
+												File:   "measurement_field_keys_test.flux",
+												Source: "\"_field\"",
+												Start: ast.Position{
+													Column: 25,
+													Line:   86,
+												},
+											},
+										},
+										Value: "_field",
+									},
+								}},
+								With: nil,
+							}},
 							BaseNode: ast.BaseNode{
 								Errors: nil,
 								Loc: &ast.SourceLocation{
 									End: ast.Position{
-										Column: 18,
-										Line:   98,
+										Column: 34,
+										Line:   86,
 									},
-									File:   "measurement_tag_keys_test.flux",
-									Source: "distinct()",
+									File:   "measurement_field_keys_test.flux",
+									Source: "distinct(column: \"_field\")",
 									Start: ast.Position{
 										Column: 8,
-										Line:   98,
+										Line:   86,
 									},
 								},
 							},
@@ -1102,13 +5346,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 									Loc: &ast.SourceLocation{
 										End: ast.Position{
 											Column: 16,
-											Line:   98,
+											Line:   86,
 										},
-										File:   "measurement_tag_keys_test.flux",
+										File:   "measurement_field_keys_test.flux",
 										Source: "distinct",
 										Start: ast.Position{
 											Column: 8,
-											Line:   98,
+											Line:   86,
 										},
 									},
 								},
@@ -1121,13 +5365,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 						Loc: &ast.SourceLocation{
 							End: ast.Position{
 								Column: 14,
-								Line:   99,
+								Line:   87,
 							},
-							File:   "measurement_tag_keys_test.flux",
-							Source: "tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => r._measurement == \"swp\")\n    |> filter(fn: (r) => r.host == \"host.global\")\n    |> keys()\n    |> keep(columns: [\"_value\"])\n    |> distinct()\n    |> sort()",
+							File:   "measurement_field_keys_test.flux",
+							Source: "tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => r._measurement == \"sys\")\n    |> filter(fn: (r) => r.host == \"host.local\")\n    |> keep(columns: [\"_field\"])\n    |> group()\n    |> distinct(column: \"_field\")\n    |> sort()",
 							Start: ast.Position{
-								Column: 42,
-								Line:   92,
+								Column: 44,
+								Line:   80,
 							},
 						},
 					},
@@ -1138,13 +5382,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 							Loc: &ast.SourceLocation{
 								End: ast.Position{
 									Column: 14,
-									Line:   99,
+									Line:   87,
 								},
-								File:   "measurement_tag_keys_test.flux",
+								File:   "measurement_field_keys_test.flux",
 								Source: "sort()",
 								Start: ast.Position{
 									Column: 8,
-									Line:   99,
+									Line:   87,
 								},
 							},
 						},
@@ -1154,13 +5398,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 								Loc: &ast.SourceLocation{
 									End: ast.Position{
 										Column: 12,
-										Line:   99,
+										Line:   87,
 									},
-									File:   "measurement_tag_keys_test.flux",
+									File:   "measurement_field_keys_test.flux",
 									Source: "sort",
 									Start: ast.Position{
 										Column: 8,
-										Line:   99,
+										Line:   87,
 									},
 								},
 							},
@@ -1173,14 +5417,14 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 						Errors: nil,
 						Loc: &ast.SourceLocation{
 							End: ast.Position{
-								Column: 37,
-								Line:   92,
+								Column: 39,
+								Line:   80,
 							},
-							File:   "measurement_tag_keys_test.flux",
+							File:   "measurement_field_keys_test.flux",
 							Source: "tables=<-",
 							Start: ast.Position{
-								Column: 28,
-								Line:   92,
+								Column: 30,
+								Line:   80,
 							},
 						},
 					},
@@ -1189,14 +5433,14 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 							Errors: nil,
 							Loc: &ast.SourceLocation{
 								End: ast.Position{
-									Column: 34,
-									Line:   92,
+									Column: 36,
+									Line:   80,
 								},
-								File:   "measurement_tag_keys_test.flux",
+								File:   "measurement_field_keys_test.flux",
 								Source: "tables",
 								Start: ast.Position{
-									Column: 28,
-									Line:   92,
+									Column: 30,
+									Line:   80,
 								},
 							},
 						},
@@ -1206,14 +5450,14 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 						Errors: nil,
 						Loc: &ast.SourceLocation{
 							End: ast.Position{
-								Column: 37,
-								Line:   92,
+								Column: 39,
+								Line:   80,
 							},
-							File:   "measurement_tag_keys_test.flux",
+							File:   "measurement_field_keys_test.flux",
 							Source: "<-",
 							Start: ast.Position{
-								Column: 35,
-								Line:   92,
+								Column: 37,
+								Line:   80,
 							},
 						},
 					}},
@@ -1225,14 +5469,14 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 					Errors: nil,
 					Loc: &ast.SourceLocation{
 						End: ast.Position{
-							Column: 112,
-							Line:   102,
+							Column: 114,
+							Line:   90,
 						},
-						File:   "measurement_tag_keys_test.flux",
-						Source: "measurement_tag_keys = () =>\n    ({input: testing.loadStorage(csv: input), want: testing.loadMem(csv: output), fn: measurement_tag_keys_fn})",
+						File:   "measurement_field_keys_test.flux",
+						Source: "measurement_field_keys = () =>\n    ({input: testing.loadStorage(csv: input), want: testing.loadMem(csv: output), fn: measurement_field_keys_fn})",
 						Start: ast.Position{
 							Column: 6,
-							Line:   101,
+							Line:   89,
 						},
 					},
 				},
@@ -1241,32 +5485,32 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 						Errors: nil,
 						Loc: &ast.SourceLocation{
 							End: ast.Position{
-								Column: 26,
-								Line:   101,
+								Column: 28,
+								Line:   89,
 							},
-							File:   "measurement_tag_keys_test.flux",
-							Source: "measurement_tag_keys",
+							File:   "measurement_field_keys_test.flux",
+							Source: "measurement_field_keys",
 							Start: ast.Position{
 								Column: 6,
-								Line:   101,
+								Line:   89,
 							},
 						},
 					},
-					Name: "measurement_tag_keys",
+					Name: "measurement_field_keys",
 				},
 				Init: &ast.FunctionExpression{
 					BaseNode: ast.BaseNode{
 						Errors: nil,
 						Loc: &ast.SourceLocation{
 							End: ast.Position{
-								Column: 112,
-								Line:   102,
+								Column: 114,
+								Line:   90,
 							},
-							File:   "measurement_tag_keys_test.flux",
-							Source: "() =>\n    ({input: testing.loadStorage(csv: input), want: testing.loadMem(csv: output), fn: measurement_tag_keys_fn})",
+							File:   "measurement_field_keys_test.flux",
+							Source: "() =>\n    ({input: testing.loadStorage(csv: input), want: testing.loadMem(csv: output), fn: measurement_field_keys_fn})",
 							Start: ast.Position{
-								Column: 29,
-								Line:   101,
+								Column: 31,
+								Line:   89,
 							},
 						},
 					},
@@ -1275,14 +5519,14 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 							Errors: nil,
 							Loc: &ast.SourceLocation{
 								End: ast.Position{
-									Column: 112,
-									Line:   102,
+									Column: 114,
+									Line:   90,
 								},
-								File:   "measurement_tag_keys_test.flux",
-								Source: "({input: testing.loadStorage(csv: input), want: testing.loadMem(csv: output), fn: measurement_tag_keys_fn})",
+								File:   "measurement_field_keys_test.flux",
+								Source: "({input: testing.loadStorage(csv: input), want: testing.loadMem(csv: output), fn: measurement_field_keys_fn})",
 								Start: ast.Position{
 									Column: 5,
-									Line:   102,
+									Line:   90,
 								},
 							},
 						},
@@ -1291,14 +5535,14 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 								Errors: nil,
 								Loc: &ast.SourceLocation{
 									End: ast.Position{
-										Column: 111,
-										Line:   102,
+										Column: 113,
+										Line:   90,
 									},
-									File:   "measurement_tag_keys_test.flux",
-									Source: "{input: testing.loadStorage(csv: input), want: testing.loadMem(csv: output), fn: measurement_tag_keys_fn}",
+									File:   "measurement_field_keys_test.flux",
+									Source: "{input: testing.loadStorage(csv: input), want: testing.loadMem(csv: output), fn: measurement_field_keys_fn}",
 									Start: ast.Position{
 										Column: 6,
-										Line:   102,
+										Line:   90,
 									},
 								},
 							},
@@ -1308,13 +5552,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 									Loc: &ast.SourceLocation{
 										End: ast.Position{
 											Column: 45,
-											Line:   102,
+											Line:   90,
 										},
-										File:   "measurement_tag_keys_test.flux",
+										File:   "measurement_field_keys_test.flux",
 										Source: "input: testing.loadStorage(csv: input)",
 										Start: ast.Position{
 											Column: 7,
-											Line:   102,
+											Line:   90,
 										},
 									},
 								},
@@ -1324,13 +5568,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 										Loc: &ast.SourceLocation{
 											End: ast.Position{
 												Column: 12,
-												Line:   102,
+												Line:   90,
 											},
-											File:   "measurement_tag_keys_test.flux",
+											File:   "measurement_field_keys_test.flux",
 											Source: "input",
 											Start: ast.Position{
 												Column: 7,
-												Line:   102,
+												Line:   90,
 											},
 										},
 									},
@@ -1343,13 +5587,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 											Loc: &ast.SourceLocation{
 												End: ast.Position{
 													Column: 44,
-													Line:   102,
+													Line:   90,
 												},
-												File:   "measurement_tag_keys_test.flux",
+												File:   "measurement_field_keys_test.flux",
 												Source: "csv: input",
 												Start: ast.Position{
 													Column: 34,
-													Line:   102,
+													Line:   90,
 												},
 											},
 										},
@@ -1359,13 +5603,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 												Loc: &ast.SourceLocation{
 													End: ast.Position{
 														Column: 44,
-														Line:   102,
+														Line:   90,
 													},
-													File:   "measurement_tag_keys_test.flux",
+													File:   "measurement_field_keys_test.flux",
 													Source: "csv: input",
 													Start: ast.Position{
 														Column: 34,
-														Line:   102,
+														Line:   90,
 													},
 												},
 											},
@@ -1375,13 +5619,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 													Loc: &ast.SourceLocation{
 														End: ast.Position{
 															Column: 37,
-															Line:   102,
+															Line:   90,
 														},
-														File:   "measurement_tag_keys_test.flux",
+														File:   "measurement_field_keys_test.flux",
 														Source: "csv",
 														Start: ast.Position{
 															Column: 34,
-															Line:   102,
+															Line:   90,
 														},
 													},
 												},
@@ -1393,13 +5637,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 													Loc: &ast.SourceLocation{
 														End: ast.Position{
 															Column: 44,
-															Line:   102,
+															Line:   90,
 														},
-														File:   "measurement_tag_keys_test.flux",
+														File:   "measurement_field_keys_test.flux",
 														Source: "input",
 														Start: ast.Position{
 															Column: 39,
-															Line:   102,
+															Line:   90,
 														},
 													},
 												},
@@ -1413,13 +5657,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 										Loc: &ast.SourceLocation{
 											End: ast.Position{
 												Column: 45,
-												Line:   102,
+												Line:   90,
 											},
-											File:   "measurement_tag_keys_test.flux",
+											File:   "measurement_field_keys_test.flux",
 											Source: "testing.loadStorage(csv: input)",
 											Start: ast.Position{
 												Column: 14,
-												Line:   102,
+												Line:   90,
 											},
 										},
 									},
@@ -1429,13 +5673,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 											Loc: &ast.SourceLocation{
 												End: ast.Position{
 													Column: 33,
-													Line:   102,
+													Line:   90,
 												},
-												File:   "measurement_tag_keys_test.flux",
+												File:   "measurement_field_keys_test.flux",
 												Source: "testing.loadStorage",
 												Start: ast.Position{
 													Column: 14,
-													Line:   102,
+													Line:   90,
 												},
 											},
 										},
@@ -1445,13 +5689,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 												Loc: &ast.SourceLocation{
 													End: ast.Position{
 														Column: 21,
-														Line:   102,
+														Line:   90,
 													},
-													File:   "measurement_tag_keys_test.flux",
+													File:   "measurement_field_keys_test.flux",
 													Source: "testing",
 													Start: ast.Position{
 														Column: 14,
-														Line:   102,
+														Line:   90,
 													},
 												},
 											},
@@ -1463,13 +5707,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 												Loc: &ast.SourceLocation{
 													End: ast.Position{
 														Column: 33,
-														Line:   102,
+														Line:   90,
 													},
-													File:   "measurement_tag_keys_test.flux",
+													File:   "measurement_field_keys_test.flux",
 													Source: "loadStorage",
 													Start: ast.Position{
 														Column: 22,
-														Line:   102,
+														Line:   90,
 													},
 												},
 											},
@@ -1483,13 +5727,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 									Loc: &ast.SourceLocation{
 										End: ast.Position{
 											Column: 81,
-											Line:   102,
+											Line:   90,
 										},
-										File:   "measurement_tag_keys_test.flux",
+										File:   "measurement_field_keys_test.flux",
 										Source: "want: testing.loadMem(csv: output)",
 										Start: ast.Position{
 											Column: 47,
-											Line:   102,
+											Line:   90,
 										},
 									},
 								},
@@ -1499,13 +5743,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 										Loc: &ast.SourceLocation{
 											End: ast.Position{
 												Column: 51,
-												Line:   102,
+												Line:   90,
 											},
-											File:   "measurement_tag_keys_test.flux",
+											File:   "measurement_field_keys_test.flux",
 											Source: "want",
 											Start: ast.Position{
 												Column: 47,
-												Line:   102,
+												Line:   90,
 											},
 										},
 									},
@@ -1518,13 +5762,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 											Loc: &ast.SourceLocation{
 												End: ast.Position{
 													Column: 80,
-													Line:   102,
+													Line:   90,
 												},
-												File:   "measurement_tag_keys_test.flux",
+												File:   "measurement_field_keys_test.flux",
 												Source: "csv: output",
 												Start: ast.Position{
 													Column: 69,
-													Line:   102,
+													Line:   90,
 												},
 											},
 										},
@@ -1534,13 +5778,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 												Loc: &ast.SourceLocation{
 													End: ast.Position{
 														Column: 80,
-														Line:   102,
+														Line:   90,
 													},
-													File:   "measurement_tag_keys_test.flux",
+													File:   "measurement_field_keys_test.flux",
 													Source: "csv: output",
 													Start: ast.Position{
 														Column: 69,
-														Line:   102,
+														Line:   90,
 													},
 												},
 											},
@@ -1550,13 +5794,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 													Loc: &ast.SourceLocation{
 														End: ast.Position{
 															Column: 72,
-															Line:   102,
+															Line:   90,
 														},
-														File:   "measurement_tag_keys_test.flux",
+														File:   "measurement_field_keys_test.flux",
 														Source: "csv",
 														Start: ast.Position{
 															Column: 69,
-															Line:   102,
+															Line:   90,
 														},
 													},
 												},
@@ -1568,13 +5812,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 													Loc: &ast.SourceLocation{
 														End: ast.Position{
 															Column: 80,
-															Line:   102,
+															Line:   90,
 														},
-														File:   "measurement_tag_keys_test.flux",
+														File:   "measurement_field_keys_test.flux",
 														Source: "output",
 														Start: ast.Position{
 															Column: 74,
-															Line:   102,
+															Line:   90,
 														},
 													},
 												},
@@ -1588,13 +5832,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 										Loc: &ast.SourceLocation{
 											End: ast.Position{
 												Column: 81,
-												Line:   102,
+												Line:   90,
 											},
-											File:   "measurement_tag_keys_test.flux",
+											File:   "measurement_field_keys_test.flux",
 											Source: "testing.loadMem(csv: output)",
 											Start: ast.Position{
 												Column: 53,
-												Line:   102,
+												Line:   90,
 											},
 										},
 									},
@@ -1604,13 +5848,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 											Loc: &ast.SourceLocation{
 												End: ast.Position{
 													Column: 68,
-													Line:   102,
+													Line:   90,
 												},
-												File:   "measurement_tag_keys_test.flux",
+												File:   "measurement_field_keys_test.flux",
 												Source: "testing.loadMem",
 												Start: ast.Position{
 													Column: 53,
-													Line:   102,
+													Line:   90,
 												},
 											},
 										},
@@ -1620,13 +5864,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 												Loc: &ast.SourceLocation{
 													End: ast.Position{
 														Column: 60,
-														Line:   102,
+														Line:   90,
 													},
-													File:   "measurement_tag_keys_test.flux",
+													File:   "measurement_field_keys_test.flux",
 													Source: "testing",
 													Start: ast.Position{
 														Column: 53,
-														Line:   102,
+														Line:   90,
 													},
 												},
 											},
@@ -1638,13 +5882,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 												Loc: &ast.SourceLocation{
 													End: ast.Position{
 														Column: 68,
-														Line:   102,
+														Line:   90,
 													},
-													File:   "measurement_tag_keys_test.flux",
+													File:   "measurement_field_keys_test.flux",
 													Source: "loadMem",
 													Start: ast.Position{
 														Column: 61,
-														Line:   102,
+														Line:   90,
 													},
 												},
 											},
@@ -1657,14 +5901,14 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 									Errors: nil,
 									Loc: &ast.SourceLocation{
 										End: ast.Position{
-											Column: 110,
-											Line:   102,
+											Column: 112,
+											Line:   90,
 										},
-										File:   "measurement_tag_keys_test.flux",
-										Source: "fn: measurement_tag_keys_fn",
+										File:   "measurement_field_keys_test.flux",
+										Source: "fn: measurement_field_keys_fn",
 										Start: ast.Position{
 											Column: 83,
-											Line:   102,
+											Line:   90,
 										},
 									},
 								},
@@ -1674,13 +5918,13 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 										Loc: &ast.SourceLocation{
 											End: ast.Position{
 												Column: 85,
-												Line:   102,
+												Line:   90,
 											},
-											File:   "measurement_tag_keys_test.flux",
+											File:   "measurement_field_keys_test.flux",
 											Source: "fn",
 											Start: ast.Position{
 												Column: 83,
-												Line:   102,
+												Line:   90,
 											},
 										},
 									},
@@ -1691,18 +5935,18 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 										Errors: nil,
 										Loc: &ast.SourceLocation{
 											End: ast.Position{
-												Column: 110,
-												Line:   102,
+												Column: 112,
+												Line:   90,
 											},
-											File:   "measurement_tag_keys_test.flux",
-											Source: "measurement_tag_keys_fn",
+											File:   "measurement_field_keys_test.flux",
+											Source: "measurement_field_keys_fn",
 											Start: ast.Position{
 												Column: 87,
-												Line:   102,
+												Line:   90,
 											},
 										},
 									},
-									Name: "measurement_tag_keys_fn",
+									Name: "measurement_field_keys_fn",
 								},
 							}},
 							With: nil,
@@ -1715,14 +5959,14 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 				Errors: nil,
 				Loc: &ast.SourceLocation{
 					End: ast.Position{
-						Column: 112,
-						Line:   102,
+						Column: 114,
+						Line:   90,
 					},
-					File:   "measurement_tag_keys_test.flux",
-					Source: "test measurement_tag_keys = () =>\n    ({input: testing.loadStorage(csv: input), want: testing.loadMem(csv: output), fn: measurement_tag_keys_fn})",
+					File:   "measurement_field_keys_test.flux",
+					Source: "test measurement_field_keys = () =>\n    ({input: testing.loadStorage(csv: input), want: testing.loadMem(csv: output), fn: measurement_field_keys_fn})",
 					Start: ast.Position{
 						Column: 1,
-						Line:   101,
+						Line:   89,
 					},
 				},
 			},
@@ -1736,7 +5980,7 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 						Column: 17,
 						Line:   3,
 					},
-					File:   "measurement_tag_keys_test.flux",
+					File:   "measurement_field_keys_test.flux",
 					Source: "import \"testing\"",
 					Start: ast.Position{
 						Column: 1,
@@ -1752,7 +5996,7 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 							Column: 17,
 							Line:   3,
 						},
-						File:   "measurement_tag_keys_test.flux",
+						File:   "measurement_field_keys_test.flux",
 						Source: "\"testing\"",
 						Start: ast.Position{
 							Column: 8,
@@ -1763,7 +6007,8 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 				Value: "testing",
 			},
 		}},
-		Name: "measurement_tag_keys_test.flux",
+		Metadata: "parser-type=rust",
+		Name:     "measurement_field_keys_test.flux",
 		Package: &ast.PackageClause{
 			BaseNode: ast.BaseNode{
 				Errors: nil,
@@ -1772,7 +6017,7 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 						Column: 16,
 						Line:   1,
 					},
-					File:   "measurement_tag_keys_test.flux",
+					File:   "measurement_field_keys_test.flux",
 					Source: "package v1_test",
 					Start: ast.Position{
 						Column: 1,
@@ -1788,7 +6033,7 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 							Column: 16,
 							Line:   1,
 						},
-						File:   "measurement_tag_keys_test.flux",
+						File:   "measurement_field_keys_test.flux",
 						Source: "v1_test",
 						Start: ast.Position{
 							Column: 9,
@@ -1796,18 +6041,10 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 						},
 					},
 				},
-				Name: "main",
+				Name: "v1_test",
 			},
 		},
-	}},
-	Package: "main",
-	Path:    "",
-}, &ast.Package{
-	BaseNode: ast.BaseNode{
-		Errors: nil,
-		Loc:    nil,
-	},
-	Files: []*ast.File{&ast.File{
+	}, &ast.File{
 		BaseNode: ast.BaseNode{
 			Errors: nil,
 			Loc: &ast.SourceLocation{
@@ -3628,7 +7865,8 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 				Value: "testing",
 			},
 		}},
-		Name: "measurement_tag_values_test.flux",
+		Metadata: "parser-type=rust",
+		Name:     "measurement_tag_values_test.flux",
 		Package: &ast.PackageClause{
 			BaseNode: ast.BaseNode{
 				Errors: nil,
@@ -3661,18 +7899,1550 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 						},
 					},
 				},
-				Name: "main",
+				Name: "v1_test",
 			},
 		},
-	}},
-	Package: "main",
-	Path:    "",
-}, &ast.Package{
-	BaseNode: ast.BaseNode{
-		Errors: nil,
-		Loc:    nil,
-	},
-	Files: []*ast.File{&ast.File{
+	}, &ast.File{
+		BaseNode: ast.BaseNode{
+			Errors: nil,
+			Loc: &ast.SourceLocation{
+				End: ast.Position{
+					Column: 107,
+					Line:   59,
+				},
+				File:   "show_field_keys_test.flux",
+				Source: "package v1_test\n\nimport \"testing\"\n\ninput = \"\n#datatype,string,long,dateTime:RFC3339,string,string,string,double\n#group,false,false,false,true,true,true,false\n#default,_result,,,,,,\n,result,table,_time,_measurement,host,_field,_value\n,,0,2018-05-22T19:53:26Z,system,host.local,load1,1.83\n,,0,2018-05-22T19:53:36Z,system,host.local,load1,1.72\n,,0,2018-05-22T19:53:46Z,system,host.local,load1,1.74\n,,0,2018-05-22T19:53:56Z,system,host.local,load1,1.63\n,,0,2018-05-22T19:54:06Z,system,host.local,load1,1.91\n,,0,2018-05-22T19:54:16Z,system,host.local,load1,1.84\n\n,,1,2018-05-22T19:53:26Z,system,host.local,load3,1.98\n,,1,2018-05-22T19:53:36Z,system,host.local,load3,1.97\n,,1,2018-05-22T19:53:46Z,system,host.local,load3,1.97\n,,1,2018-05-22T19:53:56Z,system,host.local,load3,1.96\n,,1,2018-05-22T19:54:06Z,system,host.local,load3,1.98\n,,1,2018-05-22T19:54:16Z,system,host.local,load3,1.97\n\n,,2,2018-05-22T19:53:26Z,system,host.local,load5,1.95\n,,2,2018-05-22T19:53:36Z,system,host.local,load5,1.92\n,,2,2018-05-22T19:53:46Z,system,host.local,load5,1.92\n,,2,2018-05-22T19:53:56Z,system,host.local,load5,1.89\n,,2,2018-05-22T19:54:06Z,system,host.local,load5,1.94\n,,2,2018-05-22T19:54:16Z,system,host.local,load5,1.93\n\n,,3,2018-05-22T19:53:26Z,swap,host.local,used_percent,82.98\n,,3,2018-05-22T19:53:36Z,swap,host.local,used_percent,82.59\n,,3,2018-05-22T19:53:46Z,swap,host.local,used_percent,82.59\n,,3,2018-05-22T19:53:56Z,swap,host.local,used_percent,82.59\n,,3,2018-05-22T19:54:06Z,swap,host.local,used_percent,82.59\n,,3,2018-05-22T19:54:16Z,swap,host.local,used_percent,82.64\n\"\n\noutput = \"\n#datatype,string,long,string\n#group,false,false,false\n#default,0,,\n,result,table,_value\n,,0,load1\n,,0,load3\n,,0,load5\n,,0,used_percent\n\"\n\nshow_field_keys_fn = (tables=<-) => tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => true)\n    |> keep(columns: [\"_field\"])\n    |> group()\n    |> distinct(column: \"_field\")\n    |> sort()\n\ntest show_field_keys = () =>\n    ({input: testing.loadStorage(csv: input), want: testing.loadMem(csv: output), fn: show_field_keys_fn})",
+				Start: ast.Position{
+					Column: 1,
+					Line:   1,
+				},
+			},
+		},
+		Body: []ast.Statement{&ast.VariableAssignment{
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 2,
+						Line:   37,
+					},
+					File:   "show_field_keys_test.flux",
+					Source: "input = \"\n#datatype,string,long,dateTime:RFC3339,string,string,string,double\n#group,false,false,false,true,true,true,false\n#default,_result,,,,,,\n,result,table,_time,_measurement,host,_field,_value\n,,0,2018-05-22T19:53:26Z,system,host.local,load1,1.83\n,,0,2018-05-22T19:53:36Z,system,host.local,load1,1.72\n,,0,2018-05-22T19:53:46Z,system,host.local,load1,1.74\n,,0,2018-05-22T19:53:56Z,system,host.local,load1,1.63\n,,0,2018-05-22T19:54:06Z,system,host.local,load1,1.91\n,,0,2018-05-22T19:54:16Z,system,host.local,load1,1.84\n\n,,1,2018-05-22T19:53:26Z,system,host.local,load3,1.98\n,,1,2018-05-22T19:53:36Z,system,host.local,load3,1.97\n,,1,2018-05-22T19:53:46Z,system,host.local,load3,1.97\n,,1,2018-05-22T19:53:56Z,system,host.local,load3,1.96\n,,1,2018-05-22T19:54:06Z,system,host.local,load3,1.98\n,,1,2018-05-22T19:54:16Z,system,host.local,load3,1.97\n\n,,2,2018-05-22T19:53:26Z,system,host.local,load5,1.95\n,,2,2018-05-22T19:53:36Z,system,host.local,load5,1.92\n,,2,2018-05-22T19:53:46Z,system,host.local,load5,1.92\n,,2,2018-05-22T19:53:56Z,system,host.local,load5,1.89\n,,2,2018-05-22T19:54:06Z,system,host.local,load5,1.94\n,,2,2018-05-22T19:54:16Z,system,host.local,load5,1.93\n\n,,3,2018-05-22T19:53:26Z,swap,host.local,used_percent,82.98\n,,3,2018-05-22T19:53:36Z,swap,host.local,used_percent,82.59\n,,3,2018-05-22T19:53:46Z,swap,host.local,used_percent,82.59\n,,3,2018-05-22T19:53:56Z,swap,host.local,used_percent,82.59\n,,3,2018-05-22T19:54:06Z,swap,host.local,used_percent,82.59\n,,3,2018-05-22T19:54:16Z,swap,host.local,used_percent,82.64\n\"",
+					Start: ast.Position{
+						Column: 1,
+						Line:   5,
+					},
+				},
+			},
+			ID: &ast.Identifier{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 6,
+							Line:   5,
+						},
+						File:   "show_field_keys_test.flux",
+						Source: "input",
+						Start: ast.Position{
+							Column: 1,
+							Line:   5,
+						},
+					},
+				},
+				Name: "input",
+			},
+			Init: &ast.StringLiteral{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 2,
+							Line:   37,
+						},
+						File:   "show_field_keys_test.flux",
+						Source: "\"\n#datatype,string,long,dateTime:RFC3339,string,string,string,double\n#group,false,false,false,true,true,true,false\n#default,_result,,,,,,\n,result,table,_time,_measurement,host,_field,_value\n,,0,2018-05-22T19:53:26Z,system,host.local,load1,1.83\n,,0,2018-05-22T19:53:36Z,system,host.local,load1,1.72\n,,0,2018-05-22T19:53:46Z,system,host.local,load1,1.74\n,,0,2018-05-22T19:53:56Z,system,host.local,load1,1.63\n,,0,2018-05-22T19:54:06Z,system,host.local,load1,1.91\n,,0,2018-05-22T19:54:16Z,system,host.local,load1,1.84\n\n,,1,2018-05-22T19:53:26Z,system,host.local,load3,1.98\n,,1,2018-05-22T19:53:36Z,system,host.local,load3,1.97\n,,1,2018-05-22T19:53:46Z,system,host.local,load3,1.97\n,,1,2018-05-22T19:53:56Z,system,host.local,load3,1.96\n,,1,2018-05-22T19:54:06Z,system,host.local,load3,1.98\n,,1,2018-05-22T19:54:16Z,system,host.local,load3,1.97\n\n,,2,2018-05-22T19:53:26Z,system,host.local,load5,1.95\n,,2,2018-05-22T19:53:36Z,system,host.local,load5,1.92\n,,2,2018-05-22T19:53:46Z,system,host.local,load5,1.92\n,,2,2018-05-22T19:53:56Z,system,host.local,load5,1.89\n,,2,2018-05-22T19:54:06Z,system,host.local,load5,1.94\n,,2,2018-05-22T19:54:16Z,system,host.local,load5,1.93\n\n,,3,2018-05-22T19:53:26Z,swap,host.local,used_percent,82.98\n,,3,2018-05-22T19:53:36Z,swap,host.local,used_percent,82.59\n,,3,2018-05-22T19:53:46Z,swap,host.local,used_percent,82.59\n,,3,2018-05-22T19:53:56Z,swap,host.local,used_percent,82.59\n,,3,2018-05-22T19:54:06Z,swap,host.local,used_percent,82.59\n,,3,2018-05-22T19:54:16Z,swap,host.local,used_percent,82.64\n\"",
+						Start: ast.Position{
+							Column: 9,
+							Line:   5,
+						},
+					},
+				},
+				Value: "\n#datatype,string,long,dateTime:RFC3339,string,string,string,double\n#group,false,false,false,true,true,true,false\n#default,_result,,,,,,\n,result,table,_time,_measurement,host,_field,_value\n,,0,2018-05-22T19:53:26Z,system,host.local,load1,1.83\n,,0,2018-05-22T19:53:36Z,system,host.local,load1,1.72\n,,0,2018-05-22T19:53:46Z,system,host.local,load1,1.74\n,,0,2018-05-22T19:53:56Z,system,host.local,load1,1.63\n,,0,2018-05-22T19:54:06Z,system,host.local,load1,1.91\n,,0,2018-05-22T19:54:16Z,system,host.local,load1,1.84\n\n,,1,2018-05-22T19:53:26Z,system,host.local,load3,1.98\n,,1,2018-05-22T19:53:36Z,system,host.local,load3,1.97\n,,1,2018-05-22T19:53:46Z,system,host.local,load3,1.97\n,,1,2018-05-22T19:53:56Z,system,host.local,load3,1.96\n,,1,2018-05-22T19:54:06Z,system,host.local,load3,1.98\n,,1,2018-05-22T19:54:16Z,system,host.local,load3,1.97\n\n,,2,2018-05-22T19:53:26Z,system,host.local,load5,1.95\n,,2,2018-05-22T19:53:36Z,system,host.local,load5,1.92\n,,2,2018-05-22T19:53:46Z,system,host.local,load5,1.92\n,,2,2018-05-22T19:53:56Z,system,host.local,load5,1.89\n,,2,2018-05-22T19:54:06Z,system,host.local,load5,1.94\n,,2,2018-05-22T19:54:16Z,system,host.local,load5,1.93\n\n,,3,2018-05-22T19:53:26Z,swap,host.local,used_percent,82.98\n,,3,2018-05-22T19:53:36Z,swap,host.local,used_percent,82.59\n,,3,2018-05-22T19:53:46Z,swap,host.local,used_percent,82.59\n,,3,2018-05-22T19:53:56Z,swap,host.local,used_percent,82.59\n,,3,2018-05-22T19:54:06Z,swap,host.local,used_percent,82.59\n,,3,2018-05-22T19:54:16Z,swap,host.local,used_percent,82.64\n",
+			},
+		}, &ast.VariableAssignment{
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 2,
+						Line:   48,
+					},
+					File:   "show_field_keys_test.flux",
+					Source: "output = \"\n#datatype,string,long,string\n#group,false,false,false\n#default,0,,\n,result,table,_value\n,,0,load1\n,,0,load3\n,,0,load5\n,,0,used_percent\n\"",
+					Start: ast.Position{
+						Column: 1,
+						Line:   39,
+					},
+				},
+			},
+			ID: &ast.Identifier{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 7,
+							Line:   39,
+						},
+						File:   "show_field_keys_test.flux",
+						Source: "output",
+						Start: ast.Position{
+							Column: 1,
+							Line:   39,
+						},
+					},
+				},
+				Name: "output",
+			},
+			Init: &ast.StringLiteral{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 2,
+							Line:   48,
+						},
+						File:   "show_field_keys_test.flux",
+						Source: "\"\n#datatype,string,long,string\n#group,false,false,false\n#default,0,,\n,result,table,_value\n,,0,load1\n,,0,load3\n,,0,load5\n,,0,used_percent\n\"",
+						Start: ast.Position{
+							Column: 10,
+							Line:   39,
+						},
+					},
+				},
+				Value: "\n#datatype,string,long,string\n#group,false,false,false\n#default,0,,\n,result,table,_value\n,,0,load1\n,,0,load3\n,,0,load5\n,,0,used_percent\n",
+			},
+		}, &ast.VariableAssignment{
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 14,
+						Line:   56,
+					},
+					File:   "show_field_keys_test.flux",
+					Source: "show_field_keys_fn = (tables=<-) => tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => true)\n    |> keep(columns: [\"_field\"])\n    |> group()\n    |> distinct(column: \"_field\")\n    |> sort()",
+					Start: ast.Position{
+						Column: 1,
+						Line:   50,
+					},
+				},
+			},
+			ID: &ast.Identifier{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 19,
+							Line:   50,
+						},
+						File:   "show_field_keys_test.flux",
+						Source: "show_field_keys_fn",
+						Start: ast.Position{
+							Column: 1,
+							Line:   50,
+						},
+					},
+				},
+				Name: "show_field_keys_fn",
+			},
+			Init: &ast.FunctionExpression{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 14,
+							Line:   56,
+						},
+						File:   "show_field_keys_test.flux",
+						Source: "(tables=<-) => tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => true)\n    |> keep(columns: [\"_field\"])\n    |> group()\n    |> distinct(column: \"_field\")\n    |> sort()",
+						Start: ast.Position{
+							Column: 22,
+							Line:   50,
+						},
+					},
+				},
+				Body: &ast.PipeExpression{
+					Argument: &ast.PipeExpression{
+						Argument: &ast.PipeExpression{
+							Argument: &ast.PipeExpression{
+								Argument: &ast.PipeExpression{
+									Argument: &ast.PipeExpression{
+										Argument: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 43,
+														Line:   50,
+													},
+													File:   "show_field_keys_test.flux",
+													Source: "tables",
+													Start: ast.Position{
+														Column: 37,
+														Line:   50,
+													},
+												},
+											},
+											Name: "tables",
+										},
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 70,
+													Line:   51,
+												},
+												File:   "show_field_keys_test.flux",
+												Source: "tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)",
+												Start: ast.Position{
+													Column: 37,
+													Line:   50,
+												},
+											},
+										},
+										Call: &ast.CallExpression{
+											Arguments: []ast.Expression{&ast.ObjectExpression{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 69,
+															Line:   51,
+														},
+														File:   "show_field_keys_test.flux",
+														Source: "start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z",
+														Start: ast.Position{
+															Column: 14,
+															Line:   51,
+														},
+													},
+												},
+												Properties: []*ast.Property{&ast.Property{
+													BaseNode: ast.BaseNode{
+														Errors: nil,
+														Loc: &ast.SourceLocation{
+															End: ast.Position{
+																Column: 41,
+																Line:   51,
+															},
+															File:   "show_field_keys_test.flux",
+															Source: "start: 2018-01-01T00:00:00Z",
+															Start: ast.Position{
+																Column: 14,
+																Line:   51,
+															},
+														},
+													},
+													Key: &ast.Identifier{
+														BaseNode: ast.BaseNode{
+															Errors: nil,
+															Loc: &ast.SourceLocation{
+																End: ast.Position{
+																	Column: 19,
+																	Line:   51,
+																},
+																File:   "show_field_keys_test.flux",
+																Source: "start",
+																Start: ast.Position{
+																	Column: 14,
+																	Line:   51,
+																},
+															},
+														},
+														Name: "start",
+													},
+													Value: &ast.DateTimeLiteral{
+														BaseNode: ast.BaseNode{
+															Errors: nil,
+															Loc: &ast.SourceLocation{
+																End: ast.Position{
+																	Column: 41,
+																	Line:   51,
+																},
+																File:   "show_field_keys_test.flux",
+																Source: "2018-01-01T00:00:00Z",
+																Start: ast.Position{
+																	Column: 21,
+																	Line:   51,
+																},
+															},
+														},
+														Value: parser.MustParseTime("2018-01-01T00:00:00Z"),
+													},
+												}, &ast.Property{
+													BaseNode: ast.BaseNode{
+														Errors: nil,
+														Loc: &ast.SourceLocation{
+															End: ast.Position{
+																Column: 69,
+																Line:   51,
+															},
+															File:   "show_field_keys_test.flux",
+															Source: "stop: 2019-01-01T00:00:00Z",
+															Start: ast.Position{
+																Column: 43,
+																Line:   51,
+															},
+														},
+													},
+													Key: &ast.Identifier{
+														BaseNode: ast.BaseNode{
+															Errors: nil,
+															Loc: &ast.SourceLocation{
+																End: ast.Position{
+																	Column: 47,
+																	Line:   51,
+																},
+																File:   "show_field_keys_test.flux",
+																Source: "stop",
+																Start: ast.Position{
+																	Column: 43,
+																	Line:   51,
+																},
+															},
+														},
+														Name: "stop",
+													},
+													Value: &ast.DateTimeLiteral{
+														BaseNode: ast.BaseNode{
+															Errors: nil,
+															Loc: &ast.SourceLocation{
+																End: ast.Position{
+																	Column: 69,
+																	Line:   51,
+																},
+																File:   "show_field_keys_test.flux",
+																Source: "2019-01-01T00:00:00Z",
+																Start: ast.Position{
+																	Column: 49,
+																	Line:   51,
+																},
+															},
+														},
+														Value: parser.MustParseTime("2019-01-01T00:00:00Z"),
+													},
+												}},
+												With: nil,
+											}},
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 70,
+														Line:   51,
+													},
+													File:   "show_field_keys_test.flux",
+													Source: "range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)",
+													Start: ast.Position{
+														Column: 8,
+														Line:   51,
+													},
+												},
+											},
+											Callee: &ast.Identifier{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 13,
+															Line:   51,
+														},
+														File:   "show_field_keys_test.flux",
+														Source: "range",
+														Start: ast.Position{
+															Column: 8,
+															Line:   51,
+														},
+													},
+												},
+												Name: "range",
+											},
+										},
+									},
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 31,
+												Line:   52,
+											},
+											File:   "show_field_keys_test.flux",
+											Source: "tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => true)",
+											Start: ast.Position{
+												Column: 37,
+												Line:   50,
+											},
+										},
+									},
+									Call: &ast.CallExpression{
+										Arguments: []ast.Expression{&ast.ObjectExpression{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 30,
+														Line:   52,
+													},
+													File:   "show_field_keys_test.flux",
+													Source: "fn: (r) => true",
+													Start: ast.Position{
+														Column: 15,
+														Line:   52,
+													},
+												},
+											},
+											Properties: []*ast.Property{&ast.Property{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 30,
+															Line:   52,
+														},
+														File:   "show_field_keys_test.flux",
+														Source: "fn: (r) => true",
+														Start: ast.Position{
+															Column: 15,
+															Line:   52,
+														},
+													},
+												},
+												Key: &ast.Identifier{
+													BaseNode: ast.BaseNode{
+														Errors: nil,
+														Loc: &ast.SourceLocation{
+															End: ast.Position{
+																Column: 17,
+																Line:   52,
+															},
+															File:   "show_field_keys_test.flux",
+															Source: "fn",
+															Start: ast.Position{
+																Column: 15,
+																Line:   52,
+															},
+														},
+													},
+													Name: "fn",
+												},
+												Value: &ast.FunctionExpression{
+													BaseNode: ast.BaseNode{
+														Errors: nil,
+														Loc: &ast.SourceLocation{
+															End: ast.Position{
+																Column: 30,
+																Line:   52,
+															},
+															File:   "show_field_keys_test.flux",
+															Source: "(r) => true",
+															Start: ast.Position{
+																Column: 19,
+																Line:   52,
+															},
+														},
+													},
+													Body: &ast.Identifier{
+														BaseNode: ast.BaseNode{
+															Errors: nil,
+															Loc: &ast.SourceLocation{
+																End: ast.Position{
+																	Column: 30,
+																	Line:   52,
+																},
+																File:   "show_field_keys_test.flux",
+																Source: "true",
+																Start: ast.Position{
+																	Column: 26,
+																	Line:   52,
+																},
+															},
+														},
+														Name: "true",
+													},
+													Params: []*ast.Property{&ast.Property{
+														BaseNode: ast.BaseNode{
+															Errors: nil,
+															Loc: &ast.SourceLocation{
+																End: ast.Position{
+																	Column: 21,
+																	Line:   52,
+																},
+																File:   "show_field_keys_test.flux",
+																Source: "r",
+																Start: ast.Position{
+																	Column: 20,
+																	Line:   52,
+																},
+															},
+														},
+														Key: &ast.Identifier{
+															BaseNode: ast.BaseNode{
+																Errors: nil,
+																Loc: &ast.SourceLocation{
+																	End: ast.Position{
+																		Column: 21,
+																		Line:   52,
+																	},
+																	File:   "show_field_keys_test.flux",
+																	Source: "r",
+																	Start: ast.Position{
+																		Column: 20,
+																		Line:   52,
+																	},
+																},
+															},
+															Name: "r",
+														},
+														Value: nil,
+													}},
+												},
+											}},
+											With: nil,
+										}},
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 31,
+													Line:   52,
+												},
+												File:   "show_field_keys_test.flux",
+												Source: "filter(fn: (r) => true)",
+												Start: ast.Position{
+													Column: 8,
+													Line:   52,
+												},
+											},
+										},
+										Callee: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 14,
+														Line:   52,
+													},
+													File:   "show_field_keys_test.flux",
+													Source: "filter",
+													Start: ast.Position{
+														Column: 8,
+														Line:   52,
+													},
+												},
+											},
+											Name: "filter",
+										},
+									},
+								},
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 33,
+											Line:   53,
+										},
+										File:   "show_field_keys_test.flux",
+										Source: "tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => true)\n    |> keep(columns: [\"_field\"])",
+										Start: ast.Position{
+											Column: 37,
+											Line:   50,
+										},
+									},
+								},
+								Call: &ast.CallExpression{
+									Arguments: []ast.Expression{&ast.ObjectExpression{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 32,
+													Line:   53,
+												},
+												File:   "show_field_keys_test.flux",
+												Source: "columns: [\"_field\"]",
+												Start: ast.Position{
+													Column: 13,
+													Line:   53,
+												},
+											},
+										},
+										Properties: []*ast.Property{&ast.Property{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 32,
+														Line:   53,
+													},
+													File:   "show_field_keys_test.flux",
+													Source: "columns: [\"_field\"]",
+													Start: ast.Position{
+														Column: 13,
+														Line:   53,
+													},
+												},
+											},
+											Key: &ast.Identifier{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 20,
+															Line:   53,
+														},
+														File:   "show_field_keys_test.flux",
+														Source: "columns",
+														Start: ast.Position{
+															Column: 13,
+															Line:   53,
+														},
+													},
+												},
+												Name: "columns",
+											},
+											Value: &ast.ArrayExpression{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 32,
+															Line:   53,
+														},
+														File:   "show_field_keys_test.flux",
+														Source: "[\"_field\"]",
+														Start: ast.Position{
+															Column: 22,
+															Line:   53,
+														},
+													},
+												},
+												Elements: []ast.Expression{&ast.StringLiteral{
+													BaseNode: ast.BaseNode{
+														Errors: nil,
+														Loc: &ast.SourceLocation{
+															End: ast.Position{
+																Column: 31,
+																Line:   53,
+															},
+															File:   "show_field_keys_test.flux",
+															Source: "\"_field\"",
+															Start: ast.Position{
+																Column: 23,
+																Line:   53,
+															},
+														},
+													},
+													Value: "_field",
+												}},
+											},
+										}},
+										With: nil,
+									}},
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 33,
+												Line:   53,
+											},
+											File:   "show_field_keys_test.flux",
+											Source: "keep(columns: [\"_field\"])",
+											Start: ast.Position{
+												Column: 8,
+												Line:   53,
+											},
+										},
+									},
+									Callee: &ast.Identifier{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 12,
+													Line:   53,
+												},
+												File:   "show_field_keys_test.flux",
+												Source: "keep",
+												Start: ast.Position{
+													Column: 8,
+													Line:   53,
+												},
+											},
+										},
+										Name: "keep",
+									},
+								},
+							},
+							BaseNode: ast.BaseNode{
+								Errors: nil,
+								Loc: &ast.SourceLocation{
+									End: ast.Position{
+										Column: 15,
+										Line:   54,
+									},
+									File:   "show_field_keys_test.flux",
+									Source: "tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => true)\n    |> keep(columns: [\"_field\"])\n    |> group()",
+									Start: ast.Position{
+										Column: 37,
+										Line:   50,
+									},
+								},
+							},
+							Call: &ast.CallExpression{
+								Arguments: nil,
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 15,
+											Line:   54,
+										},
+										File:   "show_field_keys_test.flux",
+										Source: "group()",
+										Start: ast.Position{
+											Column: 8,
+											Line:   54,
+										},
+									},
+								},
+								Callee: &ast.Identifier{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 13,
+												Line:   54,
+											},
+											File:   "show_field_keys_test.flux",
+											Source: "group",
+											Start: ast.Position{
+												Column: 8,
+												Line:   54,
+											},
+										},
+									},
+									Name: "group",
+								},
+							},
+						},
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 34,
+									Line:   55,
+								},
+								File:   "show_field_keys_test.flux",
+								Source: "tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => true)\n    |> keep(columns: [\"_field\"])\n    |> group()\n    |> distinct(column: \"_field\")",
+								Start: ast.Position{
+									Column: 37,
+									Line:   50,
+								},
+							},
+						},
+						Call: &ast.CallExpression{
+							Arguments: []ast.Expression{&ast.ObjectExpression{
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 33,
+											Line:   55,
+										},
+										File:   "show_field_keys_test.flux",
+										Source: "column: \"_field\"",
+										Start: ast.Position{
+											Column: 17,
+											Line:   55,
+										},
+									},
+								},
+								Properties: []*ast.Property{&ast.Property{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 33,
+												Line:   55,
+											},
+											File:   "show_field_keys_test.flux",
+											Source: "column: \"_field\"",
+											Start: ast.Position{
+												Column: 17,
+												Line:   55,
+											},
+										},
+									},
+									Key: &ast.Identifier{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 23,
+													Line:   55,
+												},
+												File:   "show_field_keys_test.flux",
+												Source: "column",
+												Start: ast.Position{
+													Column: 17,
+													Line:   55,
+												},
+											},
+										},
+										Name: "column",
+									},
+									Value: &ast.StringLiteral{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 33,
+													Line:   55,
+												},
+												File:   "show_field_keys_test.flux",
+												Source: "\"_field\"",
+												Start: ast.Position{
+													Column: 25,
+													Line:   55,
+												},
+											},
+										},
+										Value: "_field",
+									},
+								}},
+								With: nil,
+							}},
+							BaseNode: ast.BaseNode{
+								Errors: nil,
+								Loc: &ast.SourceLocation{
+									End: ast.Position{
+										Column: 34,
+										Line:   55,
+									},
+									File:   "show_field_keys_test.flux",
+									Source: "distinct(column: \"_field\")",
+									Start: ast.Position{
+										Column: 8,
+										Line:   55,
+									},
+								},
+							},
+							Callee: &ast.Identifier{
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 16,
+											Line:   55,
+										},
+										File:   "show_field_keys_test.flux",
+										Source: "distinct",
+										Start: ast.Position{
+											Column: 8,
+											Line:   55,
+										},
+									},
+								},
+								Name: "distinct",
+							},
+						},
+					},
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 14,
+								Line:   56,
+							},
+							File:   "show_field_keys_test.flux",
+							Source: "tables\n    |> range(start: 2018-01-01T00:00:00Z, stop: 2019-01-01T00:00:00Z)\n    |> filter(fn: (r) => true)\n    |> keep(columns: [\"_field\"])\n    |> group()\n    |> distinct(column: \"_field\")\n    |> sort()",
+							Start: ast.Position{
+								Column: 37,
+								Line:   50,
+							},
+						},
+					},
+					Call: &ast.CallExpression{
+						Arguments: nil,
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 14,
+									Line:   56,
+								},
+								File:   "show_field_keys_test.flux",
+								Source: "sort()",
+								Start: ast.Position{
+									Column: 8,
+									Line:   56,
+								},
+							},
+						},
+						Callee: &ast.Identifier{
+							BaseNode: ast.BaseNode{
+								Errors: nil,
+								Loc: &ast.SourceLocation{
+									End: ast.Position{
+										Column: 12,
+										Line:   56,
+									},
+									File:   "show_field_keys_test.flux",
+									Source: "sort",
+									Start: ast.Position{
+										Column: 8,
+										Line:   56,
+									},
+								},
+							},
+							Name: "sort",
+						},
+					},
+				},
+				Params: []*ast.Property{&ast.Property{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 32,
+								Line:   50,
+							},
+							File:   "show_field_keys_test.flux",
+							Source: "tables=<-",
+							Start: ast.Position{
+								Column: 23,
+								Line:   50,
+							},
+						},
+					},
+					Key: &ast.Identifier{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 29,
+									Line:   50,
+								},
+								File:   "show_field_keys_test.flux",
+								Source: "tables",
+								Start: ast.Position{
+									Column: 23,
+									Line:   50,
+								},
+							},
+						},
+						Name: "tables",
+					},
+					Value: &ast.PipeLiteral{BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 32,
+								Line:   50,
+							},
+							File:   "show_field_keys_test.flux",
+							Source: "<-",
+							Start: ast.Position{
+								Column: 30,
+								Line:   50,
+							},
+						},
+					}},
+				}},
+			},
+		}, &ast.TestStatement{
+			Assignment: &ast.VariableAssignment{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 107,
+							Line:   59,
+						},
+						File:   "show_field_keys_test.flux",
+						Source: "show_field_keys = () =>\n    ({input: testing.loadStorage(csv: input), want: testing.loadMem(csv: output), fn: show_field_keys_fn})",
+						Start: ast.Position{
+							Column: 6,
+							Line:   58,
+						},
+					},
+				},
+				ID: &ast.Identifier{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 21,
+								Line:   58,
+							},
+							File:   "show_field_keys_test.flux",
+							Source: "show_field_keys",
+							Start: ast.Position{
+								Column: 6,
+								Line:   58,
+							},
+						},
+					},
+					Name: "show_field_keys",
+				},
+				Init: &ast.FunctionExpression{
+					BaseNode: ast.BaseNode{
+						Errors: nil,
+						Loc: &ast.SourceLocation{
+							End: ast.Position{
+								Column: 107,
+								Line:   59,
+							},
+							File:   "show_field_keys_test.flux",
+							Source: "() =>\n    ({input: testing.loadStorage(csv: input), want: testing.loadMem(csv: output), fn: show_field_keys_fn})",
+							Start: ast.Position{
+								Column: 24,
+								Line:   58,
+							},
+						},
+					},
+					Body: &ast.ParenExpression{
+						BaseNode: ast.BaseNode{
+							Errors: nil,
+							Loc: &ast.SourceLocation{
+								End: ast.Position{
+									Column: 107,
+									Line:   59,
+								},
+								File:   "show_field_keys_test.flux",
+								Source: "({input: testing.loadStorage(csv: input), want: testing.loadMem(csv: output), fn: show_field_keys_fn})",
+								Start: ast.Position{
+									Column: 5,
+									Line:   59,
+								},
+							},
+						},
+						Expression: &ast.ObjectExpression{
+							BaseNode: ast.BaseNode{
+								Errors: nil,
+								Loc: &ast.SourceLocation{
+									End: ast.Position{
+										Column: 106,
+										Line:   59,
+									},
+									File:   "show_field_keys_test.flux",
+									Source: "{input: testing.loadStorage(csv: input), want: testing.loadMem(csv: output), fn: show_field_keys_fn}",
+									Start: ast.Position{
+										Column: 6,
+										Line:   59,
+									},
+								},
+							},
+							Properties: []*ast.Property{&ast.Property{
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 45,
+											Line:   59,
+										},
+										File:   "show_field_keys_test.flux",
+										Source: "input: testing.loadStorage(csv: input)",
+										Start: ast.Position{
+											Column: 7,
+											Line:   59,
+										},
+									},
+								},
+								Key: &ast.Identifier{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 12,
+												Line:   59,
+											},
+											File:   "show_field_keys_test.flux",
+											Source: "input",
+											Start: ast.Position{
+												Column: 7,
+												Line:   59,
+											},
+										},
+									},
+									Name: "input",
+								},
+								Value: &ast.CallExpression{
+									Arguments: []ast.Expression{&ast.ObjectExpression{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 44,
+													Line:   59,
+												},
+												File:   "show_field_keys_test.flux",
+												Source: "csv: input",
+												Start: ast.Position{
+													Column: 34,
+													Line:   59,
+												},
+											},
+										},
+										Properties: []*ast.Property{&ast.Property{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 44,
+														Line:   59,
+													},
+													File:   "show_field_keys_test.flux",
+													Source: "csv: input",
+													Start: ast.Position{
+														Column: 34,
+														Line:   59,
+													},
+												},
+											},
+											Key: &ast.Identifier{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 37,
+															Line:   59,
+														},
+														File:   "show_field_keys_test.flux",
+														Source: "csv",
+														Start: ast.Position{
+															Column: 34,
+															Line:   59,
+														},
+													},
+												},
+												Name: "csv",
+											},
+											Value: &ast.Identifier{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 44,
+															Line:   59,
+														},
+														File:   "show_field_keys_test.flux",
+														Source: "input",
+														Start: ast.Position{
+															Column: 39,
+															Line:   59,
+														},
+													},
+												},
+												Name: "input",
+											},
+										}},
+										With: nil,
+									}},
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 45,
+												Line:   59,
+											},
+											File:   "show_field_keys_test.flux",
+											Source: "testing.loadStorage(csv: input)",
+											Start: ast.Position{
+												Column: 14,
+												Line:   59,
+											},
+										},
+									},
+									Callee: &ast.MemberExpression{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 33,
+													Line:   59,
+												},
+												File:   "show_field_keys_test.flux",
+												Source: "testing.loadStorage",
+												Start: ast.Position{
+													Column: 14,
+													Line:   59,
+												},
+											},
+										},
+										Object: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 21,
+														Line:   59,
+													},
+													File:   "show_field_keys_test.flux",
+													Source: "testing",
+													Start: ast.Position{
+														Column: 14,
+														Line:   59,
+													},
+												},
+											},
+											Name: "testing",
+										},
+										Property: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 33,
+														Line:   59,
+													},
+													File:   "show_field_keys_test.flux",
+													Source: "loadStorage",
+													Start: ast.Position{
+														Column: 22,
+														Line:   59,
+													},
+												},
+											},
+											Name: "loadStorage",
+										},
+									},
+								},
+							}, &ast.Property{
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 81,
+											Line:   59,
+										},
+										File:   "show_field_keys_test.flux",
+										Source: "want: testing.loadMem(csv: output)",
+										Start: ast.Position{
+											Column: 47,
+											Line:   59,
+										},
+									},
+								},
+								Key: &ast.Identifier{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 51,
+												Line:   59,
+											},
+											File:   "show_field_keys_test.flux",
+											Source: "want",
+											Start: ast.Position{
+												Column: 47,
+												Line:   59,
+											},
+										},
+									},
+									Name: "want",
+								},
+								Value: &ast.CallExpression{
+									Arguments: []ast.Expression{&ast.ObjectExpression{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 80,
+													Line:   59,
+												},
+												File:   "show_field_keys_test.flux",
+												Source: "csv: output",
+												Start: ast.Position{
+													Column: 69,
+													Line:   59,
+												},
+											},
+										},
+										Properties: []*ast.Property{&ast.Property{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 80,
+														Line:   59,
+													},
+													File:   "show_field_keys_test.flux",
+													Source: "csv: output",
+													Start: ast.Position{
+														Column: 69,
+														Line:   59,
+													},
+												},
+											},
+											Key: &ast.Identifier{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 72,
+															Line:   59,
+														},
+														File:   "show_field_keys_test.flux",
+														Source: "csv",
+														Start: ast.Position{
+															Column: 69,
+															Line:   59,
+														},
+													},
+												},
+												Name: "csv",
+											},
+											Value: &ast.Identifier{
+												BaseNode: ast.BaseNode{
+													Errors: nil,
+													Loc: &ast.SourceLocation{
+														End: ast.Position{
+															Column: 80,
+															Line:   59,
+														},
+														File:   "show_field_keys_test.flux",
+														Source: "output",
+														Start: ast.Position{
+															Column: 74,
+															Line:   59,
+														},
+													},
+												},
+												Name: "output",
+											},
+										}},
+										With: nil,
+									}},
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 81,
+												Line:   59,
+											},
+											File:   "show_field_keys_test.flux",
+											Source: "testing.loadMem(csv: output)",
+											Start: ast.Position{
+												Column: 53,
+												Line:   59,
+											},
+										},
+									},
+									Callee: &ast.MemberExpression{
+										BaseNode: ast.BaseNode{
+											Errors: nil,
+											Loc: &ast.SourceLocation{
+												End: ast.Position{
+													Column: 68,
+													Line:   59,
+												},
+												File:   "show_field_keys_test.flux",
+												Source: "testing.loadMem",
+												Start: ast.Position{
+													Column: 53,
+													Line:   59,
+												},
+											},
+										},
+										Object: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 60,
+														Line:   59,
+													},
+													File:   "show_field_keys_test.flux",
+													Source: "testing",
+													Start: ast.Position{
+														Column: 53,
+														Line:   59,
+													},
+												},
+											},
+											Name: "testing",
+										},
+										Property: &ast.Identifier{
+											BaseNode: ast.BaseNode{
+												Errors: nil,
+												Loc: &ast.SourceLocation{
+													End: ast.Position{
+														Column: 68,
+														Line:   59,
+													},
+													File:   "show_field_keys_test.flux",
+													Source: "loadMem",
+													Start: ast.Position{
+														Column: 61,
+														Line:   59,
+													},
+												},
+											},
+											Name: "loadMem",
+										},
+									},
+								},
+							}, &ast.Property{
+								BaseNode: ast.BaseNode{
+									Errors: nil,
+									Loc: &ast.SourceLocation{
+										End: ast.Position{
+											Column: 105,
+											Line:   59,
+										},
+										File:   "show_field_keys_test.flux",
+										Source: "fn: show_field_keys_fn",
+										Start: ast.Position{
+											Column: 83,
+											Line:   59,
+										},
+									},
+								},
+								Key: &ast.Identifier{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 85,
+												Line:   59,
+											},
+											File:   "show_field_keys_test.flux",
+											Source: "fn",
+											Start: ast.Position{
+												Column: 83,
+												Line:   59,
+											},
+										},
+									},
+									Name: "fn",
+								},
+								Value: &ast.Identifier{
+									BaseNode: ast.BaseNode{
+										Errors: nil,
+										Loc: &ast.SourceLocation{
+											End: ast.Position{
+												Column: 105,
+												Line:   59,
+											},
+											File:   "show_field_keys_test.flux",
+											Source: "show_field_keys_fn",
+											Start: ast.Position{
+												Column: 87,
+												Line:   59,
+											},
+										},
+									},
+									Name: "show_field_keys_fn",
+								},
+							}},
+							With: nil,
+						},
+					},
+					Params: nil,
+				},
+			},
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 107,
+						Line:   59,
+					},
+					File:   "show_field_keys_test.flux",
+					Source: "test show_field_keys = () =>\n    ({input: testing.loadStorage(csv: input), want: testing.loadMem(csv: output), fn: show_field_keys_fn})",
+					Start: ast.Position{
+						Column: 1,
+						Line:   58,
+					},
+				},
+			},
+		}},
+		Imports: []*ast.ImportDeclaration{&ast.ImportDeclaration{
+			As: nil,
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 17,
+						Line:   3,
+					},
+					File:   "show_field_keys_test.flux",
+					Source: "import \"testing\"",
+					Start: ast.Position{
+						Column: 1,
+						Line:   3,
+					},
+				},
+			},
+			Path: &ast.StringLiteral{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 17,
+							Line:   3,
+						},
+						File:   "show_field_keys_test.flux",
+						Source: "\"testing\"",
+						Start: ast.Position{
+							Column: 8,
+							Line:   3,
+						},
+					},
+				},
+				Value: "testing",
+			},
+		}},
+		Metadata: "parser-type=rust",
+		Name:     "show_field_keys_test.flux",
+		Package: &ast.PackageClause{
+			BaseNode: ast.BaseNode{
+				Errors: nil,
+				Loc: &ast.SourceLocation{
+					End: ast.Position{
+						Column: 16,
+						Line:   1,
+					},
+					File:   "show_field_keys_test.flux",
+					Source: "package v1_test",
+					Start: ast.Position{
+						Column: 1,
+						Line:   1,
+					},
+				},
+			},
+			Name: &ast.Identifier{
+				BaseNode: ast.BaseNode{
+					Errors: nil,
+					Loc: &ast.SourceLocation{
+						End: ast.Position{
+							Column: 16,
+							Line:   1,
+						},
+						File:   "show_field_keys_test.flux",
+						Source: "v1_test",
+						Start: ast.Position{
+							Column: 9,
+							Line:   1,
+						},
+					},
+				},
+				Name: "v1_test",
+			},
+		},
+	}, &ast.File{
 		BaseNode: ast.BaseNode{
 			Errors: nil,
 			Loc: &ast.SourceLocation{
@@ -5175,7 +10945,8 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 				Value: "testing",
 			},
 		}},
-		Name: "show_measurements_test.flux",
+		Metadata: "parser-type=rust",
+		Name:     "show_measurements_test.flux",
 		Package: &ast.PackageClause{
 			BaseNode: ast.BaseNode{
 				Errors: nil,
@@ -5208,18 +10979,10 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 						},
 					},
 				},
-				Name: "main",
+				Name: "v1_test",
 			},
 		},
-	}},
-	Package: "main",
-	Path:    "",
-}, &ast.Package{
-	BaseNode: ast.BaseNode{
-		Errors: nil,
-		Loc:    nil,
-	},
-	Files: []*ast.File{&ast.File{
+	}, &ast.File{
 		BaseNode: ast.BaseNode{
 			Errors: nil,
 			Loc: &ast.SourceLocation{
@@ -6652,7 +12415,8 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 				Value: "testing",
 			},
 		}},
-		Name: "show_tag_keys_test.flux",
+		Metadata: "parser-type=rust",
+		Name:     "show_tag_keys_test.flux",
 		Package: &ast.PackageClause{
 			BaseNode: ast.BaseNode{
 				Errors: nil,
@@ -6685,18 +12449,10 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 						},
 					},
 				},
-				Name: "main",
+				Name: "v1_test",
 			},
 		},
-	}},
-	Package: "main",
-	Path:    "",
-}, &ast.Package{
-	BaseNode: ast.BaseNode{
-		Errors: nil,
-		Loc:    nil,
-	},
-	Files: []*ast.File{&ast.File{
+	}, &ast.File{
 		BaseNode: ast.BaseNode{
 			Errors: nil,
 			Loc: &ast.SourceLocation{
@@ -8199,7 +13955,8 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 				Value: "testing",
 			},
 		}},
-		Name: "show_tag_values_test.flux",
+		Metadata: "parser-type=rust",
+		Name:     "show_tag_values_test.flux",
 		Package: &ast.PackageClause{
 			BaseNode: ast.BaseNode{
 				Errors: nil,
@@ -8232,10 +13989,10 @@ var FluxTestPackages = []*ast.Package{&ast.Package{
 						},
 					},
 				},
-				Name: "main",
+				Name: "v1_test",
 			},
 		},
 	}},
-	Package: "main",
-	Path:    "",
+	Package: "v1_test",
+	Path:    "influxdata/influxdb/v1",
 }}

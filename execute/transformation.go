@@ -23,6 +23,65 @@ type Transformation interface {
 	Finish(id DatasetID, err error)
 }
 
+// TransformationSet is a group of transformations.
+type TransformationSet []Transformation
+
+func (ts TransformationSet) RetractTable(id DatasetID, key flux.GroupKey) error {
+	for _, t := range ts {
+		if err := t.RetractTable(id, key); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (ts TransformationSet) Process(id DatasetID, tbl flux.Table) error {
+	if len(ts) == 0 {
+		return nil
+	} else if len(ts) == 1 {
+		return ts[0].Process(id, tbl)
+	}
+
+	// There is more than one transformation so we need to
+	// copy the table for each transformation.
+	bufTable, err := CopyTable(tbl)
+	if err != nil {
+		return err
+	}
+	defer bufTable.Done()
+
+	for _, t := range ts {
+		if err := t.Process(id, bufTable.Copy()); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (ts TransformationSet) UpdateWatermark(id DatasetID, time Time) error {
+	for _, t := range ts {
+		if err := t.UpdateWatermark(id, time); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (ts TransformationSet) UpdateProcessingTime(id DatasetID, time Time) error {
+	for _, t := range ts {
+		if err := t.UpdateProcessingTime(id, time); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (ts TransformationSet) Finish(id DatasetID, err error) {
+	for _, t := range ts {
+		t.Finish(id, err)
+	}
+}
+
 // StreamContext represents necessary context for a single stream of
 // query data.
 type StreamContext interface {
@@ -39,12 +98,11 @@ type Administration interface {
 }
 
 type CreateTransformation func(id DatasetID, mode AccumulationMode, spec plan.ProcedureSpec, a Administration) (Transformation, Dataset, error)
-type CreateNewPlannerTransformation func(id DatasetID, mode AccumulationMode, spec plan.ProcedureSpec, a Administration) (Transformation, Dataset, error)
 
-var procedureToTransformation = make(map[plan.ProcedureKind]CreateNewPlannerTransformation)
+var procedureToTransformation = make(map[plan.ProcedureKind]CreateTransformation)
 
 // RegisterTransformation adds a new registration mapping of procedure kind to transformation.
-func RegisterTransformation(k plan.ProcedureKind, c CreateNewPlannerTransformation) {
+func RegisterTransformation(k plan.ProcedureKind, c CreateTransformation) {
 	if procedureToTransformation[k] != nil {
 		panic(fmt.Errorf("duplicate registration for transformation with procedure kind %v", k))
 	}
@@ -52,7 +110,7 @@ func RegisterTransformation(k plan.ProcedureKind, c CreateNewPlannerTransformati
 }
 
 // ReplaceTransformation changes an existing transformation registration.
-func ReplaceTransformation(k plan.ProcedureKind, c CreateNewPlannerTransformation) {
+func ReplaceTransformation(k plan.ProcedureKind, c CreateTransformation) {
 	if procedureToTransformation[k] == nil {
 		panic(fmt.Errorf("missing registration for transformation with procedure kind %v", k))
 	}

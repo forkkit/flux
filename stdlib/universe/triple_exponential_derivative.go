@@ -1,17 +1,18 @@
 package universe
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/apache/arrow/go/arrow/array"
 	"github.com/influxdata/flux"
 	"github.com/influxdata/flux/arrow"
+	"github.com/influxdata/flux/codes"
 	"github.com/influxdata/flux/execute"
+	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/internal/moving_average"
 	"github.com/influxdata/flux/memory"
 	"github.com/influxdata/flux/plan"
-	"github.com/influxdata/flux/semantic"
+	"github.com/influxdata/flux/runtime"
 	"github.com/influxdata/flux/values"
 )
 
@@ -22,14 +23,9 @@ type TripleExponentialDerivativeOpSpec struct {
 }
 
 func init() {
-	tripleExponentialDerivativeSignature := flux.FunctionSignature(
-		map[string]semantic.PolyType{
-			"n": semantic.Int,
-		},
-		[]string{"n"},
-	)
+	tripleExponentialDerivativeSignature := runtime.MustLookupBuiltinType("universe", "tripleExponentialDerivative")
 
-	flux.RegisterPackageValue("universe", TripleExponentialDerivativeKind, flux.FunctionValue(TripleExponentialDerivativeKind, createTripleExponentialDerivativeOpSpec, tripleExponentialDerivativeSignature))
+	runtime.RegisterPackageValue("universe", TripleExponentialDerivativeKind, flux.MustValue(flux.FunctionValue(TripleExponentialDerivativeKind, createTripleExponentialDerivativeOpSpec, tripleExponentialDerivativeSignature)))
 	flux.RegisterOpSpec(TripleExponentialDerivativeKind, newTripleExponentialDerivativeOp)
 	plan.RegisterProcedureSpec(TripleExponentialDerivativeKind, newTripleExponentialDerivativeProcedure, TripleExponentialDerivativeKind)
 	execute.RegisterTransformation(TripleExponentialDerivativeKind, createTripleExponentialDerivativeTransformation)
@@ -45,7 +41,7 @@ func createTripleExponentialDerivativeOpSpec(args flux.Arguments, a *flux.Admini
 	if n, err := args.GetRequiredInt("n"); err != nil {
 		return nil, err
 	} else if n <= 0 {
-		return nil, fmt.Errorf("cannot take triple exponential derivative with a period of %v (must be greater than 0)", n)
+		return nil, errors.Newf(codes.Internal, "cannot take triple exponential derivative with a period of %v (must be greater than 0)", n)
 	} else {
 		spec.N = n
 	}
@@ -69,7 +65,7 @@ type TripleExponentialDerivativeProcedureSpec struct {
 func newTripleExponentialDerivativeProcedure(qs flux.OperationSpec, pa plan.Administration) (plan.ProcedureSpec, error) {
 	spec, ok := qs.(*TripleExponentialDerivativeOpSpec)
 	if !ok {
-		return nil, fmt.Errorf("invalid spec type %T", qs)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", qs)
 	}
 
 	return &TripleExponentialDerivativeProcedureSpec{
@@ -95,10 +91,10 @@ func (s *TripleExponentialDerivativeProcedureSpec) TriggerSpec() plan.TriggerSpe
 func createTripleExponentialDerivativeTransformation(id execute.DatasetID, mode execute.AccumulationMode, spec plan.ProcedureSpec, a execute.Administration) (execute.Transformation, execute.Dataset, error) {
 	s, ok := spec.(*TripleExponentialDerivativeProcedureSpec)
 	if !ok {
-		return nil, nil, fmt.Errorf("invalid spec type %T", spec)
+		return nil, nil, errors.Newf(codes.Internal, "invalid spec type %T", spec)
 	}
 	alloc := a.Allocator()
-	cache := execute.NewTableBuilderCache(a.Allocator())
+	cache := execute.NewTableBuilderCache(alloc)
 
 	d := execute.NewDataset(id, mode, cache)
 	t := NewTripleExponentialDerivativeTransformation(d, cache, alloc, s)
@@ -134,17 +130,17 @@ func (t *tripleExponentialDerivativeTransformation) RetractTable(id execute.Data
 func (t *tripleExponentialDerivativeTransformation) Process(id execute.DatasetID, tbl flux.Table) error {
 	builder, created := t.cache.TableBuilder(tbl.Key())
 	if !created {
-		return fmt.Errorf("triple exponential derivative found duplicate table with key: %v", tbl.Key())
+		return errors.Newf(codes.FailedPrecondition, "triple exponential derivative found duplicate table with key: %v", tbl.Key())
 	}
 
 	cols := tbl.Cols()
 	valueIdx := execute.ColIdx(execute.DefaultValueColLabel, cols)
 	if valueIdx == -1 {
-		return fmt.Errorf("cannot find _value column")
+		return errors.New(codes.FailedPrecondition, "cannot find _value column")
 	}
 	valueCol := cols[valueIdx]
 	if valueCol.Type != flux.TInt && valueCol.Type != flux.TUInt && valueCol.Type != flux.TFloat {
-		return fmt.Errorf("cannot take exponential moving average of column %s (type %s)", valueCol.Label, valueCol.Type.String())
+		return errors.Newf(codes.FailedPrecondition, "cannot take exponential moving average of column %s (type %s)", valueCol.Label, valueCol.Type.String())
 	}
 	for j, c := range cols {
 		if j == valueIdx {
@@ -169,7 +165,7 @@ func (t *tripleExponentialDerivativeTransformation) Process(id execute.DatasetID
 	t.ema2 = moving_average.New(int(t.n), len(cols))
 	t.ema3 = moving_average.New(int(t.n), len(cols))
 
-	err := tbl.Do(func(cr flux.ColReader) error {
+	if err := tbl.Do(func(cr flux.ColReader) error {
 		if cr.Len() == 0 {
 			return nil
 		}
@@ -198,7 +194,9 @@ func (t *tripleExponentialDerivativeTransformation) Process(id execute.DatasetID
 			}
 		}
 		return nil
-	})
+	}); err != nil {
+		return err
+	}
 
 	for j := range cols {
 		if j == valueIdx {
@@ -216,7 +214,7 @@ func (t *tripleExponentialDerivativeTransformation) Process(id execute.DatasetID
 		}
 	}
 
-	return err
+	return nil
 }
 
 func (t *tripleExponentialDerivativeTransformation) passThrough(vs *moving_average.ArrayContainer, b execute.TableBuilder, bj int) error {
@@ -229,6 +227,8 @@ func (t *tripleExponentialDerivativeTransformation) passThrough(vs *moving_avera
 
 	if j < vs.Len() {
 		slice := vs.Slice(j, vs.Len()).Array()
+		defer slice.Release()
+
 		switch s := slice.(type) {
 		case *array.Boolean:
 			if err := b.AppendBools(bj, s); err != nil {
@@ -255,7 +255,9 @@ func (t *tripleExponentialDerivativeTransformation) passThroughTime(vs *array.In
 	t.i[bj] += int(math.Max(0, math.Min(float64(vs.Len()), float64(3*(t.n-1))-float64(t.i[bj])+1)))
 
 	if j < vs.Len() {
-		if err := b.AppendTimes(bj, arrow.IntSlice(vs, j, vs.Len())); err != nil {
+		slice := arrow.IntSlice(vs, j, vs.Len())
+		defer slice.Release()
+		if err := b.AppendTimes(bj, slice); err != nil {
 			return err
 		}
 	}

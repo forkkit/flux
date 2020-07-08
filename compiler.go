@@ -2,15 +2,16 @@ package flux
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/influxdata/flux/codes"
+	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/memory"
 )
 
 // Compiler produces a specification for the query.
 type Compiler interface {
 	// Compile produces a specification for the query.
-	Compile(ctx context.Context) (Program, error)
+	Compile(ctx context.Context, runtime Runtime) (Program, error)
 	CompilerType() CompilerType
 }
 
@@ -21,7 +22,7 @@ type CompilerMappings map[CompilerType]CreateCompiler
 
 func (m CompilerMappings) Add(t CompilerType, c CreateCompiler) error {
 	if _, ok := m[t]; ok {
-		return fmt.Errorf("duplicate compiler mapping for %q", t)
+		return errors.Newf(codes.Internal, "duplicate compiler mapping for %q", t)
 	}
 	m[t] = c
 	return nil

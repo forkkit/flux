@@ -2,17 +2,17 @@ package universe
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"log"
 	"time"
 
 	"github.com/influxdata/flux"
+	"github.com/influxdata/flux/codes"
 	"github.com/influxdata/flux/compiler"
 	"github.com/influxdata/flux/execute"
+	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/interpreter"
 	"github.com/influxdata/flux/plan"
-	"github.com/influxdata/flux/semantic"
+	"github.com/influxdata/flux/runtime"
 	"github.com/influxdata/flux/values"
 )
 
@@ -27,24 +27,9 @@ type StateTrackingOpSpec struct {
 }
 
 func init() {
-	stateTrackingSignature := flux.FunctionSignature(
-		map[string]semantic.PolyType{
-			"fn": semantic.NewFunctionPolyType(semantic.FunctionPolySignature{
-				Parameters: map[string]semantic.PolyType{
-					"r": semantic.Tvar(1),
-				},
-				Required: semantic.LabelSet{"r"},
-				Return:   semantic.Bool,
-			}),
-			"countColumn":    semantic.String,
-			"durationColumn": semantic.String,
-			"durationUnit":   semantic.Duration,
-			"timeColumn":     semantic.String,
-		},
-		[]string{"fn"},
-	)
+	stateTrackingSignature := runtime.MustLookupBuiltinType("universe", "stateTracking")
 
-	flux.RegisterPackageValue("universe", StateTrackingKind, flux.FunctionValue(StateTrackingKind, createStateTrackingOpSpec, stateTrackingSignature))
+	runtime.RegisterPackageValue("universe", StateTrackingKind, flux.MustValue(flux.FunctionValue(StateTrackingKind, createStateTrackingOpSpec, stateTrackingSignature)))
 	flux.RegisterOpSpec(StateTrackingKind, newStateTrackingOp)
 	plan.RegisterProcedureSpec(StateTrackingKind, newStateTrackingProcedure, StateTrackingKind)
 	execute.RegisterTransformation(StateTrackingKind, createStateTrackingTransformation)
@@ -67,7 +52,7 @@ func createStateTrackingOpSpec(args flux.Arguments, a *flux.Administration) (flu
 
 	spec := &StateTrackingOpSpec{
 		Fn:           fn,
-		DurationUnit: flux.Duration(time.Second),
+		DurationUnit: flux.ConvertDuration(time.Second),
 	}
 
 	if label, ok, err := args.GetString("countColumn"); err != nil {
@@ -93,8 +78,8 @@ func createStateTrackingOpSpec(args flux.Arguments, a *flux.Administration) (flu
 		spec.TimeColumn = execute.DefaultTimeColLabel
 	}
 
-	if spec.DurationColumn != "" && spec.DurationUnit <= 0 {
-		return nil, errors.New("state tracking duration unit must be greater than zero")
+	if spec.DurationColumn != "" && !values.Duration(spec.DurationUnit).IsPositive() {
+		return nil, errors.New(codes.Invalid, "state tracking duration unit must be greater than zero")
 	}
 	return spec, nil
 }
@@ -119,7 +104,7 @@ type StateTrackingProcedureSpec struct {
 func newStateTrackingProcedure(qs flux.OperationSpec, pa plan.Administration) (plan.ProcedureSpec, error) {
 	spec, ok := qs.(*StateTrackingOpSpec)
 	if !ok {
-		return nil, fmt.Errorf("invalid spec type %T", qs)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", qs)
 	}
 
 	return &StateTrackingProcedureSpec{
@@ -151,7 +136,7 @@ func (s *StateTrackingProcedureSpec) TriggerSpec() plan.TriggerSpec {
 func createStateTrackingTransformation(id execute.DatasetID, mode execute.AccumulationMode, spec plan.ProcedureSpec, a execute.Administration) (execute.Transformation, execute.Dataset, error) {
 	s, ok := spec.(*StateTrackingProcedureSpec)
 	if !ok {
-		return nil, nil, fmt.Errorf("invalid spec type %T", spec)
+		return nil, nil, errors.Newf(codes.Internal, "invalid spec type %T", spec)
 	}
 	cache := execute.NewTableBuilderCache(a.Allocator())
 	d := execute.NewDataset(id, mode, cache)
@@ -176,17 +161,14 @@ type stateTrackingTransformation struct {
 }
 
 func NewStateTrackingTransformation(ctx context.Context, spec *StateTrackingProcedureSpec, d execute.Dataset, cache execute.TableBuilderCache) (*stateTrackingTransformation, error) {
-	fn, err := execute.NewRowPredicateFn(spec.Fn.Fn, compiler.ToScope(spec.Fn.Scope))
-	if err != nil {
-		return nil, err
-	}
+	fn := execute.NewRowPredicateFn(spec.Fn.Fn, compiler.ToScope(spec.Fn.Scope))
 	return &stateTrackingTransformation{
 		d:              d,
 		cache:          cache,
 		fn:             fn,
 		countColumn:    spec.CountColumn,
 		durationColumn: spec.DurationColumn,
-		durationUnit:   int64(spec.DurationUnit),
+		durationUnit:   int64(values.Duration(spec.DurationUnit).Duration()),
 		timeCol:        spec.TimeCol,
 		ctx:            ctx,
 	}, nil
@@ -199,16 +181,15 @@ func (t *stateTrackingTransformation) RetractTable(id execute.DatasetID, key flu
 func (t *stateTrackingTransformation) Process(id execute.DatasetID, tbl flux.Table) error {
 	builder, created := t.cache.TableBuilder(tbl.Key())
 	if !created {
-		return fmt.Errorf("found duplicate table with key: %v", tbl.Key())
+		return errors.Newf(codes.FailedPrecondition, "found duplicate table with key: %v", tbl.Key())
 	}
-	err := execute.AddTableCols(tbl, builder)
-	if err != nil {
+	if err := execute.AddTableCols(tbl, builder); err != nil {
 		return err
 	}
 
 	// Prepare the functions for the column types.
 	cols := tbl.Cols()
-	err = t.fn.Prepare(cols)
+	fn, err := t.fn.Prepare(cols)
 	if err != nil {
 		// TODO(nathanielc): Should we not fail the query for failed compilation?
 		return err
@@ -247,7 +228,7 @@ func (t *stateTrackingTransformation) Process(id execute.DatasetID, tbl flux.Tab
 
 	timeIdx := execute.ColIdx(t.timeCol, tbl.Cols())
 	if timeIdx < 0 {
-		return fmt.Errorf("no column %q exists", t.timeCol)
+		return errors.Newf(codes.FailedPrecondition, "no column %q exists", t.timeCol)
 	}
 	colMap := make([]int, len(tbl.Cols()))
 	colMap = execute.ColMap(colMap, builder, tbl.Cols())
@@ -255,7 +236,7 @@ func (t *stateTrackingTransformation) Process(id execute.DatasetID, tbl flux.Tab
 	return tbl.Do(func(cr flux.ColReader) error {
 		l := cr.Len()
 		for i := 0; i < l; i++ {
-			match, err := t.fn.Eval(t.ctx, i, cr)
+			match, err := fn.EvalRow(t.ctx, i, cr)
 			if err != nil {
 				log.Printf("failed to evaluate state tracking expression: %v", err)
 				continue
@@ -264,13 +245,13 @@ func (t *stateTrackingTransformation) Process(id execute.DatasetID, tbl flux.Tab
 			// Duration
 			if durationCol > 0 {
 				if ts := cr.Times(timeIdx); ts.IsNull(i) {
-					return errors.New("got a null timestamp")
+					return errors.New(codes.FailedPrecondition, "got a null timestamp")
 				}
 
 				tValue := values.Time(cr.Times(timeIdx).Value(i))
 
 				if prevTime > tValue {
-					return errors.New("got an out-of-order timestamp")
+					return errors.New(codes.FailedPrecondition, "got an out-of-order timestamp")
 				}
 				prevTime = tValue
 

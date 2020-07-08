@@ -37,7 +37,7 @@ type Table interface {
 	Do(f func(ColReader) error) error
 
 	// Done indicates that this table is no longer needed and that the
-	// underlying processer that produces the table may discard any
+	// underlying processor that produces the table may discard any
 	// buffers that need to be processed. If the table has already been
 	// read with Do, this happens automatically.
 	// This is also not required if the table is empty.
@@ -53,6 +53,14 @@ type Table interface {
 // data buffered.
 type BufferedTable interface {
 	Table
+
+	// Buffer returns the i'th buffer in the buffered table.
+	// This allows accessing the buffered table contents without
+	// using the Table.
+	Buffer(i int) ColReader
+
+	// BufferN returns the number of buffers in this table.
+	BufferN() int
 
 	// Copy will return a copy of the BufferedTable without
 	// consuming the Table itself. If this Table has already
@@ -83,7 +91,7 @@ const (
 
 // ColumnType returns the column type when given a semantic.Type.
 // It returns flux.TInvalid if the Type is not a valid column type.
-func ColumnType(typ semantic.Type) ColType {
+func ColumnType(typ semantic.MonoType) ColType {
 	switch typ.Nature() {
 	case semantic.Bool:
 		return TBool
@@ -102,22 +110,22 @@ func ColumnType(typ semantic.Type) ColType {
 	}
 }
 
-func SemanticType(typ ColType) semantic.Type {
+func SemanticType(typ ColType) semantic.MonoType {
 	switch typ {
 	case TBool:
-		return semantic.Bool
+		return semantic.BasicBool
 	case TInt:
-		return semantic.Int
+		return semantic.BasicInt
 	case TUInt:
-		return semantic.UInt
+		return semantic.BasicUint
 	case TFloat:
-		return semantic.Float
+		return semantic.BasicFloat
 	case TString:
-		return semantic.String
+		return semantic.BasicString
 	case TTime:
-		return semantic.Time
+		return semantic.BasicTime
 	default:
-		return semantic.Invalid
+		return semantic.MonoType{}
 	}
 }
 

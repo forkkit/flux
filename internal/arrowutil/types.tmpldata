@@ -1,0 +1,52 @@
+[
+  {
+    "Name": "Int64",
+    "Type": "array.Int64",
+    "PrimitiveType": "int64",
+    "IsNumeric": true,
+    "IsComparable": true,
+    "Value": "Value",
+    "Append": "Append",
+    "NewArray": "NewInt64Array"
+  },
+  {
+    "Name": "Uint64",
+    "Type": "array.Uint64",
+    "PrimitiveType": "uint64",
+    "IsNumeric": true,
+    "IsComparable": true,
+    "Value": "Value",
+    "Append": "Append",
+    "NewArray": "NewUint64Array"
+  },
+  {
+    "Name": "Float64",
+    "Type": "array.Float64",
+    "PrimitiveType": "float64",
+    "IsNumeric": true,
+    "IsComparable": true,
+    "Value": "Value",
+    "Append": "Append",
+    "NewArray": "NewFloat64Array"
+  },
+  {
+    "Name": "Boolean",
+    "Type": "array.Boolean",
+    "PrimitiveType": "bool",
+    "IsNumeric": false,
+    "IsComparable": false,
+    "Value": "Value",
+    "Append": "Append",
+    "NewArray": "NewBooleanArray"
+  },
+  {
+    "Name": "String",
+    "Type": "array.Binary",
+    "PrimitiveType": "string",
+    "IsNumeric": false,
+    "IsComparable": true,
+    "Value": "ValueString",
+    "Append": "AppendString",
+    "NewArray": "NewBinaryArray"
+  }
+]

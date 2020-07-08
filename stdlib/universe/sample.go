@@ -1,15 +1,15 @@
 package universe
 
 import (
-	"fmt"
-
 	"math/rand"
 
 	"github.com/apache/arrow/go/arrow/array"
 	"github.com/influxdata/flux"
+	"github.com/influxdata/flux/codes"
 	"github.com/influxdata/flux/execute"
+	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/plan"
-	"github.com/influxdata/flux/semantic"
+	"github.com/influxdata/flux/runtime"
 )
 
 const SampleKind = "sample"
@@ -21,15 +21,9 @@ type SampleOpSpec struct {
 }
 
 func init() {
-	sampleSignature := execute.SelectorSignature(
-		map[string]semantic.PolyType{
-			"n":   semantic.Int,
-			"pos": semantic.Int,
-		},
-		[]string{"n"},
-	)
+	sampleSignature := runtime.MustLookupBuiltinType("universe", "sample")
 
-	flux.RegisterPackageValue("universe", SampleKind, flux.FunctionValue(SampleKind, createSampleOpSpec, sampleSignature))
+	runtime.RegisterPackageValue("universe", SampleKind, flux.MustValue(flux.FunctionValue(SampleKind, createSampleOpSpec, sampleSignature)))
 	flux.RegisterOpSpec(SampleKind, newSampleOp)
 	plan.RegisterProcedureSpec(SampleKind, newSampleProcedure, SampleKind)
 	execute.RegisterTransformation(SampleKind, createSampleTransformation)
@@ -46,7 +40,7 @@ func createSampleOpSpec(args flux.Arguments, a *flux.Administration) (flux.Opera
 	if err != nil {
 		return nil, err
 	} else if n <= 0 {
-		return nil, fmt.Errorf("n must be a positive integer, but was %d", n)
+		return nil, errors.Newf(codes.Invalid, "n must be a positive integer, but was %d", n)
 	}
 	spec.N = n
 
@@ -54,7 +48,7 @@ func createSampleOpSpec(args flux.Arguments, a *flux.Administration) (flux.Opera
 		return nil, err
 	} else if ok {
 		if pos >= spec.N {
-			return nil, fmt.Errorf("pos must be less than n, but %d >= %d", pos, spec.N)
+			return nil, errors.Newf(codes.Invalid, "pos must be less than n, but %d >= %d", pos, spec.N)
 		}
 		spec.Pos = pos
 	} else {
@@ -85,7 +79,7 @@ type SampleProcedureSpec struct {
 func newSampleProcedure(qs flux.OperationSpec, pa plan.Administration) (plan.ProcedureSpec, error) {
 	spec, ok := qs.(*SampleOpSpec)
 	if !ok {
-		return nil, fmt.Errorf("invalid spec type %T", qs)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", qs)
 	}
 	return &SampleProcedureSpec{
 		N:              spec.N,
@@ -121,7 +115,7 @@ type SampleSelector struct {
 func createSampleTransformation(id execute.DatasetID, mode execute.AccumulationMode, spec plan.ProcedureSpec, a execute.Administration) (execute.Transformation, execute.Dataset, error) {
 	ps, ok := spec.(*SampleProcedureSpec)
 	if !ok {
-		return nil, nil, fmt.Errorf("invalid spec type %T", ps)
+		return nil, nil, errors.Newf(codes.Internal, "invalid spec type %T", ps)
 	}
 
 	ss := &SampleSelector{

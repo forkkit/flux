@@ -1,12 +1,12 @@
 package universe
 
 import (
-	"fmt"
-
 	"github.com/influxdata/flux"
+	"github.com/influxdata/flux/codes"
 	"github.com/influxdata/flux/execute"
+	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/plan"
-	"github.com/influxdata/flux/semantic"
+	"github.com/influxdata/flux/runtime"
 	"github.com/influxdata/flux/values"
 )
 
@@ -18,15 +18,9 @@ type SetOpSpec struct {
 }
 
 func init() {
-	setSignature := flux.FunctionSignature(
-		map[string]semantic.PolyType{
-			"key":   semantic.String,
-			"value": semantic.String,
-		},
-		[]string{"key", "value"},
-	)
+	setSignature := runtime.MustLookupBuiltinType("universe", "set")
 
-	flux.RegisterPackageValue("universe", SetKind, flux.FunctionValue(SetKind, createSetOpSpec, setSignature))
+	runtime.RegisterPackageValue("universe", SetKind, flux.MustValue(flux.FunctionValue(SetKind, createSetOpSpec, setSignature)))
 	flux.RegisterOpSpec(SetKind, newSetOp)
 	plan.RegisterProcedureSpec(SetKind, newSetProcedure, SetKind)
 	execute.RegisterTransformation(SetKind, createSetTransformation)
@@ -69,7 +63,7 @@ type SetProcedureSpec struct {
 func newSetProcedure(qs flux.OperationSpec, pa plan.Administration) (plan.ProcedureSpec, error) {
 	s, ok := qs.(*SetOpSpec)
 	if !ok {
-		return nil, fmt.Errorf("invalid spec type %T", qs)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", qs)
 	}
 	p := &SetProcedureSpec{
 		Key:   s.Key,
@@ -91,7 +85,7 @@ func (s *SetProcedureSpec) Copy() plan.ProcedureSpec {
 func createSetTransformation(id execute.DatasetID, mode execute.AccumulationMode, spec plan.ProcedureSpec, a execute.Administration) (execute.Transformation, execute.Dataset, error) {
 	s, ok := spec.(*SetProcedureSpec)
 	if !ok {
-		return nil, nil, fmt.Errorf("invalid spec type %T", spec)
+		return nil, nil, errors.Newf(codes.Internal, "invalid spec type %T", spec)
 	}
 	cache := execute.NewTableBuilderCache(a.Allocator())
 	d := execute.NewDataset(id, mode, cache)

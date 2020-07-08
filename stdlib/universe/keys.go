@@ -1,13 +1,13 @@
 package universe
 
 import (
-	"fmt"
-
 	"github.com/influxdata/flux"
 	"github.com/influxdata/flux/arrow"
+	"github.com/influxdata/flux/codes"
 	"github.com/influxdata/flux/execute"
+	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/plan"
-	"github.com/influxdata/flux/semantic"
+	"github.com/influxdata/flux/runtime"
 )
 
 const KeysKind = "keys"
@@ -17,11 +17,9 @@ type KeysOpSpec struct {
 }
 
 func init() {
-	keysSignature := flux.FunctionSignature(map[string]semantic.PolyType{
-		"column": semantic.String,
-	}, nil)
+	keysSignature := runtime.MustLookupBuiltinType("universe", "keys")
 
-	flux.RegisterPackageValue("universe", KeysKind, flux.FunctionValue(KeysKind, createKeysOpSpec, keysSignature))
+	runtime.RegisterPackageValue("universe", KeysKind, flux.MustValue(flux.FunctionValue(KeysKind, createKeysOpSpec, keysSignature)))
 	flux.RegisterOpSpec(KeysKind, newKeysOp)
 	plan.RegisterProcedureSpec(KeysKind, newKeysProcedure, KeysKind)
 	execute.RegisterTransformation(KeysKind, createKeysTransformation)
@@ -61,7 +59,7 @@ type KeysProcedureSpec struct {
 func newKeysProcedure(qs flux.OperationSpec, pa plan.Administration) (plan.ProcedureSpec, error) {
 	spec, ok := qs.(*KeysOpSpec)
 	if !ok {
-		return nil, fmt.Errorf("invalid spec type %T", qs)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", qs)
 	}
 
 	return &KeysProcedureSpec{
@@ -87,7 +85,7 @@ func (s *KeysProcedureSpec) TriggerSpec() plan.TriggerSpec {
 func createKeysTransformation(id execute.DatasetID, mode execute.AccumulationMode, spec plan.ProcedureSpec, a execute.Administration) (execute.Transformation, execute.Dataset, error) {
 	s, ok := spec.(*KeysProcedureSpec)
 	if !ok {
-		return nil, nil, fmt.Errorf("invalid spec type %T", spec)
+		return nil, nil, errors.Newf(codes.Internal, "invalid spec type %T", spec)
 	}
 	cache := execute.NewTableBuilderCache(a.Allocator())
 	d := execute.NewDataset(id, mode, cache)
@@ -117,7 +115,7 @@ func (t *keysTransformation) RetractTable(id execute.DatasetID, key flux.GroupKe
 func (t *keysTransformation) Process(id execute.DatasetID, tbl flux.Table) error {
 	builder, created := t.cache.TableBuilder(tbl.Key())
 	if !created {
-		return fmt.Errorf("keys found duplicate table with key: %v", tbl.Key())
+		return errors.Newf(codes.FailedPrecondition, "keys found duplicate table with key: %v", tbl.Key())
 	}
 
 	keys := make([]string, 0, len(tbl.Cols()))

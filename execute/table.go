@@ -79,6 +79,14 @@ func (tb *tableBuffer) Empty() bool {
 	return len(tb.buffers) == 0
 }
 
+func (tb *tableBuffer) Buffer(i int) flux.ColReader {
+	return tb.buffers[i]
+}
+
+func (tb *tableBuffer) BufferN() int {
+	return len(tb.buffers)
+}
+
 func (tb *tableBuffer) Copy() flux.BufferedTable {
 	for i := tb.i; i < len(tb.buffers); i++ {
 		tb.buffers[i].Retain()
@@ -481,32 +489,32 @@ func ValueForRow(cr flux.ColReader, i, j int) values.Value {
 	switch t {
 	case flux.TString:
 		if cr.Strings(j).IsNull(i) {
-			return values.NewNull(semantic.String)
+			return values.NewNull(semantic.BasicString)
 		}
 		return values.NewString(cr.Strings(j).ValueString(i))
 	case flux.TInt:
 		if cr.Ints(j).IsNull(i) {
-			return values.NewNull(semantic.Int)
+			return values.NewNull(semantic.BasicInt)
 		}
 		return values.NewInt(cr.Ints(j).Value(i))
 	case flux.TUInt:
 		if cr.UInts(j).IsNull(i) {
-			return values.NewNull(semantic.UInt)
+			return values.NewNull(semantic.BasicUint)
 		}
 		return values.NewUInt(cr.UInts(j).Value(i))
 	case flux.TFloat:
 		if cr.Floats(j).IsNull(i) {
-			return values.NewNull(semantic.Float)
+			return values.NewNull(semantic.BasicFloat)
 		}
 		return values.NewFloat(cr.Floats(j).Value(i))
 	case flux.TBool:
 		if cr.Bools(j).IsNull(i) {
-			return values.NewNull(semantic.Bool)
+			return values.NewNull(semantic.BasicBool)
 		}
 		return values.NewBool(cr.Bools(j).Value(i))
 	case flux.TTime:
 		if cr.Times(j).IsNull(i) {
-			return values.NewNull(semantic.Time)
+			return values.NewNull(semantic.BasicTime)
 		}
 		return values.NewTime(values.Time(cr.Times(j).Value(i)))
 	default:
@@ -1101,7 +1109,7 @@ func (b *ColListTableBuilder) SetValue(i, j int, v values.Value) error {
 		return b.SetNil(i, j)
 	}
 
-	switch v.Type() {
+	switch v.Type().Nature() {
 	case semantic.Bool:
 		return b.SetBool(i, j, v.Bool())
 	case semantic.Int:
@@ -1124,7 +1132,7 @@ func (b *ColListTableBuilder) AppendValue(j int, v values.Value) error {
 		return b.AppendNil(j)
 	}
 
-	switch v.Type() {
+	switch v.Type().Nature() {
 	case semantic.Bool:
 		return b.AppendBool(j, v.Bool())
 	case semantic.Int:
@@ -1237,29 +1245,31 @@ func (b *ColListTableBuilder) Times(j int) []values.Time {
 
 // GetRow takes a row index and returns the record located at that index in the cache
 func (b *ColListTableBuilder) GetRow(row int) values.Object {
-	record := values.NewObject()
-	var val values.Value
-	for j, col := range b.colMeta {
-		if b.cols[j].IsNil(row) {
-			val = values.NewNull(flux.SemanticType(col.Type))
-		} else {
-			switch col.Type {
-			case flux.TBool:
-				val = values.NewBool(b.cols[j].(*boolColumnBuilder).data[row])
-			case flux.TInt:
-				val = values.NewInt(b.cols[j].(*intColumnBuilder).data[row])
-			case flux.TUInt:
-				val = values.NewUInt(b.cols[j].(*uintColumnBuilder).data[row])
-			case flux.TFloat:
-				val = values.NewFloat(b.cols[j].(*floatColumnBuilder).data[row])
-			case flux.TString:
-				val = values.NewString(b.cols[j].(*stringColumnBuilder).data[row])
-			case flux.TTime:
-				val = values.NewTime(b.cols[j].(*timeColumnBuilder).data[row])
+	record, _ := values.BuildObjectWithSize(len(b.colMeta), func(set values.ObjectSetter) error {
+		var val values.Value
+		for j, col := range b.colMeta {
+			if b.cols[j].IsNil(row) {
+				val = values.NewNull(flux.SemanticType(col.Type))
+			} else {
+				switch col.Type {
+				case flux.TBool:
+					val = values.NewBool(b.cols[j].(*boolColumnBuilder).data[row])
+				case flux.TInt:
+					val = values.NewInt(b.cols[j].(*intColumnBuilder).data[row])
+				case flux.TUInt:
+					val = values.NewUInt(b.cols[j].(*uintColumnBuilder).data[row])
+				case flux.TFloat:
+					val = values.NewFloat(b.cols[j].(*floatColumnBuilder).data[row])
+				case flux.TString:
+					val = values.NewString(b.cols[j].(*stringColumnBuilder).data[row])
+				case flux.TTime:
+					val = values.NewTime(b.cols[j].(*timeColumnBuilder).data[row])
+				}
 			}
+			set(col.Label, val)
 		}
-		record.Set(col.Label, val)
-	}
+		return nil
+	})
 	return record
 }
 
@@ -1438,25 +1448,27 @@ func (t *ColListTable) Times(j int) *array.Int64 {
 
 // GetRow takes a row index and returns the record located at that index in the cache
 func (t *ColListTable) GetRow(row int) values.Object {
-	record := values.NewObject()
-	var val values.Value
-	for j, col := range t.colMeta {
-		switch col.Type {
-		case flux.TBool:
-			val = values.NewBool(t.cols[j].(*boolColumnBuilder).data[row])
-		case flux.TInt:
-			val = values.NewInt(t.cols[j].(*intColumnBuilder).data[row])
-		case flux.TUInt:
-			val = values.NewUInt(t.cols[j].(*uintColumnBuilder).data[row])
-		case flux.TFloat:
-			val = values.NewFloat(t.cols[j].(*floatColumnBuilder).data[row])
-		case flux.TString:
-			val = values.NewString(t.cols[j].(*stringColumnBuilder).data[row])
-		case flux.TTime:
-			val = values.NewTime(t.cols[j].(*timeColumnBuilder).data[row])
+	record, _ := values.BuildObjectWithSize(len(t.colMeta), func(set values.ObjectSetter) error {
+		var val values.Value
+		for j, col := range t.colMeta {
+			switch col.Type {
+			case flux.TBool:
+				val = values.NewBool(t.cols[j].(*boolColumnBuilder).data[row])
+			case flux.TInt:
+				val = values.NewInt(t.cols[j].(*intColumnBuilder).data[row])
+			case flux.TUInt:
+				val = values.NewUInt(t.cols[j].(*uintColumnBuilder).data[row])
+			case flux.TFloat:
+				val = values.NewFloat(t.cols[j].(*floatColumnBuilder).data[row])
+			case flux.TString:
+				val = values.NewString(t.cols[j].(*stringColumnBuilder).data[row])
+			case flux.TTime:
+				val = values.NewTime(t.cols[j].(*timeColumnBuilder).data[row])
+			}
+			set(col.Label, val)
 		}
-		record.Set(col.Label, val)
-	}
+		return nil
+	})
 	return record
 }
 
@@ -2174,4 +2186,55 @@ func (d *tableBuilderCache) ForEachWithContext(f func(flux.GroupKey, Trigger, Ta
 			Count: b.builder.NRows(),
 		})
 	})
+}
+
+type emptyTable struct {
+	key  flux.GroupKey
+	cols []flux.ColMeta
+	used int32
+}
+
+// NewEmptyTable constructs a new empty table with the given
+// group key and columns.
+func NewEmptyTable(key flux.GroupKey, cols []flux.ColMeta) flux.Table {
+	return emptyTable{
+		key:  key,
+		cols: cols,
+	}
+}
+
+func (t emptyTable) Key() flux.GroupKey {
+	return t.key
+}
+
+func (t emptyTable) Cols() []flux.ColMeta {
+	return t.cols
+}
+
+func (t emptyTable) Do(f func(flux.ColReader) error) error {
+	if !atomic.CompareAndSwapInt32(&t.used, 0, 1) {
+		return errors.New(codes.Internal, "table already read")
+	}
+
+	// Construct empty arrays for each column.
+	arrs := make([]array.Interface, len(t.cols))
+	for i, col := range t.cols {
+		b := arrow.NewBuilder(col.Type, memory.DefaultAllocator)
+		arrs[i] = b.NewArray()
+	}
+	buf := arrow.TableBuffer{
+		GroupKey: t.key,
+		Columns:  t.cols,
+		Values:   arrs,
+	}
+	defer buf.Release()
+	return f(&buf)
+}
+
+func (t emptyTable) Done() {
+	atomic.StoreInt32(&t.used, 1)
+}
+
+func (t emptyTable) Empty() bool {
+	return true
 }

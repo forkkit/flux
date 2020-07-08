@@ -1,12 +1,12 @@
 package universe
 
 import (
-	"fmt"
-
 	"github.com/influxdata/flux"
+	"github.com/influxdata/flux/codes"
 	"github.com/influxdata/flux/execute"
+	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/plan"
-	"github.com/influxdata/flux/semantic"
+	"github.com/influxdata/flux/runtime"
 )
 
 const HourSelectionKind = "hourSelection"
@@ -18,16 +18,9 @@ type HourSelectionOpSpec struct {
 }
 
 func init() {
-	hourSelectionSignature := flux.FunctionSignature(
-		map[string]semantic.PolyType{
-			"start":      semantic.Int,
-			"stop":       semantic.Int,
-			"timeColumn": semantic.String,
-		},
-		[]string{"start", "stop"},
-	)
+	hourSelectionSignature := runtime.MustLookupBuiltinType("universe", "hourSelection")
 
-	flux.RegisterPackageValue("universe", HourSelectionKind, flux.FunctionValue(HourSelectionKind, createHourSelectionOpSpec, hourSelectionSignature))
+	runtime.RegisterPackageValue("universe", HourSelectionKind, flux.MustValue(flux.FunctionValue(HourSelectionKind, createHourSelectionOpSpec, hourSelectionSignature)))
 	flux.RegisterOpSpec(HourSelectionKind, newHourSelectionOp)
 	plan.RegisterProcedureSpec(HourSelectionKind, newHourSelectionProcedure, HourSelectionKind)
 	execute.RegisterTransformation(HourSelectionKind, createHourSelectionTransformation)
@@ -81,7 +74,7 @@ type HourSelectionProcedureSpec struct {
 func newHourSelectionProcedure(qs flux.OperationSpec, pa plan.Administration) (plan.ProcedureSpec, error) {
 	spec, ok := qs.(*HourSelectionOpSpec)
 	if !ok {
-		return nil, fmt.Errorf("invalid spec type %T", qs)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", qs)
 	}
 
 	return &HourSelectionProcedureSpec{
@@ -110,7 +103,7 @@ func (s *HourSelectionProcedureSpec) TriggerSpec() plan.TriggerSpec {
 func createHourSelectionTransformation(id execute.DatasetID, mode execute.AccumulationMode, spec plan.ProcedureSpec, a execute.Administration) (execute.Transformation, execute.Dataset, error) {
 	s, ok := spec.(*HourSelectionProcedureSpec)
 	if !ok {
-		return nil, nil, fmt.Errorf("invalid spec type %T", spec)
+		return nil, nil, errors.Newf(codes.Internal, "invalid spec type %T", spec)
 	}
 	cache := execute.NewTableBuilderCache(a.Allocator())
 	d := execute.NewDataset(id, mode, cache)
@@ -144,7 +137,7 @@ func (t *hourSelectionTransformation) RetractTable(id execute.DatasetID, key flu
 func (t *hourSelectionTransformation) Process(id execute.DatasetID, tbl flux.Table) error {
 	builder, created := t.cache.TableBuilder(tbl.Key())
 	if !created {
-		return fmt.Errorf("hour selection found duplicate table with key: %v", tbl.Key())
+		return errors.Newf(codes.FailedPrecondition, "hour selection found duplicate table with key: %v", tbl.Key())
 	}
 	if err := execute.AddTableCols(tbl, builder); err != nil {
 		return err
@@ -152,14 +145,14 @@ func (t *hourSelectionTransformation) Process(id execute.DatasetID, tbl flux.Tab
 
 	colIdx := execute.ColIdx(t.timeCol, tbl.Cols())
 	if colIdx < 0 {
-		return fmt.Errorf("invalid time column")
+		return errors.Newf(codes.FailedPrecondition, "invalid time column")
 	}
 
 	if t.start < 0 || t.start > 23 {
-		return fmt.Errorf("start must be between 0 and 23")
+		return errors.Newf(codes.Invalid, "start must be between 0 and 23")
 	}
 	if t.stop < 0 || t.stop > 23 {
-		return fmt.Errorf("stop must be between 0 and 23")
+		return errors.Newf(codes.Invalid, "stop must be between 0 and 23")
 	}
 
 	return tbl.Do(func(cr flux.ColReader) error {

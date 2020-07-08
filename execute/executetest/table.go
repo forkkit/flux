@@ -3,6 +3,7 @@ package executetest
 import (
 	"context"
 	"fmt"
+	"sort"
 	"testing"
 	"time"
 
@@ -69,7 +70,7 @@ func (t *Table) Normalize() {
 				v = values.NewNull(flux.SemanticType(t.ColMeta[idx].Type))
 			} else {
 				v = values.New(t.KeyValues[j])
-				if v.Type() == semantic.Invalid {
+				if v.Type().Nature() == semantic.Invalid {
 					panic(fmt.Errorf("invalid value: %s", t.KeyValues[j]))
 				}
 			}
@@ -378,7 +379,7 @@ func TablesFromCache(c execute.DataCache) (tables []*Table, err error) {
 		tables = append(tables, cb)
 		c.ExpireTable(key)
 	})
-	return tables, nil
+	return tables, err
 }
 
 func ConvertTable(tbl flux.Table) (*Table, error) {
@@ -475,11 +476,59 @@ func (b SortedTables) Swap(i int, j int) {
 	b[i], b[j] = b[j], b[i]
 }
 
-// NormalizeTables ensures that each table is normalized
+// NormalizeTables ensures that each table is normalized and that tables and columns are sorted in
+// alphabetical order for consistent testing
 func NormalizeTables(bs []*Table) {
 	for _, b := range bs {
 		b.Key()
 	}
+	sortByGroupKey(bs)
+}
+
+func sortByGroupKey(tables []*Table) {
+	sort.Sort(SortedTables(tables))
+	for _, table := range tables {
+		sortColumns(table)
+	}
+}
+
+func sortColumns(table *Table) {
+	// index reference to make sure that sort is consistent for metadata and data
+	indexes := createReferenceArray(table)
+
+	// the copy function doesn't work well with flux.ColMeta. Doing a manual copy here instead
+	columnsCopy := make([]flux.ColMeta, len(table.ColMeta))
+	for i, value := range indexes {
+		columnsCopy[i] = table.ColMeta[value]
+	}
+	table.ColMeta = columnsCopy
+
+	// don't create a new table.Data if there is no Data
+	if len(table.Data) == 0 {
+		return
+	}
+	valuesCopy := make([][]interface{}, len(table.Data))
+	for j, row := range table.Data {
+		if len(row) > 0 {
+			rowCopy := make([]interface{}, len(row))
+			for i, value := range indexes {
+				rowCopy[i] = row[value]
+			}
+			valuesCopy[j] = rowCopy
+		}
+	}
+	table.Data = valuesCopy
+}
+
+func createReferenceArray(table *Table) []int {
+	indexes := make([]int, len(table.ColMeta))
+	for i := range indexes {
+		indexes[i] = i
+	}
+	sort.Slice(indexes, func(i, j int) bool {
+		return table.ColMeta[indexes[i]].Label < table.ColMeta[indexes[j]].Label
+	})
+	return indexes
 }
 
 func MustCopyTable(tbl flux.Table) flux.Table {
@@ -635,6 +684,41 @@ func RunTableTests(t *testing.T, tt TableTest) {
 			}); err != nil {
 				return err
 			}
+
+			if got != want {
+				tt.t.Errorf("unexpected value for empty -got/+want\n\t- %v\n\t+ %v", got, want)
+			}
+			return nil
+		})
+		tt.finish(false)
+	})
+	tt.run(t, "EmptyAfterDo", func(tt *tableTest) {
+		// It should be ok to call empty after do and get the same result.
+		tt.do(func(tbl flux.Table) error {
+			want := tbl.Empty()
+			if err := tbl.Do(func(cr flux.ColReader) error {
+				if cr.Len() > 0 {
+					want = false
+				}
+				return nil
+			}); err != nil {
+				return err
+			}
+			got := tbl.Empty()
+
+			if got != want {
+				tt.t.Errorf("unexpected value for empty -got/+want\n\t- %v\n\t+ %v", got, want)
+			}
+			return nil
+		})
+		tt.finish(true)
+	})
+	tt.run(t, "EmptyAfterDone", func(tt *tableTest) {
+		// It should be ok to call empty after done and get the same result.
+		tt.do(func(tbl flux.Table) error {
+			want := tbl.Empty()
+			tbl.Done()
+			got := tbl.Empty()
 
 			if got != want {
 				tt.t.Errorf("unexpected value for empty -got/+want\n\t- %v\n\t+ %v", got, want)

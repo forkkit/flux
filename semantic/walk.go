@@ -1,6 +1,9 @@
 package semantic
 
-import "fmt"
+import (
+	"github.com/influxdata/flux/codes"
+	"github.com/influxdata/flux/internal/errors"
+)
 
 func Walk(v Visitor, node Node) {
 	walk(v, node)
@@ -68,25 +71,6 @@ func walk(v Visitor, n Node) {
 		if w != nil {
 			walk(w, n.As)
 			walk(w, n.Path)
-		}
-	case *Extern:
-		if n == nil {
-			return
-		}
-		w := v.Visit(n)
-		if w != nil {
-			for _, d := range n.Assignments {
-				walk(w, d)
-			}
-			walk(w, n.Block)
-		}
-	case *ExternBlock:
-		if n == nil {
-			return
-		}
-		w := v.Visit(n)
-		if w != nil {
-			walk(w, n.Node)
 		}
 	case *Block:
 		if n == nil {
@@ -156,14 +140,6 @@ func walk(v Visitor, n Node) {
 			walk(w, n.Member)
 			walk(w, n.Init)
 		}
-	case *ExternalVariableAssignment:
-		if n == nil {
-			return
-		}
-		w := v.Visit(n)
-		if w != nil {
-			walk(w, n.Identifier)
-		}
 	case *FunctionExpression:
 		if n == nil {
 			return
@@ -172,17 +148,9 @@ func walk(v Visitor, n Node) {
 		if w != nil {
 			// Walk defaults first as they are evaluated in
 			// the enclosing scope, not the function scope.
+			walk(w, n.Parameters)
 			walk(w, n.Defaults)
 			walk(w, n.Block)
-		}
-	case *FunctionBlock:
-		if n == nil {
-			return
-		}
-		w := v.Visit(n)
-		if w != nil {
-			walk(w, n.Parameters)
-			walk(w, n.Body)
 		}
 	case *FunctionParameters:
 		if n == nil {
@@ -371,7 +339,7 @@ func walk(v Visitor, n Node) {
 		}
 		v.Visit(n)
 	default:
-		panic(fmt.Errorf("walk not defined for node %T", n))
+		panic(errors.Newf(codes.Internal, "walk not defined for node %T", n))
 	}
 	// We cannot use defer here as we only call Done if n != nil,
 	// which we cannot check except for in each case.
@@ -399,9 +367,7 @@ func (v ScopedVisitor) Visit(node Node) Visitor {
 	}
 	v.v = visitor.(NestingVisitor)
 	switch node.(type) {
-	case *ExternBlock,
-		*Block,
-		*FunctionBlock:
+	case *Block, *FunctionExpression:
 		return ScopedVisitor{
 			v: v.v.Nest(),
 		}

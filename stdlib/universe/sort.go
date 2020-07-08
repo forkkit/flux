@@ -1,12 +1,13 @@
 package universe
 
 import (
-	"fmt"
-
 	"github.com/influxdata/flux"
+	"github.com/influxdata/flux/codes"
 	"github.com/influxdata/flux/execute"
+	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/interpreter"
 	"github.com/influxdata/flux/plan"
+	"github.com/influxdata/flux/runtime"
 	"github.com/influxdata/flux/semantic"
 	"github.com/influxdata/flux/values"
 )
@@ -19,15 +20,9 @@ type SortOpSpec struct {
 }
 
 func init() {
-	sortSignature := flux.FunctionSignature(
-		map[string]semantic.PolyType{
-			"columns": semantic.NewArrayPolyType(semantic.String),
-			"desc":    semantic.Bool,
-		},
-		nil,
-	)
+	sortSignature := runtime.MustLookupBuiltinType("universe", "sort")
 
-	flux.RegisterPackageValue("universe", SortKind, flux.FunctionValue(SortKind, createSortOpSpec, sortSignature))
+	runtime.RegisterPackageValue("universe", SortKind, flux.MustValue(flux.FunctionValue(SortKind, createSortOpSpec, sortSignature)))
 	flux.RegisterOpSpec(SortKind, newSortOp)
 	plan.RegisterProcedureSpec(SortKind, newSortProcedure, SortKind)
 	execute.RegisterTransformation(SortKind, createSortTransformation)
@@ -78,7 +73,7 @@ type SortProcedureSpec struct {
 func newSortProcedure(qs flux.OperationSpec, pa plan.Administration) (plan.ProcedureSpec, error) {
 	spec, ok := qs.(*SortOpSpec)
 	if !ok {
-		return nil, fmt.Errorf("invalid spec type %T", qs)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", qs)
 	}
 
 	return &SortProcedureSpec{
@@ -108,7 +103,7 @@ func (s *SortProcedureSpec) TriggerSpec() plan.TriggerSpec {
 func createSortTransformation(id execute.DatasetID, mode execute.AccumulationMode, spec plan.ProcedureSpec, a execute.Administration) (execute.Transformation, execute.Dataset, error) {
 	s, ok := spec.(*SortProcedureSpec)
 	if !ok {
-		return nil, nil, fmt.Errorf("invalid spec type %T", spec)
+		return nil, nil, errors.Newf(codes.Internal, "invalid spec type %T", spec)
 	}
 	cache := execute.NewTableBuilderCache(a.Allocator())
 	d := execute.NewDataset(id, mode, cache)
@@ -148,7 +143,7 @@ func (t *sortTransformation) Process(id execute.DatasetID, tbl flux.Table) error
 
 	builder, created := t.cache.TableBuilder(key)
 	if !created {
-		return fmt.Errorf("sort found duplicate table with key: %v", tbl.Key())
+		return errors.Newf(codes.FailedPrecondition, "sort found duplicate table with key: %v", tbl.Key())
 	}
 	if err := execute.AddTableCols(tbl, builder); err != nil {
 		return err

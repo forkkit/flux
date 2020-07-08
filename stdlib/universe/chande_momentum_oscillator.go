@@ -1,11 +1,13 @@
 package universe
 
 import (
-	"fmt"
 	"github.com/influxdata/flux"
+	"github.com/influxdata/flux/codes"
 	"github.com/influxdata/flux/execute"
+	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/interpreter"
 	"github.com/influxdata/flux/plan"
+	"github.com/influxdata/flux/runtime"
 	"github.com/influxdata/flux/semantic"
 )
 
@@ -17,15 +19,9 @@ type ChandeMomentumOscillatorOpSpec struct {
 }
 
 func init() {
-	chandeMomentumOscillatorSignature := flux.FunctionSignature(
-		map[string]semantic.PolyType{
-			"n":       semantic.Int,
-			"columns": semantic.NewArrayPolyType(semantic.String),
-		},
-		[]string{"n"},
-	)
+	chandeMomentumOscillatorSignature := runtime.MustLookupBuiltinType("universe", ChandeMomentumOscillatorKind)
 
-	flux.RegisterPackageValue("universe", ChandeMomentumOscillatorKind, flux.FunctionValue(ChandeMomentumOscillatorKind, createChandeMomentumOscillatorOpSpec, chandeMomentumOscillatorSignature))
+	runtime.RegisterPackageValue("universe", ChandeMomentumOscillatorKind, flux.MustValue(flux.FunctionValue(ChandeMomentumOscillatorKind, createChandeMomentumOscillatorOpSpec, chandeMomentumOscillatorSignature)))
 	flux.RegisterOpSpec(ChandeMomentumOscillatorKind, newChandeMomentumOscillatorOp)
 	plan.RegisterProcedureSpec(ChandeMomentumOscillatorKind, newChandeMomentumOscillatorProcedure, ChandeMomentumOscillatorKind)
 	execute.RegisterTransformation(ChandeMomentumOscillatorKind, createChandeMomentumOscillatorTransformation)
@@ -76,7 +72,7 @@ type ChandeMomentumOscillatorProcedureSpec struct {
 func newChandeMomentumOscillatorProcedure(qs flux.OperationSpec, pa plan.Administration) (plan.ProcedureSpec, error) {
 	spec, ok := qs.(*ChandeMomentumOscillatorOpSpec)
 	if !ok {
-		return nil, fmt.Errorf("invalid spec type %T", qs)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", qs)
 	}
 
 	return &ChandeMomentumOscillatorProcedureSpec{
@@ -107,7 +103,7 @@ func (s *ChandeMomentumOscillatorProcedureSpec) TriggerSpec() plan.TriggerSpec {
 func createChandeMomentumOscillatorTransformation(id execute.DatasetID, mode execute.AccumulationMode, spec plan.ProcedureSpec, a execute.Administration) (execute.Transformation, execute.Dataset, error) {
 	s, ok := spec.(*ChandeMomentumOscillatorProcedureSpec)
 	if !ok {
-		return nil, nil, fmt.Errorf("invalid spec type %T", spec)
+		return nil, nil, errors.Newf(codes.Internal, "invalid spec type %T", spec)
 	}
 	cache := execute.NewTableBuilderCache(a.Allocator())
 	d := execute.NewDataset(id, mode, cache)
@@ -139,7 +135,7 @@ func (t *chandeMomentumOscillatorTransformation) RetractTable(id execute.Dataset
 func (t *chandeMomentumOscillatorTransformation) Process(id execute.DatasetID, tbl flux.Table) error {
 	builder, created := t.cache.TableBuilder(tbl.Key())
 	if !created {
-		return fmt.Errorf("chande momentum oscillator found duplicate table with key: %v", tbl.Key())
+		return errors.Newf(codes.FailedPrecondition, "chande momentum oscillator found duplicate table with key: %v", tbl.Key())
 	}
 	cols := tbl.Cols()
 	doChandeMomentumOscillator := make([]bool, len(cols))
@@ -148,7 +144,7 @@ func (t *chandeMomentumOscillatorTransformation) Process(id execute.DatasetID, t
 		for _, label := range t.columns {
 			if c.Label == label {
 				if c.Type != flux.TInt && c.Type != flux.TUInt && c.Type != flux.TFloat {
-					return fmt.Errorf("cannot take chande momentum oscillator of column %s (type %s)", c.Label, c.Type.String())
+					return errors.Newf(codes.Invalid, "cannot take chande momentum oscillator of column %s (type %s)", c.Label, c.Type.String())
 				}
 				found = true
 				break

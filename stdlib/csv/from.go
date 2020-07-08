@@ -2,9 +2,6 @@ package csv
 
 import (
 	"context"
-	stderrors "errors"
-	"fmt"
-	"os"
 	"strings"
 
 	"github.com/influxdata/flux"
@@ -15,7 +12,7 @@ import (
 	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/memory"
 	"github.com/influxdata/flux/plan"
-	"github.com/influxdata/flux/semantic"
+	"github.com/influxdata/flux/runtime"
 )
 
 const FromCSVKind = "fromCSV"
@@ -26,15 +23,8 @@ type FromCSVOpSpec struct {
 }
 
 func init() {
-	fromCSVSignature := semantic.FunctionPolySignature{
-		Parameters: map[string]semantic.PolyType{
-			"csv":  semantic.String,
-			"file": semantic.String,
-		},
-		Required: nil,
-		Return:   flux.TableObjectType,
-	}
-	flux.RegisterPackageValue("csv", "from", flux.FunctionValue(FromCSVKind, createFromCSVOpSpec, fromCSVSignature))
+	fromCSVSignature := runtime.MustLookupBuiltinType("csv", "from")
+	runtime.RegisterPackageValue("csv", "from", flux.MustValue(flux.FunctionValue(FromCSVKind, createFromCSVOpSpec, fromCSVSignature)))
 	flux.RegisterOpSpec(FromCSVKind, newFromCSVOp)
 	plan.RegisterProcedureSpec(FromCSVKind, newFromCSVProcedure, FromCSVKind)
 	execute.RegisterSource(FromCSVKind, createFromCSVSource)
@@ -56,17 +46,11 @@ func createFromCSVOpSpec(args flux.Arguments, a *flux.Administration) (flux.Oper
 	}
 
 	if spec.CSV == "" && spec.File == "" {
-		return nil, stderrors.New("must provide csv raw text or filename")
+		return nil, errors.New(codes.Invalid, "must provide csv raw text or filename")
 	}
 
 	if spec.CSV != "" && spec.File != "" {
-		return nil, stderrors.New("must provide exactly one of the parameters csv or file")
-	}
-
-	if spec.File != "" {
-		if _, err := os.Stat(spec.File); err != nil {
-			return nil, errors.Wrap(err, codes.Inherit, "failed to stat csv file: ")
-		}
+		return nil, errors.New(codes.Invalid, "must provide exactly one of the parameters csv or file")
 	}
 
 	return spec, nil
@@ -89,7 +73,7 @@ type FromCSVProcedureSpec struct {
 func newFromCSVProcedure(qs flux.OperationSpec, pa plan.Administration) (plan.ProcedureSpec, error) {
 	spec, ok := qs.(*FromCSVOpSpec)
 	if !ok {
-		return nil, fmt.Errorf("invalid spec type %T", qs)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", qs)
 	}
 
 	return &FromCSVProcedureSpec{
@@ -112,9 +96,12 @@ func (s *FromCSVProcedureSpec) Copy() plan.ProcedureSpec {
 func createFromCSVSource(prSpec plan.ProcedureSpec, dsid execute.DatasetID, a execute.Administration) (execute.Source, error) {
 	spec, ok := prSpec.(*FromCSVProcedureSpec)
 	if !ok {
-		return nil, fmt.Errorf("invalid spec type %T", prSpec)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", prSpec)
 	}
+	return CreateSource(spec, dsid, a)
+}
 
+func CreateSource(spec *FromCSVProcedureSpec, dsid execute.DatasetID, a execute.Administration) (execute.Source, error) {
 	csvText := spec.CSV
 	// if spec.File non-empty then spec.CSV is empty
 	if spec.File != "" {

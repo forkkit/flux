@@ -1,13 +1,15 @@
 package universe
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/apache/arrow/go/arrow/array"
 	"github.com/influxdata/flux"
+	"github.com/influxdata/flux/codes"
 	"github.com/influxdata/flux/execute"
+	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/plan"
+	"github.com/influxdata/flux/runtime"
 )
 
 const SkewKind = "skew"
@@ -17,9 +19,9 @@ type SkewOpSpec struct {
 }
 
 func init() {
-	skewSignature := execute.AggregateSignature(nil, nil)
+	skewSignature := runtime.MustLookupBuiltinType("universe", "skew")
 
-	flux.RegisterPackageValue("universe", SkewKind, flux.FunctionValue(SkewKind, createSkewOpSpec, skewSignature))
+	runtime.RegisterPackageValue("universe", SkewKind, flux.MustValue(flux.FunctionValue(SkewKind, createSkewOpSpec, skewSignature)))
 	flux.RegisterOpSpec(SkewKind, newSkewOp)
 	plan.RegisterProcedureSpec(SkewKind, newSkewProcedure, SkewKind)
 	execute.RegisterTransformation(SkewKind, createSkewTransformation)
@@ -52,7 +54,7 @@ type SkewProcedureSpec struct {
 func newSkewProcedure(qs flux.OperationSpec, a plan.Administration) (plan.ProcedureSpec, error) {
 	spec, ok := qs.(*SkewOpSpec)
 	if !ok {
-		return nil, fmt.Errorf("invalid spec type %T", qs)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", qs)
 	}
 	return &SkewProcedureSpec{
 		AggregateConfig: spec.AggregateConfig,
@@ -80,7 +82,7 @@ type SkewAgg struct {
 func createSkewTransformation(id execute.DatasetID, mode execute.AccumulationMode, spec plan.ProcedureSpec, a execute.Administration) (execute.Transformation, execute.Dataset, error) {
 	s, ok := spec.(*SkewProcedureSpec)
 	if !ok {
-		return nil, nil, fmt.Errorf("invalid spec type %T", spec)
+		return nil, nil, errors.Newf(codes.Internal, "invalid spec type %T", spec)
 	}
 	t, d := execute.NewAggregateTransformationAndDataset(id, mode, new(SkewAgg), s.AggregateConfig, a.Allocator())
 	return t, d, nil

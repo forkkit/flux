@@ -1,13 +1,12 @@
 package execute
 
 import (
-	"fmt"
-
 	"github.com/apache/arrow/go/arrow/array"
 	"github.com/influxdata/flux"
+	"github.com/influxdata/flux/codes"
+	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/memory"
 	"github.com/influxdata/flux/plan"
-	"github.com/influxdata/flux/semantic"
 	"github.com/influxdata/flux/values"
 )
 
@@ -36,16 +35,6 @@ func (c *SelectorConfig) ReadArgs(args flux.Arguments) error {
 		c.Column = DefaultSelectorConfig.Column
 	}
 	return nil
-}
-
-// SelectorSignature returns a function signature common to all selector functions,
-// with any additional arguments.
-func SelectorSignature(args map[string]semantic.PolyType, required []string) semantic.FunctionPolySignature {
-	if args == nil {
-		args = make(map[string]semantic.PolyType)
-	}
-	args["column"] = semantic.String
-	return flux.FunctionSignature(args, required)
 }
 
 type rowSelectorTransformation struct {
@@ -109,7 +98,7 @@ func (t *selectorTransformation) Finish(id DatasetID, err error) {
 func (t *selectorTransformation) setupBuilder(tbl flux.Table) (TableBuilder, int, error) {
 	builder, created := t.cache.TableBuilder(tbl.Key())
 	if !created {
-		return nil, 0, fmt.Errorf("found duplicate table with key: %v", tbl.Key())
+		return nil, 0, errors.Newf(codes.FailedPrecondition, "found duplicate table with key: %v", tbl.Key())
 	}
 	if err := AddTableCols(tbl, builder); err != nil {
 		return nil, 0, err
@@ -118,7 +107,7 @@ func (t *selectorTransformation) setupBuilder(tbl flux.Table) (TableBuilder, int
 	cols := builder.Cols()
 	valueIdx := ColIdx(t.config.Column, cols)
 	if valueIdx < 0 {
-		return nil, 0, fmt.Errorf("no column %q exists", t.config.Column)
+		return nil, 0, errors.Newf(codes.FailedPrecondition, "no column %q exists", t.config.Column)
 	}
 	return builder, valueIdx, nil
 }
@@ -145,7 +134,7 @@ func (t *indexSelectorTransformation) Process(id DatasetID, tbl flux.Table) erro
 	case flux.TString:
 		s = t.selector.NewStringSelector()
 	default:
-		return fmt.Errorf("unsupported selector type %v", valueCol.Type)
+		return errors.Newf(codes.Invalid, "unsupported selector type %v", valueCol.Type)
 	}
 
 	return tbl.Do(func(cr flux.ColReader) error {
@@ -169,7 +158,7 @@ func (t *indexSelectorTransformation) Process(id DatasetID, tbl flux.Table) erro
 			selected := s.(DoStringIndexSelector).DoString(cr.Strings(valueIdx))
 			return t.appendSelected(selected, builder, cr)
 		default:
-			return fmt.Errorf("unsupported selector type %v", valueCol.Type)
+			return errors.Newf(codes.Invalid, "unsupported selector type %v", valueCol.Type)
 		}
 	})
 }
@@ -197,14 +186,14 @@ func (t *rowSelectorTransformation) Process(id DatasetID, tbl flux.Table) error 
 	case flux.TString:
 		rower = t.selector.NewStringSelector()
 	default:
-		return fmt.Errorf("unsupported selector type %v", valueCol.Type)
+		return errors.Newf(codes.Invalid, "unsupported selector type %v", valueCol.Type)
 	}
 
 	// if rower has a nil value, this means that the row selector doesn't
 	// yet have an implementation
 
 	if rower == nil {
-		return fmt.Errorf("invalid use of function: %T has no implementation for type %v", t.selector, valueCol.Type)
+		return errors.Newf(codes.FailedPrecondition, "invalid use of function: %T has no implementation for type %v", t.selector, valueCol.Type)
 	}
 
 	if err := tbl.Do(func(cr flux.ColReader) error {
@@ -222,7 +211,7 @@ func (t *rowSelectorTransformation) Process(id DatasetID, tbl flux.Table) error 
 		case flux.TString:
 			rower.(DoStringRowSelector).DoString(cr.Strings(valueIdx), cr)
 		default:
-			return fmt.Errorf("unsupported selector type %v", valueCol.Type)
+			return errors.Newf(codes.Invalid, "unsupported selector type %v", valueCol.Type)
 		}
 		return nil
 	}); err != nil {

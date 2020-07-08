@@ -1,14 +1,13 @@
 package universe
 
 import (
-	"fmt"
-
 	"github.com/influxdata/flux"
 	"github.com/influxdata/flux/codes"
 	"github.com/influxdata/flux/execute"
 	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/interpreter"
 	"github.com/influxdata/flux/plan"
+	"github.com/influxdata/flux/runtime"
 	"github.com/influxdata/flux/semantic"
 )
 
@@ -20,15 +19,9 @@ type KeyValuesOpSpec struct {
 }
 
 func init() {
-	keyValuesSignature := flux.FunctionSignature(
-		map[string]semantic.PolyType{
-			"keyColumns": semantic.NewArrayPolyType(semantic.String),
-			"fn":         semantic.Function,
-		},
-		nil,
-	)
+	keyValuesSignature := runtime.MustLookupBuiltinType("universe", "keyValues")
 
-	flux.RegisterPackageValue("universe", KeyValuesKind, flux.FunctionValue(KeyValuesKind, createKeyValuesOpSpec, keyValuesSignature))
+	runtime.RegisterPackageValue("universe", KeyValuesKind, flux.MustValue(flux.FunctionValue(KeyValuesKind, createKeyValuesOpSpec, keyValuesSignature)))
 	flux.RegisterOpSpec(KeyValuesKind, newKeyValuesOp)
 	plan.RegisterProcedureSpec(KeyValuesKind, newKeyValuesProcedure, KeyValuesKind)
 	execute.RegisterTransformation(KeyValuesKind, createKeyValuesTransformation)
@@ -88,7 +81,7 @@ type KeyValuesProcedureSpec struct {
 func newKeyValuesProcedure(qs flux.OperationSpec, pa plan.Administration) (plan.ProcedureSpec, error) {
 	spec, ok := qs.(*KeyValuesOpSpec)
 	if !ok {
-		return nil, fmt.Errorf("invalid spec type %T", qs)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", qs)
 	}
 
 	return &KeyValuesProcedureSpec{

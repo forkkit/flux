@@ -1,13 +1,15 @@
 package universe
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/influxdata/flux"
+	"github.com/influxdata/flux/codes"
 	"github.com/influxdata/flux/execute"
+	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/plan"
-	"github.com/influxdata/flux/semantic"
+	"github.com/influxdata/flux/runtime"
+	"github.com/influxdata/flux/values"
 )
 
 const ElapsedKind = "elapsed"
@@ -19,16 +21,9 @@ type ElapsedOpSpec struct {
 }
 
 func init() {
-	elapsedSignature := flux.FunctionSignature(
-		map[string]semantic.PolyType{
-			"unit":       semantic.Duration,
-			"timeColumn": semantic.String,
-			"columnName": semantic.String,
-		},
-		nil,
-	)
+	elapsedSignature := runtime.MustLookupBuiltinType("universe", "elapsed")
 
-	flux.RegisterPackageValue("universe", ElapsedKind, flux.FunctionValue(ElapsedKind, createElapsedOpSpec, elapsedSignature))
+	runtime.RegisterPackageValue("universe", ElapsedKind, flux.MustValue(flux.FunctionValue(ElapsedKind, createElapsedOpSpec, elapsedSignature)))
 	flux.RegisterOpSpec(ElapsedKind, newElapsedOp)
 	plan.RegisterProcedureSpec(ElapsedKind, newElapsedProcedure, ElapsedKind)
 	execute.RegisterTransformation(ElapsedKind, createElapsedTransformation)
@@ -46,7 +41,7 @@ func createElapsedOpSpec(args flux.Arguments, a *flux.Administration) (flux.Oper
 	} else if ok {
 		spec.Unit = unit
 	} else {
-		spec.Unit = flux.Duration(time.Second)
+		spec.Unit = flux.ConvertDuration(time.Second)
 	}
 
 	if timeCol, ok, err := args.GetString("timeColumn"); err != nil {
@@ -86,7 +81,7 @@ type ElapsedProcedureSpec struct {
 func newElapsedProcedure(qs flux.OperationSpec, pa plan.Administration) (plan.ProcedureSpec, error) {
 	spec, ok := qs.(*ElapsedOpSpec)
 	if !ok {
-		return nil, fmt.Errorf("invalid spec type %T", qs)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", qs)
 	}
 
 	return &ElapsedProcedureSpec{
@@ -111,7 +106,7 @@ func (s *ElapsedProcedureSpec) Copy() plan.ProcedureSpec {
 func createElapsedTransformation(id execute.DatasetID, mode execute.AccumulationMode, spec plan.ProcedureSpec, a execute.Administration) (execute.Transformation, execute.Dataset, error) {
 	s, ok := spec.(*ElapsedProcedureSpec)
 	if !ok {
-		return nil, nil, fmt.Errorf("invalid spec type %T", spec)
+		return nil, nil, errors.Newf(codes.Internal, "invalid spec type %T", spec)
 	}
 	cache := execute.NewTableBuilderCache(a.Allocator())
 	d := execute.NewDataset(id, mode, cache)
@@ -133,7 +128,7 @@ func NewElapsedTransformation(d execute.Dataset, cache execute.TableBuilderCache
 		d:     d,
 		cache: cache,
 
-		unit:       float64(spec.Unit),
+		unit:       float64(values.Duration(spec.Unit).Duration()),
 		timeColumn: spec.TimeColumn,
 		columnName: spec.ColumnName,
 	}
@@ -158,7 +153,7 @@ func (t *elapsedTransformation) Finish(id execute.DatasetID, err error) {
 func (t *elapsedTransformation) Process(id execute.DatasetID, tbl flux.Table) error {
 	builder, created := t.cache.TableBuilder(tbl.Key())
 	if !created {
-		return fmt.Errorf("found duplicate table with key: %v", tbl.Key())
+		return errors.Newf(codes.FailedPrecondition, "found duplicate table with key: %v", tbl.Key())
 	}
 	cols := tbl.Cols()
 	numCol := 0
@@ -170,7 +165,7 @@ func (t *elapsedTransformation) Process(id execute.DatasetID, tbl flux.Table) er
 
 	timeIdx := execute.ColIdx(t.timeColumn, cols)
 	if timeIdx < 0 {
-		return fmt.Errorf("column %q does not exist", t.timeColumn)
+		return errors.Newf(codes.FailedPrecondition, "column %q does not exist", t.timeColumn)
 	}
 
 	timeCol := cols[timeIdx]

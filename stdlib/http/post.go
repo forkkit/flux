@@ -12,28 +12,17 @@ import (
 	"github.com/influxdata/flux/codes"
 	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/iocounter"
+	"github.com/influxdata/flux/runtime"
 	"github.com/influxdata/flux/semantic"
 	"github.com/influxdata/flux/values"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/log"
 )
 
-// maxResponseBody is the maximum response body we will read before just discarding
-// the rest. This allows sockets to be reused.
-const maxResponseBody = 512 * 1024 // 512 KB
-
 func init() {
-	flux.RegisterPackageValue("http", "post", values.NewFunction(
+	runtime.RegisterPackageValue("http", "post", values.NewFunction(
 		"post",
-		semantic.NewFunctionPolyType(semantic.FunctionPolySignature{
-			Parameters: map[string]semantic.PolyType{
-				"url":     semantic.String,
-				"headers": semantic.Tvar(1),
-				"data":    semantic.Bytes,
-			},
-			Required: []string{"url"},
-			Return:   semantic.Int,
-		}),
+		runtime.MustLookupBuiltinType("http", "post"),
 		func(ctx context.Context, args values.Object) (values.Value, error) {
 			// Get and validate URL
 			uV, ok := args.Get("url")
@@ -71,7 +60,7 @@ func init() {
 			if ok && !header.IsNull() {
 				var rangeErr error
 				header.Object().Range(func(k string, v values.Value) {
-					if v.Type() == semantic.String {
+					if v.Type().Nature() == semantic.String {
 						req.Header.Set(k, v.Str())
 					} else {
 						rangeErr = errors.Newf(codes.Invalid, "header value %q must be a string", k)
@@ -99,14 +88,8 @@ func init() {
 					return 0, err
 				}
 
-				// Read the response body but limit how much we will read.
-				// This is to allow a socket to be reused after it is closed.
 				wc := iocounter.Writer{Writer: ioutil.Discard}
-				r := io.LimitedReader{
-					R: response.Body,
-					N: maxResponseBody,
-				}
-				_, _ = io.Copy(&wc, &r)
+				_, _ = io.Copy(&wc, response.Body)
 				_ = response.Body.Close()
 				s.LogFields(
 					log.Int("statusCode", response.StatusCode),

@@ -2,16 +2,18 @@ package universe
 
 import (
 	"fmt"
-	"github.com/influxdata/flux/values"
 
 	"github.com/apache/arrow/go/arrow/array"
 	"github.com/influxdata/flux"
 	fluxarrow "github.com/influxdata/flux/arrow"
+	"github.com/influxdata/flux/codes"
 	"github.com/influxdata/flux/execute"
+	"github.com/influxdata/flux/internal/errors"
 	fluxmemory "github.com/influxdata/flux/memory"
 	"github.com/influxdata/flux/plan"
-	"github.com/influxdata/flux/semantic"
+	"github.com/influxdata/flux/runtime"
 	"github.com/influxdata/flux/stdlib/universe/holt_winters"
+	"github.com/influxdata/flux/values"
 )
 
 const HoltWintersKind = "holtWinters"
@@ -26,18 +28,8 @@ type HoltWintersOpSpec struct {
 }
 
 func init() {
-	hwSignature := flux.FunctionSignature(
-		map[string]semantic.PolyType{
-			"withFit":     semantic.Bool,
-			"column":      semantic.String,
-			"timeColumn":  semantic.String,
-			"n":           semantic.Int,
-			"seasonality": semantic.Int,
-			"interval":    semantic.Duration,
-		},
-		[]string{"n", "interval"},
-	)
-	flux.RegisterPackageValue("universe", HoltWintersKind, flux.FunctionValue(HoltWintersKind, createHoltWintersOpSpec, hwSignature))
+	hwSignature := runtime.MustLookupBuiltinType("universe", "holtWinters")
+	runtime.RegisterPackageValue("universe", HoltWintersKind, flux.MustValue(flux.FunctionValue(HoltWintersKind, createHoltWintersOpSpec, hwSignature)))
 	flux.RegisterOpSpec(HoltWintersKind, newHoltWintersOp)
 	plan.RegisterProcedureSpec(HoltWintersKind, newHoltWintersProcedure, HoltWintersKind)
 	execute.RegisterTransformation(HoltWintersKind, createHoltWintersTransformation)
@@ -108,7 +100,7 @@ type HoltWintersProcedureSpec struct {
 func newHoltWintersProcedure(qs flux.OperationSpec, pa plan.Administration) (plan.ProcedureSpec, error) {
 	spec, ok := qs.(*HoltWintersOpSpec)
 	if !ok {
-		return nil, fmt.Errorf("invalid spec type %T", qs)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", qs)
 	}
 	return &HoltWintersProcedureSpec{
 		WithFit:    spec.WithFit,
@@ -137,7 +129,7 @@ func (s *HoltWintersProcedureSpec) TriggerSpec() plan.TriggerSpec {
 func createHoltWintersTransformation(id execute.DatasetID, mode execute.AccumulationMode, spec plan.ProcedureSpec, a execute.Administration) (execute.Transformation, execute.Dataset, error) {
 	s, ok := spec.(*HoltWintersProcedureSpec)
 	if !ok {
-		return nil, nil, fmt.Errorf("invalid spec type %T", spec)
+		return nil, nil, errors.Newf(codes.Internal, "invalid spec type %T", spec)
 	}
 	cache := execute.NewTableBuilderCache(a.Allocator())
 	d := execute.NewDataset(id, mode, cache)
@@ -176,22 +168,22 @@ func (hwt *holtWintersTransformation) Process(id execute.DatasetID, tbl flux.Tab
 	// Sanity checks.
 	builder, created := hwt.cache.TableBuilder(tbl.Key())
 	if !created {
-		return fmt.Errorf("holtWinters found duplicate table with key: %v", tbl.Key())
+		return errors.Newf(codes.FailedPrecondition, "holtWinters found duplicate table with key: %v", tbl.Key())
 	}
 	cols := tbl.Cols()
 	timeIdx := execute.ColIdx(hwt.timeColumn, cols)
 	if timeIdx < 0 {
-		return fmt.Errorf("cannot find time column %s", hwt.timeColumn)
+		return errors.Newf(codes.FailedPrecondition, "cannot find time column %s", hwt.timeColumn)
 	}
 	colIdx := execute.ColIdx(hwt.column, cols)
 	if colIdx < 0 {
-		return fmt.Errorf("cannot find column %s", hwt.column)
+		return errors.Newf(codes.FailedPrecondition, "cannot find column %s", hwt.column)
 	}
 	typ := cols[colIdx].Type
 	if typ != flux.TInt &&
 		typ != flux.TUInt &&
 		typ != flux.TFloat {
-		return fmt.Errorf("holtWinters can work only on numerical types, got %s", typ.String())
+		return errors.Newf(codes.FailedPrecondition, "holtWinters can work only on numerical types, got %s", typ.String())
 	}
 
 	// Building schema.
@@ -274,7 +266,7 @@ func (hwt *holtWintersTransformation) getCleanData(tbl flux.Table, colIdx, timeI
 		return int64(values.Time(t).Round(hwt.interval))
 	}
 	nextBucket := func() {
-		bucketEnd += int64(hwt.interval)
+		bucketEnd += int64(hwt.interval.Duration())
 		bucketFilled = false
 	}
 	appendV := func(cr flux.ColReader, i int) {

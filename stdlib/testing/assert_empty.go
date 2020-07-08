@@ -1,11 +1,12 @@
 package testing
 
 import (
-	"fmt"
-
 	"github.com/influxdata/flux"
+	"github.com/influxdata/flux/codes"
 	"github.com/influxdata/flux/execute"
+	"github.com/influxdata/flux/internal/errors"
 	"github.com/influxdata/flux/plan"
+	"github.com/influxdata/flux/runtime"
 )
 
 const AssertEmptyKind = "assertEmpty"
@@ -17,9 +18,9 @@ func (s *AssertEmptyOpSpec) Kind() flux.OperationKind {
 }
 
 func init() {
-	assertEmptySignature := flux.FunctionSignature(nil, nil)
+	assertEmptySignature := runtime.MustLookupBuiltinType("testing", "assertEmpty")
 
-	flux.RegisterPackageValue("testing", "assertEmpty", flux.FunctionValue(AssertEmptyKind, createAssertEmptyOpSpec, assertEmptySignature))
+	runtime.RegisterPackageValue("testing", "assertEmpty", flux.MustValue(flux.FunctionValue(AssertEmptyKind, createAssertEmptyOpSpec, assertEmptySignature)))
 	flux.RegisterOpSpec(AssertEmptyKind, newAssertEmptyOp)
 	plan.RegisterProcedureSpec(AssertEmptyKind, newAssertEmptyProcedure, AssertEmptyKind)
 	execute.RegisterTransformation(AssertEmptyKind, createAssertEmptyTransformation)
@@ -51,7 +52,7 @@ func (s *AssertEmptyProcedureSpec) Copy() plan.ProcedureSpec {
 
 func newAssertEmptyProcedure(qs flux.OperationSpec, pa plan.Administration) (plan.ProcedureSpec, error) {
 	if _, ok := qs.(*AssertEmptyOpSpec); !ok {
-		return nil, fmt.Errorf("invalid spec type %T", qs)
+		return nil, errors.Newf(codes.Internal, "invalid spec type %T", qs)
 	}
 	return &AssertEmptyProcedureSpec{}, nil
 }
@@ -67,7 +68,7 @@ func createAssertEmptyTransformation(id execute.DatasetID, mode execute.Accumula
 	cache := execute.NewTableBuilderCache(a.Allocator())
 	dataset := execute.NewDataset(id, mode, cache)
 	if _, ok := spec.(*AssertEmptyProcedureSpec); !ok {
-		return nil, nil, fmt.Errorf("invalid spec type %T", spec)
+		return nil, nil, errors.Newf(codes.Internal, "invalid spec type %T", spec)
 	}
 
 	transform := NewAssertEmptyTransformation(dataset, cache)
@@ -105,7 +106,7 @@ func (t *AssertEmptyTransformation) UpdateProcessingTime(id execute.DatasetID, m
 
 func (t *AssertEmptyTransformation) Finish(id execute.DatasetID, err error) {
 	if err == nil && t.failures > 0 {
-		err = fmt.Errorf("found %d tables that were not empty", t.failures)
+		err = errors.Newf(codes.Aborted, "found %d tables that were not empty", t.failures)
 	}
 	t.d.Finish(err)
 }

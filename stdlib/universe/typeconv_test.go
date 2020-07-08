@@ -50,11 +50,21 @@ func TestTypeconv_String(t *testing.T) {
 		},
 		{
 			name: "string(v:7)",
-			v:    values.Duration(184000000000),
+			v:    values.ConvertDuration(184000000000),
 			want: "3m4s",
 		},
 		{
 			name: "string(v:8)",
+			v:    []byte{120},
+			want: "x",
+		},
+		{
+			name: "string(v:9)",
+			v:    []byte{194, 167},
+			want: "§",
+		},
+		{
+			name: "string(v:10)",
 			v:    int64(-541),
 			want: "-541",
 		},
@@ -134,7 +144,7 @@ func TestTypeconv_Int(t *testing.T) {
 		},
 		{
 			name: "int64(v:6)",
-			v:    values.Duration(123456789),
+			v:    values.ConvertDuration(123456789),
 			want: int64(123456789),
 		},
 		{
@@ -219,7 +229,7 @@ func TestTypeconv_UInt(t *testing.T) {
 		},
 		{
 			name: "uint64(v:6)",
-			v:    values.Duration(123456789),
+			v:    values.ConvertDuration(123456789),
 			want: uint64(123456789),
 		},
 		{
@@ -535,28 +545,28 @@ func TestTypeconv_Duration(t *testing.T) {
 		{
 			name: "duration(v:1)",
 			v:    int64(123456789),
-			want: values.Duration(123456789),
+			want: values.ConvertDuration(123456789),
 		},
 		{
 			name: "duration(v:2)",
 			v:    uint64(123456789),
-			want: values.Duration(123456789),
+			want: values.ConvertDuration(123456789),
 		},
 		{
 			name: "duration(v:3)",
 			v:    "4s2ns",
-			want: values.Duration(4000000002),
+			want: values.ConvertDuration(4000000002),
 		},
 		{
 			name: "duration(v:4s2ns)",
-			v:    values.Duration(4000000002),
-			want: values.Duration(4000000002),
+			v:    values.ConvertDuration(4000000002),
+			want: values.ConvertDuration(4000000002),
 		},
 		{
 			name:      "duration(error)",
 			v:         "not_a_duration",
-			want:      values.Duration(0),
-			expectErr: errors.New("time: invalid duration not_a_duration"),
+			want:      values.ConvertDuration(0),
+			expectErr: errors.New("invalid duration not_a_duration"),
 		},
 		{
 			name:     "duration(v:nil)",

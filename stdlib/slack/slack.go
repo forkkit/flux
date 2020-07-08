@@ -2,23 +2,23 @@ package slack
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/influxdata/flux"
+	"github.com/influxdata/flux/codes"
+	"github.com/influxdata/flux/internal/errors"
+	"github.com/influxdata/flux/runtime"
 	"github.com/influxdata/flux/semantic"
 	"github.com/influxdata/flux/values"
 )
 
 var defaultColors = map[string]struct{}{
-	"good":    struct{}{},
-	"warning": struct{}{},
-	"danger":  struct{}{},
+	"good":    {},
+	"warning": {},
+	"danger":  {},
 }
 
-var errColorParse = errors.New("could not parse color string")
+var errColorParse = errors.New(codes.Invalid, "could not parse color string")
 
 func validateColorString(color string) error {
 	if _, ok := defaultColors[color]; ok {
@@ -40,16 +40,12 @@ func validateColorString(color string) error {
 
 var validateColorStringFluxFn = values.NewFunction(
 	"validateColorString",
-	semantic.NewFunctionPolyType(semantic.FunctionPolySignature{
-		Parameters: map[string]semantic.PolyType{"color": semantic.String},
-		Required:   semantic.LabelSet{"color"},
-		Return:     semantic.String,
-	}),
+	runtime.MustLookupBuiltinType("slack", "validateColorString"),
 	func(ctx context.Context, args values.Object) (values.Value, error) {
 		v, ok := args.Get("color")
 
 		if !ok {
-			return nil, fmt.Errorf("missing argument: color")
+			return nil, errors.New(codes.Invalid, "missing argument: color")
 		}
 
 		if v.Type().Nature() == semantic.String {
@@ -59,11 +55,11 @@ var validateColorStringFluxFn = values.NewFunction(
 			return v, nil
 		}
 
-		return nil, fmt.Errorf("could not parse color string")
+		return nil, errColorParse
 	},
 	false,
 )
 
 func init() {
-	flux.RegisterPackageValue("slack", "validateColorString", validateColorStringFluxFn)
+	runtime.RegisterPackageValue("slack", "validateColorString", validateColorStringFluxFn)
 }

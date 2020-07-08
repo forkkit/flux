@@ -14,6 +14,8 @@ import (
 	"github.com/influxdata/flux/parser"
 )
 
+var parserType = "parser-type=rust"
+
 func TestParseDir(t *testing.T) {
 	tmpDir, err := ioutil.TempDir("", "TestParseDir")
 	if err != nil {
@@ -61,7 +63,8 @@ c = 3
 			Package: "foo",
 			Files: []*ast.File{
 				{
-					Name: "a.flux",
+					Name:     "a.flux",
+					Metadata: parserType,
 					Package: &ast.PackageClause{
 						Name: &ast.Identifier{Name: "foo"},
 					},
@@ -73,7 +76,8 @@ c = 3
 					},
 				},
 				{
-					Name: "b.flux",
+					Name:     "b.flux",
+					Metadata: parserType,
 					Package: &ast.PackageClause{
 						Name: &ast.Identifier{Name: "foo"},
 					},
@@ -89,7 +93,8 @@ c = 3
 		"main": &ast.Package{
 			Package: "main",
 			Files: []*ast.File{{
-				Name: "c.flux",
+				Name:     "c.flux",
+				Metadata: parserType,
 				Body: []ast.Statement{
 					&ast.VariableAssignment{
 						ID:   &ast.Identifier{Name: "c"},
@@ -135,7 +140,8 @@ a = 1
 		t.Fatal(err)
 	}
 	want := &ast.File{
-		Name: "a.flux",
+		Name:     "a.flux",
+		Metadata: parserType,
 		Package: &ast.PackageClause{
 			Name: &ast.Identifier{Name: "foo"},
 		},
@@ -162,7 +168,8 @@ a = 1
 	want := &ast.Package{
 		Package: "foo",
 		Files: []*ast.File{{
-			Name: "",
+			Name:     "",
+			Metadata: parserType,
 			Package: &ast.PackageClause{
 				Name: &ast.Identifier{Name: "foo"},
 			},
@@ -176,6 +183,22 @@ a = 1
 	}
 	if !cmp.Equal(got, want, asttest.IgnoreBaseNodeOptions...) {
 		t.Errorf("ParseSource unexpected package -want/+got:\n%s", cmp.Diff(want, got, asttest.IgnoreBaseNodeOptions...))
+	}
+}
+
+func TestHandleToJSON(t *testing.T) {
+	src := `x = 0`
+	hdl, err := parser.ParseToHandle([]byte(src))
+	if err != nil {
+		t.Fatal(err)
+	}
+	json, err := parser.HandleToJSON(hdl)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := `{"type":"Package","package":"main","files":[{"type":"File","location":{"start":{"line":1,"column":1},"end":{"line":1,"column":6},"source":"x = 0"},"metadata":"parser-type=rust","package":null,"imports":[],"body":[{"type":"VariableAssignment","location":{"start":{"line":1,"column":1},"end":{"line":1,"column":6},"source":"x = 0"},"id":{"location":{"start":{"line":1,"column":1},"end":{"line":1,"column":2},"source":"x"},"name":"x"},"init":{"type":"IntegerLiteral","location":{"start":{"line":1,"column":5},"end":{"line":1,"column":6},"source":"0"},"value":"0"}}]}]}`
+	if want, got := want, string(json); want != got {
+		t.Errorf("unexpected JSON: -want/+got:\n%v", cmp.Diff(want, got))
 	}
 }
 

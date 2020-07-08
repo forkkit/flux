@@ -13,6 +13,7 @@ import (
 	"github.com/influxdata/flux/dependencies/url"
 	"github.com/influxdata/flux/execute"
 	"github.com/influxdata/flux/execute/executetest"
+	"github.com/influxdata/flux/plan"
 	"github.com/influxdata/flux/querytest"
 	"github.com/influxdata/flux/stdlib/influxdata/influxdb"
 	fkafka "github.com/influxdata/flux/stdlib/kafka"
@@ -31,14 +32,14 @@ func TestToKafka_NewQuery(t *testing.T) {
 					{
 						ID: "from0",
 						Spec: &influxdb.FromOpSpec{
-							Bucket: "mybucket",
+							Bucket: influxdb.NameOrID{Name: "mybucket"},
 						},
 					},
 					{
 						ID: "toKafka1",
 						Spec: &fkafka.ToKafkaOpSpec{
 							Brokers:      []string{"brokerurl:8989"},
-							Topic:        "totallynotfaketopic", //Balancer: &kafka.Hash{},
+							Topic:        "totallynotfaketopic", // Balancer: &kafka.Hash{},
 							Name:         "series1",
 							TimeColumn:   execute.DefaultTimeColLabel,
 							ValueColumns: []string{execute.DefaultValueColLabel},
@@ -427,23 +428,21 @@ func TestToKafka_Process(t *testing.T) {
 				},
 			},
 			want: wanted{
-				Table: []*executetest.Table{
-					&executetest.Table{
-						ColMeta: []flux.ColMeta{
-							{Label: "_time", Type: flux.TTime},
-							{Label: "_value", Type: flux.TFloat},
-							{Label: "fred", Type: flux.TString},
-						},
-						Data: [][]interface{}{
-							{execute.Time(11), 2.0, "one"},
-							{execute.Time(21), 1.0, "seven"},
-							{execute.Time(31), 3.0, "nine"},
-							{execute.Time(51), 2.0, "one"},
-							{execute.Time(61), 1.0, "seven"},
-							{execute.Time(71), 3.0, "nine"},
-						},
+				Table: []*executetest.Table{{
+					ColMeta: []flux.ColMeta{
+						{Label: "_time", Type: flux.TTime},
+						{Label: "_value", Type: flux.TFloat},
+						{Label: "fred", Type: flux.TString},
 					},
-				},
+					Data: [][]interface{}{
+						{execute.Time(11), 2.0, "one"},
+						{execute.Time(21), 1.0, "seven"},
+						{execute.Time(31), 3.0, "nine"},
+						{execute.Time(51), 2.0, "one"},
+						{execute.Time(61), 1.0, "seven"},
+						{execute.Time(71), 3.0, "nine"},
+					},
+				}},
 				Result: [][]kafka.Message{{
 					{Value: []byte("multi_block,fred=one _value=2 11"), Key: []byte{0x41, 0x9d, 0x7f, 0x17, 0xc8, 0x21, 0xfb, 0x69}},
 					{Value: []byte("multi_block,fred=seven _value=1 21"), Key: []byte{0x8f, 0x83, 0x72, 0x66, 0x7b, 0x78, 0x77, 0x18}},
@@ -495,23 +494,21 @@ func TestToKafka_Process(t *testing.T) {
 				},
 			},
 			want: wanted{
-				Table: []*executetest.Table{
-					&executetest.Table{
-						ColMeta: []flux.ColMeta{
-							{Label: "_time", Type: flux.TTime},
-							{Label: "_value", Type: flux.TFloat},
-							{Label: "fred", Type: flux.TString},
-						},
-						Data: [][]interface{}{
-							{execute.Time(11), 2.0, "one"},
-							{execute.Time(21), 1.0, "seven"},
-							{execute.Time(31), 3.0, "nine"},
-							{execute.Time(51), 2.0, "one"},
-							{execute.Time(61), 1.0, "seven"},
-							{execute.Time(71), 3.0, "nine"},
-						},
+				Table: []*executetest.Table{{
+					ColMeta: []flux.ColMeta{
+						{Label: "_time", Type: flux.TTime},
+						{Label: "_value", Type: flux.TFloat},
+						{Label: "fred", Type: flux.TString},
 					},
-				},
+					Data: [][]interface{}{
+						{execute.Time(11), 2.0, "one"},
+						{execute.Time(21), 1.0, "seven"},
+						{execute.Time(31), 3.0, "nine"},
+						{execute.Time(51), 2.0, "one"},
+						{execute.Time(61), 1.0, "seven"},
+						{execute.Time(71), 3.0, "nine"},
+					},
+				}},
 				Result: [][]kafka.Message{{
 					{Value: []byte("multi_collist_blocks,fred=one _value=2 11"), Key: []byte{0xfc, 0xab, 0xa3, 0x68, 0x81, 0x48, 0x7d, 0x8a}},
 					{Value: []byte("multi_collist_blocks,fred=seven _value=1 21"), Key: []byte{0x9f, 0xe1, 0x82, 0x97, 0x49, 0x92, 0x56, 0x1a}},
@@ -548,77 +545,51 @@ func TestToKafka_Process(t *testing.T) {
 }
 
 func TestToKafka_NewTransformation(t *testing.T) {
-	testCases := []struct {
-		name      string
-		spec      *fkafka.ToKafkaProcedureSpec
-		validator url.Validator
-		wantErr   string
-	}{
-		{
-			name: "ok",
-			spec: &fkafka.ToKafkaProcedureSpec{
-				Spec: &fkafka.ToKafkaOpSpec{
-					Brokers:      []string{"brokerurl:8989"},
-					Topic:        "totallynotfaketopic",
-					TimeColumn:   execute.DefaultTimeColLabel,
-					ValueColumns: []string{"_value"},
-					NameColumn:   "_measurement",
-				},
-			},
+	test := executetest.TfUrlValidationTest{
+		CreateFn: func(d execute.Dataset, deps flux.Dependencies, cache execute.TableBuilderCache,
+			spec plan.ProcedureSpec) (execute.Transformation, error) {
+			return fkafka.NewToKafkaTransformation(d, deps, cache, spec.(*fkafka.ToKafkaProcedureSpec))
 		},
-		{
-			name: "invalid url",
-			spec: &fkafka.ToKafkaProcedureSpec{
-				Spec: &fkafka.ToKafkaOpSpec{
-					Brokers: []string{":this:is:invalid:"},
+		Cases: []executetest.TfUrlValidationTestCase{
+			{
+				Name: "ok",
+				Spec: &fkafka.ToKafkaProcedureSpec{
+					Spec: &fkafka.ToKafkaOpSpec{
+						Brokers:      []string{"brokerurl:8989"},
+						Topic:        "totallynotfaketopic",
+						TimeColumn:   execute.DefaultTimeColLabel,
+						ValueColumns: []string{"_value"},
+						NameColumn:   "_measurement",
+					},
 				},
-			},
-			wantErr: "invalid kafka broker url: parse :this:is:invalid:: missing protocol scheme",
-		},
-		{
-			name: "no lookup",
-			spec: &fkafka.ToKafkaProcedureSpec{
-				Spec: &fkafka.ToKafkaOpSpec{
-					Brokers: []string{"notfound"},
+			}, {
+				Name: "invalid url",
+				Spec: &fkafka.ToKafkaProcedureSpec{
+					Spec: &fkafka.ToKafkaOpSpec{
+						Brokers: []string{":this:is:invalid:"},
+					},
 				},
-			},
-			validator: url.PrivateIPValidator{},
-			wantErr:   "kafka broker url did not pass validation: lookup : no such host",
-		},
-		{
-			name: "private url",
-			spec: &fkafka.ToKafkaProcedureSpec{
-				Spec: &fkafka.ToKafkaOpSpec{
-					Brokers: []string{"http://localhost"},
+				WantErr: "invalid kafka broker url: parse :this:is:invalid:: missing protocol scheme",
+			}, {
+				Name: "no lookup",
+				Spec: &fkafka.ToKafkaProcedureSpec{
+					Spec: &fkafka.ToKafkaOpSpec{
+						Brokers: []string{"notfound"},
+					},
 				},
+				Validator: url.PrivateIPValidator{},
+				WantErr:   "kafka broker url did not pass validation: lookup : no such host",
+			}, {
+				Name: "private url",
+				Spec: &fkafka.ToKafkaProcedureSpec{
+					Spec: &fkafka.ToKafkaOpSpec{
+						Brokers: []string{"http://localhost"},
+					},
+				},
+				Validator: url.PrivateIPValidator{},
+				WantErr:   "kafka broker url did not pass validation: url is not valid, it connects to a private IP",
 			},
-			validator: url.PrivateIPValidator{},
-			wantErr:   "kafka broker url did not pass validation: url is not valid, it connects to a private IP",
 		},
 	}
-
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
-			d := executetest.NewDataset(executetest.RandomDatasetID())
-			c := execute.NewTableBuilderCache(executetest.UnlimitedAllocator)
-			deps := dependenciestest.Default()
-			if tc.validator != nil {
-				deps.Deps.URLValidator = tc.validator
-			}
-			_, err := fkafka.NewToKafkaTransformation(d, deps, c, tc.spec)
-			if err != nil {
-				if tc.wantErr != "" {
-					if got := err.Error(); tc.wantErr != got {
-						t.Fatalf("got wrong err -want/+got:\n\t- %s\n\t+ %s", tc.wantErr, got)
-					}
-					return
-				} else {
-					t.Fatal(err)
-				}
-			}
-		})
-	}
+	test.Run(t)
 }

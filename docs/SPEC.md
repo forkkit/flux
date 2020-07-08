@@ -103,7 +103,7 @@ The following keywords are reserved and may not be used as identifiers:
 The following character sequences represent operators:
 
     +   ==   !=   (   )   =>
-    -   <    !~   [   ]
+    -   <    !~   [   ]   ^
     *   >    =~   {   }
     /   <=   =    ,   :
     %   >=   <-   .   |>
@@ -167,36 +167,40 @@ When several durations are specified together, larger units must appear before s
     duration_lit  = { int_lit duration_unit } .
     duration_unit = "y" | "mo" | "w" | "d" | "h" | "m" | "s" | "ms" | "us" | "µs" | "ns" .
 
-| Units    | Meaning                                 |
-| -----    | -------                                 |
-| y        | year (12 months)                        |
-| mo       | month                                   |
-| w        | week (7 days)                           |
-| d        | day                                     |
-| h        | hour (60 minutes)                       |
-| m        | minute (60 seconds)                     |
-| s        | second                                  |
-| ms       | milliseconds (1 thousandth of a second) |
-| us or µs | microseconds (1 millionth of a second)  |
-| ns       | nanoseconds (1 billionth of a second)   |
+| Units    | Meaning                                 | Base |
+| -----    | -------                                 | ---- |
+| y        | year (12 months)                        | mo   |
+| mo       | month                                   | mo   |
+| w        | week (7 days)                           | ns   |
+| d        | day                                     | ns   |
+| h        | hour (60 minutes)                       | ns   |
+| m        | minute (60 seconds)                     | ns   |
+| s        | second                                  | ns   |
+| ms       | milliseconds (1 thousandth of a second) | ns   |
+| us or µs | microseconds (1 millionth of a second)  | ns   |
+| ns       | nanoseconds (1 billionth of a second)   | ns   |
 
 Durations represent a length of time.
 Lengths of time are dependent on specific instants in time they occur and as such, durations do not represent a fixed amount of time.
-No amount of seconds is equal to a day, as days vary in their number of seconds.
-No amount of days is equal to a month, as months vary in their number of days.
-A duration consists of three basic time units: seconds, days and months.
+A duration is composed of a tuple of months and nanoseconds along with whether the duration is positive or negative.
+Each duration unit corresponds to one of these two base units.
+It is possible to compose a duration of multiple base units.
 
-Durations can be combined via addition and subtraction.
-Durations can be multiplied by an integer value.
+Durations cannot be combined by addition and subtraction.
+This is because all of the values in the tuple must have the same sign and it is not possible to guarantee that is true when addition and subtraction are allowed.
+Durations can be multiplied by any integer value.
+The unary negative operator is the equivalent of multiplying the duration by -1.
 These operations are performed on each time unit independently.
 
 Examples:
 
     1s
     10d
-    1h15m // 1 hour and 15 minutes
+    1h15m  // 1 hour and 15 minutes
     5w
-    1mo5d // 1 month and 5 days
+    1mo5d  // 1 month and 5 days
+    -1mo5d // negative 1 month and 5 days
+    5w * 2 // 10 weeks
 
 Durations can be added to date times to produce a new date time.
 
@@ -215,10 +219,12 @@ Examples:
     2018-01-31T00:00:00Z + 1mo      // 2018-02-28T00:00:00Z, February 31th is rolled back to the last day of the month, February 28th in 2018.
 
     // Addition and subtraction of durations to date times does not commute
-    2018-02-28T00:00:00Z + 1mo + 1d // 2018-03-29T00:00:00Z
-    2018-02-28T00:00:00Z + 1d + 1mo // 2018-04-01T00:00:00Z
-    2018-01-01T00:00:00Z + 2mo - 1d // 2018-02-28T00:00:00Z
-    2018-01-01T00:00:00Z - 1d + 3mo // 2018-03-31T00:00:00Z
+    2018-02-28T00:00:00Z + 1mo + 1d  // 2018-03-29T00:00:00Z
+    2018-02-28T00:00:00Z + 1d + 1mo  // 2018-04-01T00:00:00Z
+    2018-01-01T00:00:00Z + 2mo - 1d  // 2018-02-28T00:00:00Z
+    2018-01-01T00:00:00Z - 1d + 3mo  // 2018-03-31T00:00:00Z
+    2018-01-31T00:00:00Z + 1mo + 1mo // 2018-03-28T00:00:00Z
+    2018-01-31T00:00:00Z + 2mo       // 2018-03-31T00:00:00Z
 
     // Addition and subtraction of durations to date times applies months, days and seconds in that order.
     2018-01-28T00:00:00Z + 1mo + 2d // 2018-03-02T00:00:00Z
@@ -227,6 +233,14 @@ Examples:
     2018-02-01T00:00:00Z + 2mo2d    // 2018-04-03T00:00:00Z
     2018-01-01T00:00:00Z + 1mo30d   // 2018-03-02T00:00:00Z, Months are applied first to get February 1st, then days are added resulting in March 2 in 2018.
     2018-01-31T00:00:00Z + 1mo1d    // 2018-03-01T00:00:00Z, Months are applied first to get February 28th, then days are added resulting in March 1 in 2018.
+
+    // Multiplication works
+    2018-01-01T00:00:00Z + 1mo * 1  // 2018-02-01T00:00:00Z
+    2018-01-01T00:00:00Z + 1mo * 2  // 2018-03-01T00:00:00Z
+    2018-01-01T00:00:00Z + 1mo * 3  // 2018-04-01T00:00:00Z
+    2018-01-31T00:00:00Z + 1mo * 1  // 2018-02-28T00:00:00Z
+    2018-01-31T00:00:00Z + 1mo * 2  // 2018-03-31T00:00:00Z
+    2018-01-31T00:00:00Z + 1mo * 3  // 2018-04-30T00:00:00Z
 
 [IMPL#657](https://github.com/influxdata/platform/issues/657) Implement Duration vectors
 
@@ -499,19 +513,21 @@ An _object type_ represents a set of unordered key and value pairs.
 The key must always be a string.
 The value may be any other type, and need not be the same as other values within the object.
 
+Type inference will determine the properties that are present on an object.
+If type inference determines all the properties on an object it is said to be bounded.
+Not all keys may be known on the type of an object in which case the object is said to be unbounded.
+An unbounded object may contain any property in addition to the properties it is known to contain.
+
 ##### Function types
 
 A _function type_ represents a set of all functions with the same argument and result types.
-
-
-[IMPL#249](https://github.com/influxdata/platform/issues/249) Specify type inference rules
 
 ##### Generator types
 
 A _generator type_ represents a value that produces an unknown number of other values.
 The generated values may be of any other type but must all be the same type.
 
-[IMPL#658](https://github.com/influxdata/platform/query/issues/658) Implement Generators types
+[IMPL#658](https://github.com/influxdata/platform/issues/658) Implement Generators types
 
 #### Polymorphism
 
@@ -783,12 +799,13 @@ Index expressions access a value from an array based on a numeric index.
 
 Member expressions access a property of an object.
 They are specified via an expression of the form `obj.k` or `obj["k"]`.
-The property being accessed must be either an identifer or a string literal.
-In either case the literal value is the name of the property being accessed, the identifer is not evaluated.
+The property being accessed must be either an identifier or a string literal.
+In either case the literal value is the name of the property being accessed, the identifier is not evaluated.
 It is not possible to access an object's property using an arbitrary expression.
 
 If `obj` contains an entry with property `k`, both `obj.k` and `obj["k"]` return the value associated with `k`.
-If `obj` does **not** contain an entry with property `k`, both `obj.k` and `obj["k"]` return _null_.
+If `obj` is bounded and does *not* contain a property `k`, both `obj.k` and `obj["k"]` report a type checking error.
+If `obj` is unbounded and does *not* contain a property `k`, both `obj.k` and `obj["k"]` return _null_.
 
     MemberExpression        = DotExpression  | MemberBracketExpression
     DotExpression           = "." identifer
@@ -1190,6 +1207,8 @@ Intervals has the following parameters:
 The Nth interval start date is the initial start date plus the offset plus an Nth multiple of the every parameter.
 Each interval stop date is equal to the interval start date plus the period duration.
 When filtering intervals each potential interval is passed to the filter function, when the function returns false, that interval is excluded from the set of intervals.
+The `every` parameter must contain duration units for only one base unit as defined in the duration literals.
+It is not possible to mix months and nanoseconds in an interval.
 
 The intervals function has the following signature:
 
@@ -1203,6 +1222,8 @@ Examples:
     intervals(every:1w, offset:1d)             // 1 week intervals starting on Monday (by default weeks start on Sunday)
     intervals(every:1d, period:-1h)            // the hour from 11PM - 12AM every night
     intervals(every:1mo, period:-1d)           // the last day of each month
+    intervals(every:1mo2w)                     // not allowed because it is composed of different base units
+    intervals(every:1mo, period:1mo2w)         // this is fine since the period can mix base units
 
 Examples using a predicate:
 
@@ -1264,7 +1285,7 @@ Examples using known start and stop dates:
     // [2018-04-15, 2018-05-15)
 
 
-[IMPL#659](https://github.com/influxdata/platform/query/issues/659) Implement intervals function
+[IMPL#659](https://github.com/influxdata/platform/issues/659) Implement intervals function
 
 
 ### Builtin Intervals
@@ -2088,12 +2109,16 @@ Filter applies a predicate function to each input record.
 Only the records for which the predicate evaluates to _true_ will be included in the output tables.
 One output table is produced for each input table.
 The output tables will have the same schema as their corresponding input tables.
+If `onEmpty` is set to `drop`, then empty tables will be dropped.
+If `onEmpty` is set to `keep`, then empty tables will be output to the next transformation.
+The default is to drop empty tables.
 
 Filter has the following properties:
 
-| Name | Type                | Description                                                                                        |
-| ---- | ----                | -----------                                                                                        |
-| fn   | (r: record) -> bool | Fn is a predicate function. Records which evaluate to true, will be included in the output tables. |
+| Name    | Type                | Description                                                                                        |
+| ----    | ----                | -----------                                                                                        |
+| fn      | (r: record) -> bool | Fn is a predicate function. Records which evaluate to true, will be included in the output tables. |
+| onEmpty | string              | The behavior for empty tables. This can be `keep` or `drop`. The default is `drop`.
 
 _NOTE_: make sure that `fn`'s parameter names match the ones specified above (see [why](#Transformations)).
 
@@ -2105,6 +2130,14 @@ from(bucket:"telegraf/autogen")
     |> filter(fn: (r) => r._measurement == "cpu" AND
                 r._field == "usage_system" AND
                 r.service == "app-server")
+```
+
+Example:
+
+```
+from(bucket:"telegraf/autogen")
+    |> range(start:-12h)
+    |> filter(fn: (r) => r._measurement == "cpu", onEmpty: "keep")
 ```
 
 Note according to the definition, records for which the predicate evaluates to _null_ will not be included in the output.
@@ -2355,13 +2388,13 @@ Tables where all records exists outside the time bounds are filtered entirely.
 
 Range has the following properties:
 
-| Name        | Type   | Description                                                                                                             |
-| ----        | ----   | -----------                                                                                                             |
-| start       | time   | Start specifies the oldest time to be included in the results.                                                          |
-| stop        | time   | Stop specifies the exclusive newest time to be included in the results. Defaults to the value of the `now` option time. |
-| timeColumn  | string | Name of the time column to use. Defaults to `_time`.                                                                    |
-| startColumn | string | StartColumn is the name of the column containing the start time. Defaults to `_start`.                                  |
-| stopColumn  | string | StopColumn is the name of the column containing the stop time. Defaults to `_stop`.                                     |
+| Name        | Type   | Description                                                                                                                                       |
+| ----        | ----   | -----------                                                                                                                                       |
+| start       | time   | Start inclusively specifies the lower bound (oldest) time of the range by which to filter records.                                                |
+| stop        | time   | Stop exclusively specifies the upper bound (newest) time of the range by which to filter records. Defaults to the value of the `now` option time. |
+| timeColumn  | string | Name of the time column to use. Defaults to `_time`.                                                                                              |
+| startColumn | string | StartColumn is the name of the column containing the start time. Defaults to `_start`.                                                            |
+| stopColumn  | string | StopColumn is the name of the column containing the stop time. Defaults to `_stop`.                                                               |
 
 Example:
 ```
@@ -2417,7 +2450,7 @@ from(bucket: "telegraf/autogen")
 
 Drop excludes specified columns from a table. Columns to exclude can be specified either through a list, or a predicate function.
 When a dropped column is part of the group key it will also be dropped from the key.
-If a specified column is not present in a table an error will be thrown.
+If dropping a column in the group key would result in merging two tables with different schemas, an error will be thrown.
 
 Drop has the following properties:
 
@@ -2451,7 +2484,8 @@ from(bucket: "telegraf/autogen")
 Keep is the inverse of drop. It returns a table containing only columns that are specified,
 ignoring all others.
 Only columns in the group key that are also specified in `keep` will be kept in the resulting group key.
-If a specified column is not present in a table an error will be thrown.
+If not all columns in the group key are kept, this can result in merging tables that will have the same group key.
+If this would result in merging two tables with different schemas, an error will be thrown.
 
 Keep has the following properties:
 
@@ -4119,6 +4153,60 @@ r0 = from(bucket:"telegraf/autogen")
     |> filter(fn:(r) => r._measurement == "cpu")
     |> tableFind(fn: (key) => key._field == "usage_idle")
     |> getRecord(idx: 0)
+
+// use values
+x = r0._field + "--" + r0._measurement
+```
+
+##### FindColumn
+
+FindColumn extracts the first table from a stream of tables where the group key
+values match a given predicate, and from that table extracts a specified column.
+The column is returned as an array. The function returns an empty array if no
+table is found, or if the column label is not present in the set of columns.
+
+It has the following parameters:
+
+| Name   | Type   | Description                                                                                                   |
+| ----   | ----   | -----------                                                                                                   |
+| fn     | (key: object) -> bool | Fn is a predicate function. The column is extracted from the first table for which fn is true. |
+| column | string                | Column is the name of the column to extract.                                                   |
+
+_NOTE_: make sure that `fn`'s parameter names match the ones specified above (see [why](#Transformations)).
+
+Example:
+
+```
+vs = from(bucket:"telegraf/autogen")
+    |> range(start: -5m)
+    |> filter(fn:(r) => r._measurement == "cpu")
+    |> findColumn(fn: (key) => key._field == "usage_idle", column: "_value")
+
+// use values
+x = vs[0] + vs[1]
+```
+
+##### FindRecord
+
+FindRecord extracts the first table from a stream of tables where the group key
+values match a given predicate, and from that table extracts a record at a
+specified index. The record is returned as an object. The function returns an
+empty object if no table is found, or if the index is out of bounds.
+
+It has the following parameters:
+
+| Name | Type | Description                                                                                                     |
+| ---- | ---- | -----------                                                                                                     |
+| fn   | (key: object) -> bool | Fn is a predicate function. The record is extracted from the first table for which fn is true. |
+| idx  | int                   | Idx is the index of the record to extract.                                                     |
+
+Example:
+
+```
+r0 = from(bucket:"telegraf/autogen")
+    |> range(start: -5m)
+    |> filter(fn:(r) => r._measurement == "cpu")
+    |> findRecord(fn: (key) => key._field == "usage_idle", idx: 0)
 
 // use values
 x = r0._field + "--" + r0._measurement
